@@ -20,8 +20,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    outputs:
-      image_tag: ${{ steps.meta.outputs.tags }}
     steps:
       - uses: actions/checkout@v4
 
@@ -63,9 +61,7 @@ jobs:
       github.event.inputs.target == 'all' ||
       github.event.inputs.target == 'cocari'
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to VPS Cocari (217.216.89.186)
+      - name: Deploy to VPS Cocari
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_MCR_HOST }}
@@ -74,27 +70,13 @@ jobs:
           script: |
             set -e
             cd /opt/mcr
-
-            echo "=== Pulling latest code ==="
             git pull origin main
-
-            echo "=== Copying .env from deploy/mcr-vps/ ==="
-            cp deploy/mcr-vps/.env .env
-
-            echo "=== Copying nginx config ==="
+            printf 'API_DOMAIN=mcr.cocari.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=false\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCARI }}' > .env
             mkdir -p nginx
             cp deploy/mcr-vps/nginx/custom.conf nginx/custom.conf
-
-            echo "=== Pulling and restarting with GHCR image ==="
-            export MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            docker compose -f docker-compose.yml pull mcr-api 2>/dev/null || true
-            docker compose down
-            MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker compose up -d
-
-            echo "=== Waiting for API ==="
+            docker compose down || true
+            MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
             sleep 15
-
-            echo "=== Checking status ==="
             docker ps
             echo "Deploy Cocari concluido!"
 
@@ -106,8 +88,6 @@ jobs:
       github.event.inputs.target == 'all' ||
       github.event.inputs.target == 'cocamar'
     steps:
-      - uses: actions/checkout@v4
-
       - name: Deploy to VPS Cocamar
         uses: appleboy/ssh-action@v1
         with:
@@ -117,26 +97,12 @@ jobs:
           script: |
             set -e
             cd /opt/mcr-cocamar
-
-            echo "=== Pulling latest code ==="
             git pull origin main
-
-            echo "=== Copying .env from deploy/mcr-cocamar/ ==="
-            cp deploy/mcr-cocamar/.env .env
-
-            echo "=== Copying nginx config ==="
+            printf 'API_DOMAIN=mcr.cocamar.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=true\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCAMAR }}' > .env
             mkdir -p nginx
             cp deploy/mcr-cocamar/nginx/custom.conf nginx/custom.conf
-
-            echo "=== Pulling and restarting with GHCR image ==="
-            export MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            docker compose -f docker-compose.yml pull mcr-api 2>/dev/null || true
-            docker compose down
-            MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker compose up -d
-
-            echo "=== Waiting for API ==="
+            docker compose down || true
+            MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
             sleep 15
-
-            echo "=== Checking status ==="
             docker ps
             echo "Deploy Cocamar concluido!"
