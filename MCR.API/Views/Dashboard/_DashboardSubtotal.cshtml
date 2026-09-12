@@ -1,0 +1,11 @@
+@model MCR.API.Models.Dashboard.SubtotalData
+
+<tr class="table-info" id="subtotalRow">
+    <th>SUBTOTAL</th>
+    <th id="subtotalArea">@((Model?.Area ?? 0m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")))</th>
+    <th id="subtotalQtd">@(Model?.Qtd ?? 0)</th>
+    <th id="subtotalLMI">@((Model?.LMI ?? 0).ToString("C"))</th>
+    <th id="subtotalPremio">@((Model?.Premio ?? 0).ToString("C"))</th>
+    <th id="subtotalProdutividade">@((Model?.Produtividade ?? 0).ToString("N2"))</th>
+    <th id="subtotalTaxa">@((Model?.Taxa ?? 0).ToString("N2"))%</th>
+</tr>

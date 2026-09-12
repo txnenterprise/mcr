@@ -1,0 +1,371 @@
+<!-- Modal para Cadastrar Talhão -->
+<div class="modal fade" id="modalCadastrarTalhao" tabindex="-1" aria-labelledby="modalCadastrarTalhaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCadastrarTalhaoLabel">Cadastrar Novo Talhão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCadastrarTalhao">
+                    <input type="hidden" id="modalPropriedadeId" />
+                    <input type="hidden" id="modalPropertyAddress" />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalTalhaoNome" placeholder="Nome do Talhão">
+                                <label for="modalTalhaoNome">Nome do Talhão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <div class="form-floating">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="modalPossuiAnaliseFisicaSolo">
+                                    <label class="form-check-label" for="modalPossuiAnaliseFisicaSolo">Análise Física do Solo?</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-2 col-lg-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalPercentualAreia" placeholder="% Areia">
+                                <label for="modalPercentualAreia">% Areia</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-2 col-lg-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalPercentualSilte" placeholder="% Silte">
+                                <label for="modalPercentualSilte">% Silte</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-2 col-lg-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalPercentualArgila" placeholder="% Argila">
+                                <label for="modalPercentualArgila">% Argila</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <h5 id="modalClasseAD"></h5>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-2 col-lg-2 col-sm-12">
+                            <p><span class="badge bg-secondary">AD0</span> Valores de AD menor do que 0,33</p>
+                            <p><span class="badge bg-info">AD6</span> Valores de AD maiores ou iguais a 1,40 mm/cm.</p>
+                        </div>
+                        <div class="col-md-2 col-lg-2 col-sm-12">
+                            <p><span class="badge bg-warning text-dark">AD1</span> Valores de AD maiores ou iguais a 0,34 e menores que 0,46 mm/cm.</p>
+                        </div>
+                        <div class="col-md-2 col-lg-2 col-sm-12">
+                            <p><span class="badge text-dark" style="background-color: #fbeab7">AD2</span> Valores de AD maiores ou iguais a 0,46 e menores que 0,61 mm/cm.</p>
+                        </div>
+                        <div class="col-md-2 col-lg-2 col-sm-12">
+                            <p><span class="badge text-dark" style="background-color: #ffeb00">AD3</span> Valores de AD maiores ou iguais a 0,61 e menores que 0,80 mm/cm.</p>
+                        </div>
+                        <div class="col-md-2 col-lg-2 col-sm-12">
+                            <p><span class="badge bg-success">AD4</span> Valores de AD maiores ou iguais a 0,80 e menores que 1,06 mm/cm.</p>
+                        </div>
+                        <div class="col-md-2 col-lg-2 col-sm-12">
+                            <p><span class="badge bg-primary">AD5</span> Valores de AD maiores ou iguais a 1,06 e menores que 1,40 mm/cm.</p>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <select class="form-select form-dropdownlist" aria-label="TipoSolo" id="modalTipoSolo">
+                                    <option value="">Selecione um Tipo de Solo</option>
+                                    <option value="Tipo 1">Tipo 1</option>
+                                    <option value="Tipo 2">Tipo 2</option>
+                                    <option value="Tipo 3">Tipo 3</option>
+                                </select>
+                                <label for="modalTipoSolo">Tipo de Solo</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <select class="form-select form-dropdownlist" aria-label="ClassificacaoSolo" id="modalClassificacaoSoloAD">
+                                    <option value="">Selecione uma Classificação do Solo</option>
+                                    <option value="AD 1">AD 1</option>
+                                    <option value="AD 2">AD 2</option>
+                                    <option value="AD 3">AD 3</option>
+                                    <option value="AD 4">AD 4</option>
+                                    <option value="AD 5">AD 5</option>
+                                    <option value="AD 6">AD 6</option>
+                                </select>
+                                <label for="modalClassificacaoSoloAD">Classificação do Solo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <label>
+                                Desenhe o polígono referente ao talhão para que os campos de latitude, longitude, roteiro de acesso e área sejam preenchidos.
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12 col-sm-12">
+                            <div id="modalMap" style="width: 100%; height: 400px; margin-top: 20px;"></div>
+                        </div>
+                    </div>
+                    <br />
+                    <!-- NOVA SEÇÃO: Importar KML -->
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Importar KML</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-floating">
+                                                <input type="file" class="form-control" id="modalKmlFileInput" accept=".kml" onchange="handleModalKmlFileUpload(event)">
+                                                <label for="modalKmlFileInput">Selecione um arquivo KML</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="button" class="btn btn-info rounded-pill" onclick="importModalKmlFromFile()">
+                                                Importar KML
+                                            </button>
+                                            <button type="button" class="btn btn-secondary rounded-pill" onclick="clearModalImportedKml()">
+                                                Limpar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-12">
+                                            <small class="text-muted">
+                                                Você pode importar um arquivo KML para carregar automaticamente o polígono no mapa. O arquivo deve conter um ou mais polígonos válidos.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalLatitude" placeholder="Latitude">
+                                <label for="modalLatitude">Latitude</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalLongitude" placeholder="Longitude">
+                                <label for="modalLongitude">Longitude</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalArea" placeholder="Área">
+                                <label for="modalArea">Área</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="modalRoteiroAcesso" placeholder="Roteiro de Acesso" style="height: 100px !important"></textarea>
+                                <label for="modalRoteiroAcesso">Roteiro de Acesso</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12 col-lg-4">
+                            <label>Imagem Capturada</label>
+                            <img id="modalMapScreenshot" class="img-thumbnail" alt="Captura da Área" style="display: none;">
+                        </div>
+                        <div class="col-md-4 col-sm-12 col-lg-4">
+                            <label>KML Gerado</label>
+                            <textarea class="form-control" id="modalKmlOutput" rows="5" cols="50" readonly style="display: none;"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnSalvarTalhao">Salvar Talhão</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para funcionalidade de importar KML no modal -->
+<script>
+    let modalImportedKmlContent = "";
+
+    function handleModalKmlFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            modalImportedKmlContent = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+
+    function importModalKmlFromFile() {
+        if (!modalImportedKmlContent) {
+            alert("Selecione um arquivo KML primeiro.");
+            return;
+        }
+        loadModalKmlFromJson(modalImportedKmlContent);
+    }
+
+    function clearModalImportedKml() {
+        modalImportedKmlContent = "";
+        document.getElementById("modalKmlFileInput").value = "";
+        removeModalExistingPolygon();
+        document.getElementById("modalKmlOutput").value = "";
+    }
+
+    function removeModalExistingPolygon() {
+        // Verificar se as variáveis existem no escopo global ou no objeto clienteJS
+        if (typeof modalSelectedShape !== 'undefined' && modalSelectedShape) {
+            modalSelectedShape.setMap(null);
+            modalSelectedShape = null;
+        }
+        if (typeof modalLoadedPolygon !== 'undefined' && modalLoadedPolygon) {
+            modalLoadedPolygon.setMap(null);
+            modalLoadedPolygon = null;
+        }
+        // Também verificar no objeto clienteJS se existir
+        if (typeof clienteJS !== 'undefined' && clienteJS.modalSelectedShape) {
+            clienteJS.modalSelectedShape.setMap(null);
+            clienteJS.modalSelectedShape = null;
+        }
+        if (typeof clienteJS !== 'undefined' && clienteJS.modalLoadedPolygon) {
+            clienteJS.modalLoadedPolygon.setMap(null);
+            clienteJS.modalLoadedPolygon = null;
+        }
+    }
+
+    function decodeModalHtmlEntities(encodedString) {
+        const textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
+
+    function loadModalKmlFromJson(kmlString) {
+        if (!kmlString) {
+            console.error("KML vazio ou não fornecido.");
+            return;
+        }
+
+        const decodedKml = decodeModalHtmlEntities(kmlString);
+        const parser = new DOMParser();
+        const kmlDoc = parser.parseFromString(decodedKml, "text/xml");
+
+        document.getElementById("modalKmlOutput").value = decodedKml;
+
+        if (kmlDoc.getElementsByTagName("parsererror").length > 0) {
+            console.error("Erro ao parsear o KML.");
+            return;
+        }
+
+        const coordinatesElement = kmlDoc.querySelector("LinearRing > coordinates");
+        if (!coordinatesElement) {
+            console.error("Elemento <coordinates> não encontrado.");
+            return;
+        }
+
+        const coordinatesText = coordinatesElement.textContent.trim();
+        const coordinates = coordinatesText.split(/\s+/).map(coord => {
+            const [lng, lat] = coord.split(",");
+            return new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+        });
+
+        if (coordinates.length > 0) {
+            removeModalExistingPolygon(); // Remove qualquer polígono existente antes de carregar um novo
+
+            // Determinar qual mapa usar baseado no contexto
+            let targetMap = null;
+            
+            // Primeiro, verificar se existe uma variável global modalMap
+            if (typeof modalMap !== 'undefined' && modalMap && typeof modalMap.fitBounds === 'function') {
+                targetMap = modalMap;
+            } 
+            // Segundo, verificar se existe no objeto clienteJS
+            else if (typeof clienteJS !== 'undefined' && clienteJS.modalMap && typeof clienteJS.modalMap.fitBounds === 'function') {
+                targetMap = clienteJS.modalMap;
+            }
+            // Terceiro, tentar obter o mapa do elemento DOM
+            else {
+                const mapElement = document.getElementById("modalMap");
+                if (mapElement && mapElement._googleMap) {
+                    targetMap = mapElement._googleMap;
+                }
+            }
+
+            if (!targetMap || typeof targetMap.fitBounds !== 'function') {
+                console.error("Mapa do modal não encontrado ou inválido. TargetMap:", targetMap);
+                alert("Erro: Mapa não está inicializado. Tente fechar e abrir o modal novamente.");
+                return;
+            }
+
+            // Criar o polígono
+            const newPolygon = new google.maps.Polygon({
+                paths: coordinates,
+                map: targetMap,
+                editable: true,
+                draggable: false,
+            });
+
+            // Atribuir o polígono à variável correta baseado no contexto
+            if (typeof modalSelectedShape !== 'undefined') {
+                modalSelectedShape = newPolygon;
+            } else if (typeof clienteJS !== 'undefined') {
+                clienteJS.modalSelectedShape = newPolygon;
+            }
+
+            if (typeof modalLoadedPolygon !== 'undefined') {
+                modalLoadedPolygon = newPolygon;
+            } else if (typeof clienteJS !== 'undefined') {
+                clienteJS.modalLoadedPolygon = newPolygon;
+            }
+
+            // Processar o polígono para calcular área, coordenadas e roteiro
+            if (typeof processModalPolygon !== 'undefined') {
+                processModalPolygon(newPolygon);
+            } else if (typeof clienteJS !== 'undefined' && clienteJS.processModalPolygon) {
+                clienteJS.processModalPolygon(newPolygon);
+            }
+
+            // Ajustar o mapa para mostrar o polígono
+            try {
+                const bounds = new google.maps.LatLngBounds();
+                coordinates.forEach(coord => bounds.extend(coord));
+                targetMap.fitBounds(bounds);
+            } catch (error) {
+                console.error("Erro ao ajustar mapa:", error);
+            }
+
+            // Adicionar listeners para edição do polígono
+            google.maps.event.addListener(newPolygon.getPath(), "set_at", () => {
+                if (typeof processModalPolygon !== 'undefined') {
+                    processModalPolygon(newPolygon);
+                } else if (typeof clienteJS !== 'undefined' && clienteJS.processModalPolygon) {
+                    clienteJS.processModalPolygon(newPolygon);
+                }
+            });
+            google.maps.event.addListener(newPolygon.getPath(), "insert_at", () => {
+                if (typeof processModalPolygon !== 'undefined') {
+                    processModalPolygon(newPolygon);
+                } else if (typeof clienteJS !== 'undefined' && clienteJS.processModalPolygon) {
+                    clienteJS.processModalPolygon(newPolygon);
+                }
+            });
+        }
+    }
+</script> 

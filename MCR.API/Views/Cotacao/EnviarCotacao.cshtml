@@ -1,0 +1,700 @@
+@using System.Globalization;
+@model MCR.API.Entities.CotacaoEntity
+@{
+    ViewData["Title"] = "Cotações - Retorno das Cotações";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Cotações - Retorno das Cotações</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-action="NovaCotacao" asp-controller="Cotacao" class="btn-light btn d-flex justify-content-center align-items-center">
+                Voltar e fazer uma nova cotação
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a id="editarCotacao" class="btn d-flex btn-primary justify-content-center align-items-center">
+                Voltar e editar a cotação atual
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-6">
+            <p>
+                O tempo de retorno das cotações dependem de seus respectivos sistemas. <br />
+                Em caso de falha, serão feitas 10 tentativas para tentar obter sucesso.
+            </p>
+        </div>
+    </div>
+
+    <br /><br />
+
+    <h6>Resumo da Cotação </h6>
+    <a style="cursor: pointer" title="Re" onclick="printDiv('resumoCotacaoDiv')"><svg width="34px" height="34px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><rect x="16" y="32" width="32" height="24"></rect><line x1="24" y1="48" x2="40" y2="48"></line><line x1="24" y1="40" x2="40" y2="40"></line><polyline points="20 16 20 8 44 8 44 16"></polyline><polyline points="16 40 8 40 8 16 56 16 56 40 48 40"></polyline></g></svg></a>
+    <h6>Download Relatório de Cotação Completo </h6>
+    <a asp-action="GerarPdfRelatorioCotacao" asp-route-id="@Model.Cotacao.Id"><svg width="34px" height="34px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <rect width="24" height="24" fill="white"></rect> <path d="M5 12V18C5 18.5523 5.44772 19 6 19H18C18.5523 19 19 18.5523 19 18V12" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 3L12 15M12 15L16 11M12 15L8 11" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg></a>
+   
+     <br /><br />
+
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)" id="resumoCotacaoDiv">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p>Cód. Interno: @Model.Cotacao.Id</p>
+                    <br />
+                    <h6>Segurado: @Model.Cotacao.InformacaoSegurado.Nome</h6>
+                    <br />
+                    <h6>CPF/CNPJ: @Model.Cotacao.InformacaoSegurado.CPFCNPJ</h6>
+                    <br />
+                    <h6>Localidade: @($"{Model.Cotacao.InformacaoSegurado.Endereco}, {Model.Cotacao.InformacaoSegurado.Numero} - {Model.Cotacao.InformacaoSegurado.Bairro} - {Model.Cotacao.InformacaoSegurado.CEP} - {Model.Cotacao.InformacaoSegurado.Cidade}/{Model.Cotacao.InformacaoSegurado.Estado}")</h6>
+                    <br />
+                    <h6>Tipo de Seguro: @Model.Cotacao.InformacaoSeguro.TipoSeguro</h6>
+                    <br />
+                    <h6>Vigência: @Model.Cotacao.InformacaoSeguro.TempoVigenciaSeguro</h6>
+                    <br />
+                    <br />
+                    <div style="overflow-x:auto;">
+                        <table id="tabelaRetornoCotacoes" class="table table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Seguradora</th>
+                                    <th>Núm. Cotação</th>
+                                    <th>Prêmio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <h6>Seguradoras</h6>
+    <br />
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarMapfre)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-mapfre.png" class="img-responsive" width="200" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        <h4 id="numeroCotacaoMapfre">Núm. 000</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        <h4 id="premioCotacaoMapfre">R$ 0,00</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <div id="timerMapfre">00:00</div>
+                        <div class="spinner-border text-success" role="status" id="spinnerMapfre">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p id="retornoCotacaoMapfre"></p>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarSwissRe)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-swissre.png" class="img-responsive" width="200" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        @if (Model != null && Model.CotacaoRetornoSeguradoraSwissRe != null)
+                        {
+                            if (!Model.CotacaoRetornoSeguradoraSwissRe.Sucesso)
+                            {
+                                <h4 id="numeroCotacaoSwissRe">Núm. 000</h4>
+                            }
+                            else
+                            {
+                                <h4 id="numeroCotacaoSwissRe">Núm. @Model.CotacaoRetornoSeguradoraSwissRe.NumeroCotacao</h4>
+                            }
+                        }
+                        else
+                        {
+                            <h4 id="numeroCotacaoSwissRe">Núm. 000</h4>
+                        }
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        @if (Model != null && Model.CotacaoRetornoSeguradoraSwissRe != null)
+                        {
+                            if (!Model.CotacaoRetornoSeguradoraSwissRe.Sucesso)
+                            {
+                                <h4 id="premioCotacaoSwissRe">R$ 0,00</h4>
+                            }
+                            else
+                            {
+                                <h4 id="premioCotacaoSwissRe">@Model.CotacaoRetornoSeguradoraSwissRe.Premio</h4>
+                            }
+                        }
+                        else
+                        {
+                            <h4 id="premioCotacaoSwissRe">R$ 0,00</h4>
+                        }
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Média Retorno</h4>
+                        <h4>15 segundos</h4>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    @if (Model != null && Model.CotacaoRetornoSeguradoraSwissRe != null)
+                    {
+                        <p id="retornoCotacaoSwissRe">@($"{Model.CotacaoRetornoSeguradoraSwissRe.Mensagem} - {Model.CotacaoRetornoSeguradoraSwissRe.MensagemComplementar}")</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarAllianz)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-allianz.png" class="img-responsive" width="200" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        <h4 id="numeroCotacaoAllianz">Núm. 000</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        <h4 id="premioCotacaoAllianz">R$ 0,00</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <div id="timerAllianz">00:00</div>
+                        <div class="spinner-border text-success" role="status" id="spinnerAllianz">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p id="retornoCotacaoAllianz"></p>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarTokio)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-tokio.png" class="img-responsive" width="100" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        <h4 id="numeroCotacaoTokio">Núm. 000</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        <h4 id="premioCotacaoTokio">R$ 0,00</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <div id="timerTokio">00:00</div>
+                        <div class="spinner-border text-success" role="status" id="spinnerTokio">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p id="retornoCotacaoTokio"></p>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarSompo)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-sompo.png" class="img-responsive" width="200" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        <h4 id="numeroCotacaoSompo">Núm. 000</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        <h4 id="premioCotacaoSompo">R$ 0,00</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <div id="timerSompo">00:00</div>
+                        <div class="spinner-border text-success" role="status" id="spinnerSompo">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p id="retornoCotacaoSompo"></p>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarPottencial)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-pottencial.png" class="img-responsive" width="200" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        @if (Model != null && Model.CotacaoRetornoSeguradoraPottencial != null)
+                        {
+                            if (!Model.CotacaoRetornoSeguradoraPottencial.Sucesso)
+                            {
+                                <h4 id="numeroCotacaoPottencial">Núm. 000</h4>
+                            }
+                            else
+                            {
+                                <h4 id="numeroCotacaoPottencial">Núm. @Model.CotacaoRetornoSeguradoraPottencial.NumeroCotacao</h4>
+                            }
+                        }
+                        else
+                        {
+                            <h4 id="numeroCotacaoPottencial">Núm. 000</h4>
+                        }
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        @if (Model != null && Model.CotacaoRetornoSeguradoraPottencial != null)
+                        {
+                            if (!Model.CotacaoRetornoSeguradoraPottencial.Sucesso)
+                            {
+                                <h4 id="premioCotacaoPottencial">R$ 0,00</h4>
+                            }
+                            else
+                            {
+                                <h4 id="premioCotacaoPottencial">@Model.CotacaoRetornoSeguradoraPottencial.Premio</h4>
+                            }
+                        }
+                        else
+                        {
+                            <h4 id="premioCotacaoPottencial">R$ 0,00</h4>
+                        }
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Média Retorno</h4>
+                        <h4>11 segundos</h4>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    @if (Model != null && Model.CotacaoRetornoSeguradoraPottencial != null)
+                    {
+                        <p id="retornoCotacaoPottencial">@($"{Model.CotacaoRetornoSeguradoraPottencial.Mensagem} - {Model.CotacaoRetornoSeguradoraPottencial.MensagemComplementar}")</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <br />
+
+    }
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarSombrero)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-sombrero.png" class="img-responsive" width="250" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        @if (Model != null && Model.CotacaoRetornoSeguradoraSombrero != null)
+                        {
+                            if (!Model.CotacaoRetornoSeguradoraSombrero.Sucesso)
+                            {
+                                <h4 id="numeroCotacaoSombrero">Núm. 000</h4>
+                            }
+                            else
+                            {
+                                <h4 id="numeroCotacaoSombrero">Núm. @Model.CotacaoRetornoSeguradoraSombrero.NumeroCotacao</h4>
+                            }
+                        }
+                        else
+                        {
+                            <h4 id="numeroCotacaoSombrero">Núm. 000</h4>
+                        }
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        @if (Model != null && Model.CotacaoRetornoSeguradoraSombrero != null)
+                        {
+                            if (!Model.CotacaoRetornoSeguradoraSombrero.Sucesso)
+                            {
+                                <h4 id="premioCotacaoSombrero">R$ 0,00</h4>
+                            }
+                            else
+                            {
+                                <h4 id="premioCotacaoSombrero">@Model.CotacaoRetornoSeguradoraSombrero.PremioDecimal.ToString("C", new CultureInfo("pt-BR"))</h4>
+                            }
+                        }
+                        else
+                        {
+                            <h4 id="premioCotacaoSombrero">R$ 0,00</h4>
+                        }
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Média Retorno</h4>
+                        <h4>9 segundos</h4>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    @if (Model != null && Model.CotacaoRetornoSeguradoraSombrero != null)
+                    {
+                        <p id="retornoCotacaoSombrero">@($"{Model.CotacaoRetornoSeguradoraSombrero.Mensagem} - {Model.CotacaoRetornoSeguradoraSombrero.MensagemComplementar}")</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+    @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarFairFax)
+    {
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row text-center">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <img src="~/img/logo-ff.png" class="img-responsive" width="100" />
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Cotação</h4>
+                        <h4 id="numeroCotacaoFairfax">Núm. 000</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <h4 style="color: #000; font-weight: bold">Prêmio</h4>
+                        <h4 id="premioCotacaoFairfax">R$ 0,00</h4>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3 vl">
+                        <div id="timerFairfax">00:00</div>
+                        <div class="spinner-border text-success" role="status" id="spinnerFairfax">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p id="retornoCotacaoFairfax"></p>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+</div>
+
+<script>
+    function adicionarTermometroCores() {
+        var tabela = document.getElementById('tabelaRetornoCotacoes').getElementsByTagName('tbody')[0];
+        var linhas = tabela.rows;
+
+        // Encontrar o menor e maior prêmio
+        var menorPremio = Number.MAX_VALUE;
+        var maiorPremio = Number.MIN_VALUE;
+
+        cotacoesArray.forEach(function (cotacao) {
+            var preco = parseFloat(cotacao.premio.replace('R$', '').replace('.', '').replace(',', '.'));
+            if (preco < menorPremio) {
+                menorPremio = preco;
+            }
+            if (preco > maiorPremio) {
+                maiorPremio = preco;
+            }
+        });
+
+        var rangePremio = maiorPremio - menorPremio;
+
+        for (var i = 0; i < linhas.length; i++) {
+            var preco = parseFloat(linhas[i].cells[2].innerText.replace('R$', '').replace('.', '').replace(',', '.'));
+
+            // Calcular a cor com base na posição relativa do prêmio no intervalo
+            var percentual = (preco - menorPremio) / rangePremio;
+
+            // Definir a cor com base no percentual
+            var red, green, blue;
+            if (percentual <= 0) {
+                // Menor prêmio (Verde Escuro)
+                red = 0;
+                green = 128;
+                blue = 0;
+            } else if (percentual <= 0.25) {
+                // Verde para Amarelo Claro
+                red = 122 + Math.round(percentual * 400);
+                green = 190 + Math.round(percentual * 62);
+                blue = 122;
+            } else if (percentual <= 0.5) {
+                // Amarelo Claro para Laranja Claro
+                red = 255;
+                green = 252 - Math.round((percentual - 0.25) * 100);
+                blue = 0;
+            } else if (percentual <= 0.75) {
+                // Laranja Claro para Laranja Escuro
+                red = 255;
+                green = 152 - Math.round((percentual - 0.5) * 200);
+                blue = 0;
+            } else {
+                // Laranja Escuro para Vermelho Escuro
+                red = 255;
+                green = 0;
+                blue = 0;
+            }
+
+            var cor = 'rgb(' + red + ',' + green + ',' + blue + ')';
+            linhas[i].style.backgroundColor = cor;
+        }
+    }
+
+</script>
+
+<script>
+    let timers = {};
+    let intervalId;
+    let totalMinutes = 0;
+    let totalSeconds = 0;
+    let totalInterval;
+    let cotacoesConcluidas = {
+        mapfre: false,
+        swissre: false,
+        allianz: false,
+        tokio: false,
+        sompo: false,
+        pottencial: false,
+        sombrero: false,
+        fairfax: false
+    };
+
+    var cotacoesArray = [];
+    var cotacaoConcluida = false;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarMapfre.ToString().ToLower() == 'false')
+        mapfre = true;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarSwissRe.ToString().ToLower() == 'false')
+        swissre = true;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarAllianz.ToString().ToLower() == 'false')
+        allianz = true;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarTokio.ToString().ToLower() == 'false')
+        tokio = true;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarSompo.ToString().ToLower() == 'false')
+        sompo = true;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarPottencial.ToString().ToLower() == 'false')
+        pottencial = true;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarSombrero.ToString().ToLower() == 'false')
+        sombrero = true;
+
+    if (@Model.ParametrizacaoMultiCalculoParceiro.HabilitarFairFax.ToString().ToLower() == 'false')
+        fairfax = true;
+
+    function startTimer(seguradora) {
+
+        if (!timers[seguradora]) {
+            timers[seguradora] = { minutes: 0, seconds: 0, interval: null };
+        }
+
+        timers[seguradora].interval = setInterval(() => {
+            let timer = timers[seguradora];
+            timer.seconds++;
+            if (timer.seconds === 60) {
+                timer.seconds = 0;
+                timer.minutes++;
+            }
+            updateTimerDisplay(seguradora);
+        }, 1000);
+    }
+
+    function stopTimer(seguradora) {
+        if (timers[seguradora]) {
+            clearInterval(timers[seguradora].interval);
+            timers[seguradora].interval = null;
+        }
+    }
+
+    function updateTimerDisplay(seguradora) {
+        let timer = timers[seguradora];
+        const formattedMinutes = String(timer.minutes).padStart(2, '0');
+        const formattedSeconds = String(timer.seconds).padStart(2, '0');
+        const timerElement = document.getElementById(`timer${capitalizeFirstLetter(seguradora)}`);
+        if (timerElement) {
+            timerElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+        }
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function allCotacoesConcluidas() {
+        return Object.values(cotacoesConcluidas).every(val => val === true);
+    }
+
+    function adicionarLinhaTabela(seguradora, numeroCotacao, premio) {
+        var tabela = document.getElementById('tabelaRetornoCotacoes').getElementsByTagName('tbody')[0];
+        var novaLinha = tabela.insertRow();
+        var colunas = [
+            seguradora,
+            numeroCotacao,
+            premio
+        ];
+        colunas.forEach(function (valor) {
+            var coluna = novaLinha.insertCell();
+            coluna.appendChild(document.createTextNode(valor));
+        });
+    }
+
+    function atualizarCotacao() {
+        console.log("Atualizando cotações...");
+
+        if (cotacaoConcluida) return;
+
+        console.log("Há cotações pendentes.");
+
+        var idCotacao = '@Model.Cotacao.Id';
+        var url = `/Cotacao/ObterRetornosPorCotacaoId?id=${idCotacao}`;
+        cotacoesArray = [];
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(retorno => {
+                    console.log("Cotação recebida para a seguradora ", retorno.seguradora, " com retorno ", retorno);
+                    if (retorno.cotacaoId == '@Model.Cotacao.Id') {
+                        console.log("Match de cotação realizado com sucesso.");
+                        console.log("Atualizando cotação da seguradora ", retorno.seguradora, " com retorno ", retorno);
+
+                        let seguradora = retorno.seguradora.toLowerCase();
+                        stopTimer(seguradora);
+                        cotacoesConcluidas[seguradora] = true;
+
+                        if (retorno.seguradora.toLowerCase() == "mapfre") {
+                            document.getElementById("spinnerMapfre").style.visibility = "hidden";
+                            document.getElementById("numeroCotacaoMapfre").textContent = retorno.numeroCotacao;
+                            document.getElementById("premioCotacaoMapfre").textContent = retorno.premio;
+                            document.getElementById("retornoCotacaoMapfre").textContent = retorno.mensagemComplementar;
+                            retornoMapfre = true;
+                        } else if (retorno.seguradora.toLowerCase() == "swissre") {
+                            document.getElementById("numeroCotacaoSwissRe").textContent = retorno.numeroCotacao;
+                            document.getElementById("premioCotacaoSwissRe").textContent = retorno.premio;
+                            document.getElementById("retornoCotacaoSwissRe").textContent = retorno.mensagemComplementar;
+                            retornoSwissRe = true;
+                        } else if (retorno.seguradora.toLowerCase() == "allianz") {
+                            document.getElementById("spinnerAllianz").style.visibility = "hidden";
+                            document.getElementById("numeroCotacaoAllianz").textContent = retorno.numeroCotacao;
+                            document.getElementById("premioCotacaoAllianz").textContent = retorno.premio;
+                            document.getElementById("retornoCotacaoAllianz").textContent = retorno.mensagemComplementar;
+                            retornoAllianz = true;
+                        } else if (retorno.seguradora.toLowerCase() == "tokio") {
+                            document.getElementById("spinnerTokio").style.visibility = "hidden";
+                            document.getElementById("numeroCotacaoTokio").textContent = retorno.numeroCotacao;
+                            document.getElementById("premioCotacaoTokio").textContent = retorno.premio;
+                            document.getElementById("retornoCotacaoTokio").textContent = retorno.mensagemComplementar;
+                            retornoTokio = true;
+                        } else if (retorno.seguradora.toLowerCase() == "sompo") {
+                            document.getElementById("spinnerSompo").style.visibility = "hidden";
+                            document.getElementById("numeroCotacaoSompo").textContent = retorno.numeroCotacao;
+                            document.getElementById("premioCotacaoSompo").textContent = retorno.premio;
+                            document.getElementById("retornoCotacaoSompo").textContent = retorno.mensagemComplementar;
+                            retornoSompo = true;
+                        } else if (retorno.seguradora.toLowerCase() == "pottencial") {
+                            document.getElementById("numeroCotacaoPottencial").textContent = retorno.numeroCotacao;
+                            document.getElementById("premioCotacaoPottencial").textContent = retorno.premio;
+                            document.getElementById("retornoCotacaoPottencial").textContent = retorno.mensagemComplementar;
+                            retornoPottencial = true;
+                        } else if (retorno.seguradora.toLowerCase() == "fairfax") {
+                            document.getElementById("spinnerFairfax").style.visibility = "hidden";
+                            document.getElementById("numeroCotacaoFairfax").textContent = retorno.numeroCotacao;
+                            document.getElementById("premioCotacaoFairfax").textContent = retorno.premio;
+                            document.getElementById("retornoCotacaoFairfax").textContent = retorno.mensagemComplementar;
+                            retornoPottencial = true;
+                        }
+
+                        if (allCotacoesConcluidas()) {
+                            cotacaoConcluida = true;
+                            alert("Cotações finalizadas!");
+                        }
+
+                        if (retorno.premio != "0") {
+                            cotacoesArray.push({
+                                seguradora: retorno.seguradora.toLowerCase(),
+                                numeroCotacao: retorno.numeroCotacao,
+                                premio: retorno.premio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                            });
+
+                            adicionarLinhaTabela(retorno.seguradora.toLowerCase(), retorno.numeroCotacao, retorno.premio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+                        }
+
+                        ordenarPorPremio();
+                        adicionarTermometroCores();
+                    }
+                });
+            });
+    }
+
+    function initCotacao() {
+        startTimer('mapfre');
+        startTimer('swissre');
+        startTimer('allianz');
+        startTimer('tokio');
+        startTimer('sompo');
+        startTimer('pottencial');
+        startTimer('sombrero');
+        startTimer('fairfax');
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        initCotacao();
+        console.log("Inicializando...");
+        setInterval(atualizarCotacao, 30000);
+    });
+
+    function ordenarPorPremio() {
+        cotacoesArray.sort(function (a, b) {
+            var precoA = parseFloat(a.premio.replace('R$', '').replace('.', '').replace(',', '.'));
+            var precoB = parseFloat(b.premio.replace('R$', '').replace('.', '').replace(',', '.'));
+            return precoA - precoB;
+        });
+
+        var tabela = document.getElementById('tabelaRetornoCotacoes').getElementsByTagName('tbody')[0];
+        tabela.innerHTML = '';
+
+        cotacoesArray.forEach(function (cotacao) {
+            var novaLinha = tabela.insertRow();
+            var colunas = [cotacao.seguradora, cotacao.numeroCotacao, cotacao.premio];
+            colunas.forEach(function (valor) {
+                var coluna = novaLinha.insertCell();
+                coluna.appendChild(document.createTextNode(valor));
+            });
+        });
+    }
+</script>
+
+<script>
+    document.getElementById("editarCotacao").addEventListener("click", function () {
+        window.history.back();
+    });
+</script>

@@ -1,0 +1,28 @@
+@model IEnumerable<MCR.API.Propostas.Domain.DTO.PropostasFormaPagamentosDTO>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Formas de Pagamento</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Forma de Pagamento</th>
+                        <th>Parcelamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.FormaDePagamento</td>
+                            <td>@item.Parcelamento</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> 

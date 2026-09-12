@@ -1,0 +1,76 @@
+@model MCR.API.Models.ViewModels.SubvencaoFederalModel
+@{
+    if (Model.SubvencaoFederal.Ativo)
+        ViewData["Title"] = "Subvenções Federais - Inativar";
+    else
+        ViewData["Title"] = "Subvenções Federais - Ativar";
+}
+<div class="form-box">
+    @if (Model.SubvencaoFederal.Ativo)
+    {
+        <h4 class="form-title form-box-title justify-content-center align-items-center">Subvenções Federais - Inativar</h4>
+    }
+    else
+    {
+        <h4 class="form-title form-box-title justify-content-center align-items-center">Subvenções Federais - Ativar</h4>
+    }
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="SubvencaoFederal" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <form asp-controller="SubvencaoFederal" method="post" id="inativarSubvencaoFederal">
+                <ul class="list-group">
+                    <li class="list-group-item">Cultura: @Model.SubvencaoFederal.Cultura</li>
+                    <li class="list-group-item">Porcentagem: @Model.SubvencaoFederal.Porentagem.ToString("N2")%</li>
+                    <li class="list-group-item">Limite R$: @Model.SubvencaoFederal.LimiteReal.ToString("N2")</li>
+                    <li class="list-group-item">CPF: @Model.SubvencaoFederal.CPF</li>
+                    <li class="list-group-item">Ano Civil: @Model.SubvencaoFederal.AnoCivil</li>
+                    <li class="list-group-item">Ativo? @(Model.SubvencaoFederal.Ativo ? "Sim" : "Não")</li>
+                </ul>
+                <input asp-for="SubvencaoFederal.Id" value="@Model.SubvencaoFederal.Id" hidden>
+                <br />
+                <br />
+                @if (Model.SubvencaoFederal.Ativo)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <h6>Deseja, realmente, inativar este cadastro?</h6>
+                    </div>
+                    <br />
+                    <div class="social-login">
+                        <button type="submit" action="Inativar" class="login-btn btn d-flex justify-content-center align-items-center" onclick="setAction('Inativar')">
+                            Inativar
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="social-login">
+                        <button type="submit" class="login-btn btn d-flex justify-content-center align-items-center" onclick="setAction('Ativar')">
+                            Ativar
+                        </button>
+                    </div>
+                }
+            </form>
+            @if (Model != null && !Model.SubvencaoFederal.Sucesso)
+            {
+                <br />
+                <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+                    <h6>Atenção!</h6>
+                    <h6>@Model.SubvencaoFederal.Mensagem</h6>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    function setAction(action) {
+        document.getElementById("inativarSubvencaoFederal").action = '/SubvencaoFederal/' + action;
+    }
+</script>

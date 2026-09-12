@@ -1,0 +1,58 @@
+﻿@model List<MCR.API.Produto.Domain.DTO.ProdutosTaxasDTO>
+
+<style>
+    #tabelaTaxas {
+        visibility: hidden;
+    }
+
+    #tabelaTaxas.dataTable {
+        visibility: visible;
+    }
+</style>
+
+@if (Model != null)
+{
+    <div style="overflow-x:auto;">
+        <div id="tabelaTaxasLoading" style="text-align: center; padding: 20px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p>Carregando dados...</p>
+        </div>
+        <table id="tabelaTaxas" class="table table-striped table-bordered display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>UF</th>
+                    <th>Município</th>
+                    <th>Produtividade Esperada (kg/ha)</th>
+                    <th>Taxa NC 65%</th>
+                    <th>Taxa NC 70%</th>
+                    <th>Taxa NC 75%</th>
+                    <th>CPF</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.UF</td>
+                            <td>@item.Municipio</td>
+                            <td>@item.ProdutividadeEsperada</td>
+                            <td>@item.TaxaNc65</td>
+                            <td>@item.TaxaNc70</td>
+                            <td>@item.TaxaNc75</td>
+                            <td>@item.Cpf</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-warning btn-sm taxaEdit" data-id="@item.ProdutoTaxaId">Editar</button>
+                                <button type="button" class="btn btn-danger btn-sm taxaRemove" data-id="@item.ProdutoTaxaId">Remover</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}

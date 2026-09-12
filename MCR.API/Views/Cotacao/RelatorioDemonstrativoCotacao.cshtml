@@ -1,0 +1,310 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+@using System.Globalization;
+
+@model MCR.API.Entities.CotacaoEntity
+@{
+    ViewData["Title"] = "Relatórios - Demonstrativo de Cotação";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Relatórios - Demonstrativo de Cotação</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-action="Index" asp-controller="Cotacao" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a id="btnImprimir" onclick="gerarPDF()" class="default-btn btn d-flex justify-content-center align-items-center">
+                Imprimir
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <br /><br />
+    <div id="imprimirRelatorio">
+        <div class="row">
+            <div class="col-sm-12 col-md-3 col-lg-3">
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <img class="img-fluid mx-auto d-block" src="@Model.LogoParceiro" alt="Logo" width="200" />
+                <br />
+                <p class="text-center" style="color: @ViewData["CorTitulo1"]; font-size: @ViewData["TamanhoTitulo1"]px;">@ViewData["Titulo1"]</p>
+                <p class="text-center" style="color: @ViewData["CorTexto1"]; font-size: @ViewData["TamanhoTexto1"]px;">@ViewData["Texto1"]</p>
+            </div>
+            <div class="col-sm-12 col-md-3 col-lg-3">
+            </div>
+        </div>
+        <hr />
+        @if (Model != null && Model.Cotacao != null && Model.Cotacao.InformacaoSegurado != null &&
+        Model.Cotacao.ListaCotacaoRetornoSeguradora != null && Model.Cotacao.ListaCotacaoRetornoSeguradora.Count > 0 &&
+        Model.Cotacao.ListaCotacaoRetornoSeguradora[0] != null && Model.Cotacao.ListaBens != null && 
+        Model.Cotacao.ListaBens.Count > 0 && Model.Cotacao.ListaBens[0] != null)
+        {
+            var linha1 = $"Segurado: {Model.Cotacao.InformacaoSegurado.Nome}  |  Tipo de Seguro: {Model.Cotacao.InformacaoSeguro.TipoSeguro}  |  Data Cotação: {Model.Cotacao.ListaCotacaoRetornoSeguradora[0].DataHoraRetorno.ToShortDateString()}";
+            var linha2 = $"Bem: {Model.Cotacao.ListaBens[0].TipoEquipamento}  |  Ano Fab.: {Model.Cotacao.ListaBens[0].AnoFabricacao}  |  Valor: {Model.Cotacao.ListaBens[0].ValorEquipamento.ToString("C")}";
+            
+            <h6>@linha1</h6>
+            <h6>@linha2</h6>
+        }
+        <br/>
+        <br/>
+        <p style="font-size: small; font-style: italic">As coberturas são uma representação exatada de como estão em seus respectivos portais.</p>
+        <div class="row">
+    @if (Model != null && Model.Cotacao != null && Model.Cotacao.RelatorioDemonstrativoCoberturaDTO != null &&
+    Model.Cotacao.RelatorioDemonstrativoCoberturaDTO.Count > 0 && Model.Cotacao.ListaCotacaoRetornoSeguradora != null &&
+    Model.Cotacao.ListaCotacaoRetornoSeguradora.Count > 0)
+    {
+        int cardCount = 0;
+        foreach (var item in Model.Cotacao.RelatorioDemonstrativoCoberturaDTO)
+        {
+            if (!string.IsNullOrEmpty(item.Key) && item.Value != null && item.Value.Count > 0)
+            {
+                var imagem = $"{item.Key}.png";
+                <div class="col-md-4 col-lg-4 col-sm-12 mb-4">
+                    <div class="card pt-3">
+                        <center>
+                            <img src="~/img/logo-@imagem" class="card-img-top" style="max-width: 100px !important;">
+                            <br/>
+                            <br/>
+                            <h5>Prêmio: @Model.Cotacao.ListaCotacaoRetornoSeguradora.Where(c => c.Seguradora == item.Key).FirstOrDefault()?.Premio</h5>
+                            <h6>Cotação: @Model.Cotacao.ListaCotacaoRetornoSeguradora.Where(c => c.Seguradora == item.Key).FirstOrDefault()?.NumeroCotacao</h6>
+                        </center>
+                        <div class="card-body">
+                            @foreach (var valor in item.Value)
+                            {
+                                <h6 class="card-text"><b>@valor.DescricaoCobertura</b></h6>
+                                <h6 class="card-text">@valor.Franquia</h6>
+                                <h6 class="card-text">@valor.Valor</h6>
+                                <hr/>
+                            }
+                        </div>
+                    </div>
+                </div>
+                cardCount++;
+                if (cardCount % 3 == 0)
+                {
+                    @:</div><div class="row">
+                }
+            }
+        }
+    }
+</div>
+        <hr />
+        <p class="text-center" style="color: @ViewData["CorTitulo2"]; font-size: @ViewData["TamanhoTitulo2"]px;">@ViewData["Titulo2"]</p>
+        <p class="text-center" style="color: @ViewData["CorTexto2"]; font-size: @ViewData["TamanhoTexto2"]px;">@ViewData["Texto2"]</p>
+        @if (ViewData["Imagem1"] != null && ViewData["Imagem1"] != "")
+        {
+            <img class="img-fluid mx-auto d-block" src="@ViewData["Imagem1"]" alt="" />
+        }
+        <br/>
+        <br/>
+        <center>
+        <img src="~/img/txn-logo.png" width="50" />
+        <p style="font-size: small">Um produto <b>TXN enterprise</b></p>
+        <a style="font-size: small"href="https://txnenterprise.com.br" target="_blank">txnenterprise.com.br</a>
+        <br/>
+        <br/>
+        <p style="font-size: small">Relatório gerado em @DateTime.UtcNow.ToShortDateString() às @DateTime.UtcNow.ToShortTimeString()</p>
+        </center>
+    </div>
+</div>
+
+<style>
+    td {
+        font-size: small;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    function gerarPDF() {
+        var newDate = new Date();
+        var datetime = getFormattedDate(newDate);
+        const options = {
+            margin: 0.3,
+            filename: 'MultiCalculo_Demonstrativo_Cotacoes_' + datetime + '_.pdf',
+            image: {
+                type: 'jpeg',
+                quality: 0.98
+            },
+            html2canvas: {
+                scale: 2
+            },
+            jsPDF: {
+                unit: 'in',
+                format: 'a3',
+                orientation: 'landscape'
+            }
+        }
+        var element = document.getElementById('imprimirRelatorio');
+        html2pdf().from(element).set(options).save();
+    }
+
+    function getFormattedDate(date) {
+        var year = date.getFullYear();
+        var month = (1 + date.getMonth()).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+        var hours = date.getHours().toString().padStart(2, '0');
+        var minutes = date.getMinutes().toString().padStart(2, '0');
+        var seconds = date.getSeconds().toString().padStart(2, '0');
+        return year + month + day + '_' + hours + minutes + seconds;
+    }
+</script>
+
+
+@{
+            /*
+         * @if (Model != null && Model.Cotacao != null && Model.RelatorioDemonstrativoCotacaoDTO != null)
+        {
+        foreach (var retorno in Model.Cotacao.ListaCotacaoRetornoSeguradora)
+    {
+    @if (retorno == null)
+    {
+    continue;
+    }
+    @foreach (var retornoCobertura in Model.RelatorioDemonstrativoCotacaoDTO)
+        {
+        if (retornoCobertura != null)
+    {
+    var premioDecimal = Convert.ToDecimal(retorno.Premio.Trim().Replace("R$", ""));
+        <tr>
+        @if (retorno.Seguradora.ToLower() == "sompo")
+                {
+                <td>
+                <img class="img-fluid" src="~/img/logo-sompo.png" width="100" />
+        </td>
+        }
+        else
+        @if (retorno.Seguradora.ToLower() == "swissre")
+                {
+                <td>
+                <img class="img-fluid" src="~/img/logo-swissre.png" width="100" />
+        </td>
+        }
+        else
+        @if (retorno.Seguradora.ToLower() == "allianz")
+                {
+                <td>
+                <img class="img-fluid" src="~/img/logo-allianz.png" width="100" />
+        </td>
+        }
+        else
+        @if (retorno.Seguradora.ToLower() == "tokio")
+                {
+                <td>
+                <img class="img-fluid" src="~/img/logo-tokio.png" width="100" />
+        </td>
+        }
+        else
+        @if (retorno.Seguradora.ToLower() == "pottencial")
+                {
+                <td>
+                <img class="img-fluid" src="~/img/logo-pottencial.png" width="100" />
+        </td>
+        }
+        else
+        @if (retorno.Seguradora.ToLower() == "sombrero")
+                {
+                <td>
+                <img class="img-fluid" src="~/img/logo-sombrero.png" width="100" />
+        </td>
+        }
+        else
+        @if (retorno.Seguradora.ToLower() == "fairfax")
+                {
+                <td>
+                <img class="img-fluid" src="~/img/logo-fairfax.png" width="100" />
+            </td>
+            }
+            else { }
+            <td>
+            @premioDecimal.ToString("C", new CultureInfo("pt-BR"))
+            </td>
+            <td>
+            @($"{Model.Cotacao.InformacaoSeguro.QuantidadeParcelas}x")
+            </td>
+            <td>
+            @Convert.ToDecimal(retornoCobertura.CoberturaBasicaValor).ToString("C")
+            </td>
+            <td>
+            @retornoCobertura.CoberturaBasicaPercentualFranquia
+            </td>
+            <td>
+            @retornoCobertura.CoberturaBasicaMultiplicadorFranquia
+            </td>
+
+            <td>
+            @retornoCobertura.CoberturaDanosEletricosValor
+            </td>
+            <td>
+            @retornoCobertura.CoberturaDanosEletricosValorPremio
+            </td>
+            <td>
+            @retornoCobertura.CoberturaDanosEletricosPercentualFranquia
+            </td>
+            <td>
+            @retornoCobertura.CoberturaDanosEletricosMultiplicadorFranquia
+            </td>
+
+            <td>
+            @retornoCobertura.CoberturaVidroValor
+            </td>
+            <td>
+            @retornoCobertura.CoberturaVidroValorPremio
+            </td>
+            <td>
+            @retornoCobertura.CoberturaVidroPercentualFranquia
+            </td>
+            <td>
+            @retornoCobertura.CoberturaVidroMultiplicadorFranquia
+            </td>
+
+            <td>
+            @retornoCobertura.CoberturaRouboFurtoValor
+            </td>
+            <td>
+            @retornoCobertura.CoberturaRouboFurtoPremio
+            </td>
+            <td>
+            @retornoCobertura.CoberturaRouboFurtoFranquia
+            </td>
+            <td>
+            @retornoCobertura.CoberturaRouboFurtoMultiplicadorFranquia
+            </td>
+
+            <td>
+            @retornoCobertura.CoberturaRespCivilValor
+            </td>
+            <td>
+            @retornoCobertura.CoberturaRespCivilPremio
+            </td>
+            <td>
+            @retornoCobertura.CoberturaRespCivilFranquia
+            </td>
+            <td>
+            @retornoCobertura.CoberturaRespCivilMultiplicadorFranquia
+            </td>
+
+            <td>
+            @retornoCobertura.CoberturaDespesaSalvamentoValor
+            </td>
+            <td>
+            @retornoCobertura.CoberturaDespesaSalvamentoPremio
+            </td>
+            <td>
+            @retornoCobertura.CoberturaDespesaSalvamentoFranquia
+            </td>
+            <td>
+            @retornoCobertura.CoberturaDespesaSalvamentoMultiplicadorFranquia
+    </td>
+
+            </tr>
+                    }
+                            }
+    }
+    }
+    */
+}

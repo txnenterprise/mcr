@@ -1,0 +1,124 @@
+<!-- Modal para Cadastrar Propriedade -->
+<div class="modal fade" id="modalCadastrarPropriedade" tabindex="-1" aria-labelledby="modalCadastrarPropriedadeLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCadastrarPropriedadeLabel">Cadastrar Nova Propriedade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCadastrarPropriedade">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalNome" placeholder="Nome" required>
+                                <label for="modalNome">Nome</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalSomaAreaTotalTalhao" placeholder="Área total da propriedade" required>
+                                <label for="modalSomaAreaTotalTalhao">Área total da propriedade</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalMatriculaLote" placeholder="Matrícula do Lote">
+                                <label for="modalMatriculaLote">Matrícula do Lote</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalCadastroAmbientalRural" placeholder="CAR (Cadastro Ambiental Rural)">
+                                <label for="modalCadastroAmbientalRural">CAR (Cadastro Ambiental Rural)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalCEP" placeholder="CEP">
+                                <label for="modalCEP">CEP</label>
+                            </div>
+                            <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalEndereco" placeholder="Endereço">
+                                <label for="modalEndereco">Endereço</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" id="modalBairro" placeholder="Bairro">
+                                <label for="modalBairro">Bairro</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <input type="number" min="0" class="form-control form-input form-control-placeholder" id="modalNumero" placeholder="Número">
+                                <label for="modalNumero">Número</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <select class="form-select form-control-placeholder" id="modalEstado" aria-label="Estado" required>
+                                    <option value="">Selecione um estado</option>
+                                    <option value="AC">Acre (AC)</option>
+                                    <option value="AL">Alagoas (AL)</option>
+                                    <option value="AP">Amapá (AP)</option>
+                                    <option value="AM">Amazonas (AM)</option>
+                                    <option value="BA">Bahia (BA)</option>
+                                    <option value="CE">Ceará (CE)</option>
+                                    <option value="DF">Distrito Federal (DF)</option>
+                                    <option value="ES">Espírito Santo (ES)</option>
+                                    <option value="GO">Goiás (GO)</option>
+                                    <option value="MA">Maranhão (MA)</option>
+                                    <option value="MT">Mato Grosso (MT)</option>
+                                    <option value="MS">Mato Grosso do Sul (MS)</option>
+                                    <option value="MG">Minas Gerais (MG)</option>
+                                    <option value="PA">Pará (PA)</option>
+                                    <option value="PB">Paraíba (PB)</option>
+                                    <option value="PR">Paraná (PR)</option>
+                                    <option value="PE">Pernambuco (PE)</option>
+                                    <option value="PI">Piauí (PI)</option>
+                                    <option value="RJ">Rio de Janeiro (RJ)</option>
+                                    <option value="RN">Rio Grande do Norte (RN)</option>
+                                    <option value="RS">Rio Grande do Sul (RS)</option>
+                                    <option value="RO">Rondônia (RO)</option>
+                                    <option value="RR">Roraima (RR)</option>
+                                    <option value="SC">Santa Catarina (SC)</option>
+                                    <option value="SP">São Paulo (SP)</option>
+                                    <option value="SE">Sergipe (SE)</option>
+                                    <option value="TO">Tocantins (TO)</option>
+                                </select>
+                                <label for="modalEstado">Estado</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="form-floating">
+                                <select class="form-select form-control-placeholder" id="modalCidade" aria-label="Cidade" required>
+                                    <option value="">Selecione primeiro um estado</option>
+                                </select>
+                                <label for="modalCidade">Cidade</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                
+                <button type="button" class="btn btn-success" id="btnSalvarPropriedade">Salvar Propriedade</button>
+            </div>
+        </div>
+    </div>
+</div> 

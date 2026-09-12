@@ -1,0 +1,278 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using MCR.API.Entities;
+using MCR.API.Propostas.Domain.DTO;
+using MCR.API.Repository;
+using MCR.API.Services.Interfaces;
+using MCR.API.Shared.Extensions;
+
+namespace MCR.API.Services.Implementations;
+
+public class PropostasStatusService : IPropostasStatusService
+{
+    private readonly DbContextMCR _context;
+    private readonly IHttpContextAccessor _contextAccessor;
+
+    private static readonly HashSet<string> StatusExigeTalhoesCompletos = new(StringComparer.Ordinal)
+    {
+        "Apólice emitida",
+        "Proposta transmitida (Em análise)",
+        "Proposta aceita",
+        "Proposta aceita → Devolutiva da Seguradora",
+    };
+
+    private static readonly HashSet<string> StatusTerminais = new(StringComparer.Ordinal)
+    {
+        "Apólice cancelada",
+        "Proposta recusada",
+        "Proposta recusada → Devolutiva da Seguradora",
+        "Proposta cancelada",
+        "Cotação encerrada sem sucesso"
+    };
+
+    public PropostasStatusService(
+        DbContextMCR context,
+        IHttpContextAccessor contextAccessor)
+    {
+        _context = context;
+        _contextAccessor = contextAccessor;
+    }
+
+    public async Task<IEnumerable<PropostasStatusEntity>> ObterStatusPorPropostaAsync(Guid propostaId)
+    {
+        return await _context.PropostasStatus
+            .Include(s => s.Usuario)
+            .Where(s => s.PropostaId == propostaId)
+            .OrderByDescending(s => s.DataStatus)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<PropostasStatusDTO>> ObterPropostaStatusLista(Guid propostaId)
+    {
+        var statusList = await _context.PropostasStatus
+            .Where(s => s.PropostaId == propostaId)
+            .OrderByDescending(s => s.DataStatus)
+            .ToListAsync();
+
+        return statusList.Select(s => new PropostasStatusDTO
+        {
+            Id = s.Id,
+            PropostaId = s.PropostaId,
+            UsuarioId = s.UsuarioId,
+            Status = s.Status,
+            StatusAnterior = s.StatusAnterior,
+            DataStatus = s.DataStatus,
+            NomeUsuario = s.Usuario?.Name
+        }).ToList();
+    }
+
+    public List<string> ListarStatusProposta()
+    {
+        var todosStatus = new List<string>
+        {
+            "Cotação em negociação",
+            "Proposta em negociação",
+            "Aguardando transmissão",
+            "Proposta com pendência",
+            "Proposta transmitida (Em análise)",
+            "Proposta aceita → Devolutiva da Seguradora",
+            "Proposta recusada → Devolutiva da Seguradora",
+            "Proposta cancelada",
+            "Apólice emitida",
+            "Apólice cancelada",
+            "Cotação encerrada sem sucesso",
+            "Solicitar Endosso",
+            "Endosso com pendência",
+            "Endosso Transmitido",
+            "Endosso Emitido",
+            "Comunicar Sinistro",
+            "Sinistro Com Pendência",
+            "Sinistro Cancelado",
+            "Sinistro Aberto/Em Regulação",
+            "Sinistro Aguardando Pagamento",
+            "Sinistro deferido Pago",
+            "Sinistro indeferido",
+        };
+
+        if (_contextAccessor.IsCorretor())
+        {
+            var statusCorretor = new List<string>
+            {
+                "Proposta cancelada",
+                "Proposta com pendência",
+                "Proposta transmitida (Em análise)",
+                "Proposta aceita → Devolutiva da Seguradora",
+                "Proposta recusada → Devolutiva da Seguradora",
+                "Apólice emitida",
+                "Apólice cancelada",
+                "Solicitar Endosso",
+                "Comunicar Sinistro"
+            };
+            return todosStatus.Where(status => statusCorretor.Contains(status)).ToList();
+        }
+
+        if (_contextAccessor.IsConsultor() || _contextAccessor.IsAssistente())
+        {
+            var statusConsultor = new List<string>
+            {
+                "Proposta em negociação",
+                "Aguardando transmissão",
+                "Cotação encerrada sem sucesso",
+                "Proposta com pendência",
+                "Endosso com pendência",
+                "Endosso Transmitido",
+                "Sinistro Com Pendência"
+            };
+            if (_contextAccessor.IsConsultor())
+                return todosStatus.Where(status => statusConsultor.Contains(status)).ToList();
+            statusConsultor.Add("Sinistro Aberto/Em Regulação");
+            return todosStatus.Where(status => statusConsultor.Contains(status)).ToList();
+        }
+
+        return todosStatus;
+    }
+
+    public List<string> ListarStatusPropostaFiltrado(Guid propostaId)
+    {
+        var proposta = _context.Propostas.FirstOrDefault(x => x.Id == propostaId);
+        var statusAtualProposta = proposta?.Status ?? string.Empty;
+
+        var statusEndossoSinistro = new List<string>
+        {
+            "Solicitar Endosso", "Endosso com pendência", "Endosso Transmitido", "Endosso Emitido",
+            "Comunicar Sinistro", "Sinistro Com Pendência", "Sinistro Cancelado",
+            "Sinistro Aberto/Em Regulação", "Sinistro Aguardando Pagamento",
+            "Sinistro deferido Pago", "Sinistro indeferido"
+        };
+
+        var transicoesPermitidas = statusAtualProposta switch
+        {
+            "Proposta em negociação" => new List<string> { "Cotação encerrada sem sucesso" },
+            "Aguardando transmissão" => new List<string> { "Proposta com pendência", "Proposta transmitida (Em análise)", "Proposta cancelada" },
+            "Proposta com pendência" => new List<string> { "Aguardando transmissão", "Proposta cancelada" },
+            "Proposta transmitida (Em análise)" => new List<string> { "Proposta cancelada", "Proposta aceita → Devolutiva da Seguradora", "Proposta recusada → Devolutiva da Seguradora" },
+            "Proposta aceita → Devolutiva da Seguradora" => new List<string> { "Apólice emitida", "Proposta cancelada" },
+            "Apólice emitida" => new List<string> { "Apólice cancelada", "Proposta cancelada", "Solicitar Endosso", "Comunicar Sinistro" },
+            "Solicitar Endosso" => new List<string> { "Endosso com pendência", "Endosso Transmitido" },
+            "Endosso com pendência" => new List<string> { "Solicitar Endosso", "Endosso Transmitido" },
+            "Endosso Transmitido" => new List<string> { "Endosso Emitido", "Endosso com pendência" },
+            "Endosso Emitido" => new List<string> { "Endosso com pendência", "Comunicar Sinistro" },
+            "Comunicar Sinistro" => _contextAccessor.IsCorretor()
+                ? new List<string> { "Sinistro Cancelado", "Sinistro Com Pendência", "Sinistro Aberto/Em Regulação" }
+                : new List<string> { "Sinistro Com Pendência", "Sinistro Cancelado" },
+            "Sinistro Com Pendência" => _contextAccessor.IsConsultor()
+                ? new List<string> { "Comunicar Sinistro" }
+                : new List<string> { "Comunicar Sinistro", "Sinistro Aberto/Em Regulação" },
+            "Sinistro Cancelado" => new List<string> { "Comunicar Sinistro" },
+            "Sinistro Aberto/Em Regulação" => _contextAccessor.IsCorretor()
+                ? new List<string> { "Sinistro Aguardando Pagamento", "Sinistro indeferido" }
+                : new List<string> { "Sinistro Com Pendência", "Sinistro Aguardando Pagamento", "Sinistro indeferido" },
+            "Sinistro Aguardando Pagamento" => _contextAccessor.IsCorretor()
+                ? new List<string> { "Sinistro deferido Pago" }
+                : new List<string> { "Sinistro deferido Pago", "Sinistro indeferido" },
+            "Sinistro deferido Pago" => new List<string> { "Sinistro Com Pendência" },
+            "Sinistro indeferido" => new List<string> { "Sinistro Com Pendência", "Sinistro Aberto/Em Regulação" },
+            _ => new List<string>()
+        };
+
+        // Sempre permite manter o status atual (para re-salvar dados)
+        if (!string.IsNullOrEmpty(statusAtualProposta) && !transicoesPermitidas.Contains(statusAtualProposta))
+            transicoesPermitidas.Add(statusAtualProposta);
+
+        if (statusAtualProposta == "Proposta em negociação")
+        {
+            var todosStatus = ListarStatusProposta();
+            return todosStatus.Where(s => !statusEndossoSinistro.Contains(s)).ToList();
+        }
+
+        if (_contextAccessor.IsAdministrador())
+            return ListarStatusProposta();
+
+        return transicoesPermitidas;
+    }
+
+    public async Task<bool> SalvarStatusAsync(Guid propostaId, string status, string observacao, Guid usuarioId, byte[]? anexo = null)
+    {
+        try
+        {
+            var proposta = await _context.Propostas.Where(x => x.Id == propostaId).FirstOrDefaultAsync();
+            if (proposta == null)
+                return false;
+
+            // Validação de transição: verificar se o status de destino é permitido
+            var statusPermitidos = ListarStatusPropostaFiltrado(propostaId);
+            if (statusPermitidos.Any() && !statusPermitidos.Contains(status))
+                return false;
+
+            // Validação de status terminal
+            if (StatusTerminais.Contains(proposta.Status))
+                return false;
+
+            if (StatusExigeTalhoesCompletos.Contains(status))
+            {
+                var riscos = await _context.PropostasClientePropriedades
+                    .Include(r => r.PropostasClientePropriedadesTalhoes)
+                    .Where(r => r.PropostaId == propostaId)
+                    .ToListAsync();
+
+                if (!riscos.Any())
+                    return false;
+
+                foreach (var risco in riscos)
+                {
+                    if (!risco.PropostasClientePropriedadesTalhoes.Any())
+                        return false;
+
+                    foreach (var t in risco.PropostasClientePropriedadesTalhoes)
+                    {
+                        if (!t.DataPlantio.HasValue)
+                            return false;
+                        if (!t.GrupoVariedadeId.HasValue || t.GrupoVariedadeId.Value == Guid.Empty)
+                            return false;
+                        if (!t.VariedadeId.HasValue || t.VariedadeId.Value == Guid.Empty)
+                            return false;
+                    }
+                }
+            }
+
+            var lastStatus = _context.PropostasStatus
+                .Where(x => x.PropostaId == propostaId)
+                .OrderByDescending(o => o.DataStatus)
+                .FirstOrDefault();
+
+            var statusEntity = new PropostasStatusEntity
+            {
+                Id = Guid.NewGuid(),
+                PropostaId = propostaId,
+                UsuarioId = usuarioId,
+                Status = status,
+                StatusAnterior = lastStatus?.Status,
+                DataStatus = DateTime.UtcNow
+            };
+
+            proposta.Status = status;
+            _context.Entry(proposta).State = EntityState.Modified;
+
+            await _context.PropostasStatus.AddAsync(statusEntity);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<(byte[] Conteudo, string Nome)> DownloadAnexoStatusAsync(Guid statusId)
+    {
+        var statusEntity = await _context.PropostasStatus.OfType<PropostaStatusPendenciaEntity>()
+            .FirstOrDefaultAsync(s => s.Id == statusId);
+
+        if (statusEntity == null || string.IsNullOrEmpty(statusEntity.UploadArquivo))
+            return (Array.Empty<byte>(), string.Empty);
+
+        var conteudo = Convert.FromBase64String(statusEntity.UploadArquivo);
+        return (conteudo, statusEntity.UploadArquivoNome ?? "anexo");
+    }
+}

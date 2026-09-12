@@ -1,0 +1,31 @@
+﻿@model MCR.API.Models.ViewModels.UsuarioModel
+@{
+    ViewData["Title"] = "Usuários - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Usuários - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Usuario" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+
+    @await Component.InvokeAsync("UsuarioCadastro")
+
+    @if (Model != null && !Model.Sucesso && !string.IsNullOrEmpty(Model.Mensagem))
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Mensagem</h6>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/app/usuarios/usuario-cadastro.js"></script>
+}

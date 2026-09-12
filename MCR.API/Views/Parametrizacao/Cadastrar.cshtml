@@ -1,0 +1,74 @@
+﻿@model MCR.API.Entities.CotacaoEntity
+@{
+    ViewData["Title"] = "Parametrizações - Cadastro";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Parametrizações - Cadastro</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-action="Index" asp-controller="Home" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <h6>Parametrizações - Informações do Seguro</h6>
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <label>Forma de pagamento do seguro</label>
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="InformacaoSeguro.ApoliceRenovacao" id="ApoliceRenovacao" placeholder="Valor">
+                        <label for="ApoliceRenovacao">Valor</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <label>Valor da cobertura contra danos elétricos</label>
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="InformacaoSeguro.ApoliceRenovacao" id="ApoliceRenovacao" placeholder="Valor">
+                        <label for="ApoliceRenovacao">Valor</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <label>Valor da cobertura contra quebra de vidros</label>
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="InformacaoSeguro.ApoliceRenovacao" id="ApoliceRenovacao" placeholder="Valor">
+                        <label for="ApoliceRenovacao">Valor</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <label>Valor da cobertura relativa a responsabilidade civil</label>
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="InformacaoSeguro.ApoliceRenovacao" id="ApoliceRenovacao" placeholder="Valor">
+                        <label for="ApoliceRenovacao">Valor</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <label>Valor da cobertura contra danos elétricos</label>
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="InformacaoSeguro.ApoliceRenovacao" id="ApoliceRenovacao" placeholder="Valor">
+                        <label for="ApoliceRenovacao">Valor</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <label>Valor da cobertura contra quebra de vidros</label>
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="InformacaoSeguro.ApoliceRenovacao" id="ApoliceRenovacao" placeholder="Valor">
+                        <label for="ApoliceRenovacao">Valor</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

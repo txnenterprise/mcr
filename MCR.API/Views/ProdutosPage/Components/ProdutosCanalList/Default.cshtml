@@ -1,0 +1,33 @@
+﻿@model List<MCR.API.Produto.Domain.DTO.ProdutosCanalListaDTO>
+
+@if (Model != null)
+{
+    <div style="overflow-x:auto;">
+        <table id="tblProdutos" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Canal</th>
+                    <th>Ponto de Atendimento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Canal</td>
+                            <td>@item.PontoAtendimento</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger btn-sm paRemove" data-id="@item.Id">Remover</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+}

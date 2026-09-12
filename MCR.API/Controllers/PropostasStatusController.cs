@@ -1,0 +1,66 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MCR.API.Propostas.Domain.DTO;
+using MCR.API.Services.Interfaces;
+
+namespace MCR.API.Controllers
+{
+    public class PropostasStatusController : Controller
+    {
+        private readonly IPropostasStatusService _service;
+
+        public PropostasStatusController(IPropostasStatusService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SalvarStatus([FromForm] PropostasStatusDTO model)
+        {
+            var usuarioId = GetUserId();
+            if (!usuarioId.HasValue)
+                return Json(new { success = false, message = "Usuário não autenticado" });
+
+            var (sucesso, mensagem) = await _service.SalvarStatusProposta(model, usuarioId.Value);
+            return Json(new { success = sucesso, message = mensagem, status = model.Status });
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DownloadPropostaAceita(Guid statusId)
+        {
+            return await DownloadAnexo(statusId);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DownloadApoliceEmitida(Guid statusId)
+        {
+            return await DownloadAnexo(statusId);
+        }
+
+        private async Task<IActionResult> DownloadAnexo(Guid statusId)
+        {
+            try
+            {
+                var (conteudo, nome) = await _service.DownloadAnexoStatusAsync(statusId);
+                if (conteudo == null || conteudo.Length == 0)
+                    return NotFound("Anexo não encontrado.");
+                return File(conteudo, "application/octet-stream", nome ?? "anexo.bin");
+            }
+            catch
+            {
+                return StatusCode(500, "Erro interno do servidor ao processar o download.");
+            }
+        }
+
+        private Guid? GetUserId()
+        {
+            var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (claim != null && Guid.TryParse(claim.Value, out var id))
+                return id;
+            return null;
+        }
+    }
+}

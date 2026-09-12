@@ -1,0 +1,440 @@
+@model MCR.API.CotacoesAgricola.Domain.DTO.CotacaoAgricolaPdfDTO
+@using System.Globalization
+@{
+    ViewData["Title"] = "Cotação Agrícola - Gerenciar";
+    var areaTotalStr = Model.AreaTotal ?? string.Empty;
+    decimal areaTotalCentesimos = 0;
+    var areaTotalOk = !string.IsNullOrWhiteSpace(areaTotalStr)
+        && (decimal.TryParse(areaTotalStr, NumberStyles.Number, CultureInfo.CurrentCulture, out areaTotalCentesimos)
+            || decimal.TryParse(areaTotalStr, NumberStyles.Number, CultureInfo.InvariantCulture, out areaTotalCentesimos));
+}
+<div class="row">
+    <div class="col-md-2">
+        <a asp-action="Gerenciar" asp-controller="CotacaoAgricola" asp-route-id="@Model.CotacaoAgricolaId" class="btn btn-secondary rounded-pill">
+            Voltar
+        </a>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-md-12 col-sm-12 col-lg-12">
+        <div class="card pt-3">
+            <div class="card-body">
+                <!-- Cabeçalho -->
+                <div class="row mb-1">
+                    <div class="col-12">
+                        <h4 class="text-center fs-5 fw-bold">COTAÇÃO SEGURO AGRÍCOLA</h4>
+                    </div>
+
+                </div>
+                <div class="row mb-2">
+                    <div class="col-9">
+
+                    </div>
+                    <div class="col-3">
+                        <div class="border p-2 text-center">
+                            <span class="fw-bold">Cotação: @Model.NumeroCotacao</span> <br />
+                            <span class="fs-8"> @Model.DataCotacao</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados do Atendimento -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h5 class="border-bottom fs-6">DADOS DO ATENDIMENTO</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">CORRETORA</div>
+                                    <div class="col-8 fs-7">@Model.Corretora</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">CANAL</div>
+                                    <div class="col-8 fs-7">@Model.Canal</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">P.A.</div>
+                                    <div class="col-8 fs-7">@Model.PA</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">CONSULTOR</div>
+                                    <div class="col-8 fs-7">@Model.Consultor</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">CONTATO</div>
+                                    <div class="col-8 fs-7">@Model.Contato?.FormatCelular()</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">E-MAIL</div>
+                                    <div class="col-8 fs-7">@Model.Email</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados do Risco -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h5 class="border-bottom fs-6">DADOS DO RISCO</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">CULTURA</div>
+                                    <div class="col-8 fs-7">@Model.Cultura</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">SAFRA</div>
+                                    <div class="col-8 fs-7">@Model.Safra</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">UF</div>
+                                    <div class="col-8 fs-7">@Model.UF</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">MUNICÍPIO</div>
+                                    <div class="col-8 fs-7">@Model.Municipio</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">CPF</div>
+                                    <div class="col-8 fs-7">@Model.CPF</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">CLIENTE</div>
+                                    <div class="col-8 fs-7">@Model.NomeCliente</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">ÁREA TOTAL(Hectares)</div>
+                                    <div class="col-8 fs-7">@(areaTotalOk ? areaTotalCentesimos.FormatAreaHectaresVisualizacao() : areaTotalStr) ha</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-6 fs-7 fw-bold">TIPO SOLO</div>
+                                    <div class="col-6 fs-7">@Model.TipoSolo</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 fs-7 fw-bold">CLASSIFICAÇÃO SOLO</div>
+                                    <div class="col-6 fs-7">@Model.ClassificacaoSolo</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 fs-7 fw-bold">PLANTIO CONSORCIADO</div>
+                                    <div class="col-6 fs-7">@Model.PlantioConsorciado</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 fs-7 fw-bold">PLANTIO CONVENCIONAL</div>
+                                    <div class="col-6 fs-7">@Model.PlantioDireto</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 fs-7 fw-bold">PLANTIO PÓS CANA</div>
+                                    <div class="col-6 fs-7">@Model.PlantioPosCanal</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 fs-7 fw-bold">LAVOURA IRRIGADA</div>
+                                    <div class="col-6 fs-7">@Model.LavouraIrrigada</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados do Seguro -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h5 class="border-bottom fs-6">DADOS DO SEGURO</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-4 fs-7 fw-bold">MODALIDADE</div>
+                                    <div class="col-8 fs-7">@Model.Modalidade</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                @if (Model.IsModalidadeProdutividade)
+                                {
+                                    <div class="row">
+                                        <div class="col-6 fs-7 fw-bold">PREÇO SACA</div>
+                                        <div class="col-6 fs-7">@Model.PrecoSaca</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-6 fs-7 fw-bold">R$ CUSTEIO/HA</div>
+                                        <div class="col-6 fs-7">@Model.CusteioHa</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coberturas -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="align-middle fs-7" style="width: 20%;">COBERTURAS</th>
+                                        @for (int i = 0; i < Model.Coberturas.Count; i++)
+                                        {
+                                            <th class="text-center fs-7 align-middle" style="width: 20%">OPÇÃO @(i + 1)</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dados básicos -->
+                                    <tr>
+                                        <td class="fw-bold fs-7">TIPO DA OFERTA</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.TipoOferta</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">SEGURADORA</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.Seguradora</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">NOME PRODUTO</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.NomeProduto</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">REGULAÇÃO DO SINISTRO</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.RegulacaoSinistro</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">PRODUTIVIDADE ESPERADA KG/HA</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.ProdutividadeEsperada</td>
+                                        }
+                                    </tr>
+
+                                    <!-- Dados de Cobertura -->
+                                    <tr>
+                                        <td class="fw-bold fs-7">NÍVEL DE COBERTURA</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.NivelCobertura%</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">PRODUTIVIDADE SEGURADA KG/HA</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            var scAlq = (item.ProdutividadeSegurada / 60m) * 2.42m;
+                                            <td class="text-center fs-7">@item.ProdutividadeSegurada.ToString() <span class="text-muted">(@scAlq.ToString("N2") sc/alq)</span></td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">LMI DE PRODUÇÃO/HECTARE</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.LMIProducaoHectare.FormatarMoeda()</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">LMI DE REPLANTIO/HECTARE</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.LMIReplantioHectare.FormatarMoeda()</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">LMI DE PRODUÇÃO TOTAL</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.LMIProducaoTotal.FormatarMoeda()</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">LMI DE REPLANTIO TOTAL</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.LMIReplantioTotal.FormatarMoeda()</td>
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prêmio/Custo do Seguro -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="align-middle" style="width: 20%;">PRÊMIO/CUSTO DO SEGURO</th>
+                                        @for (int i = 0; i < Model.Coberturas.Count; i++)
+                                        {
+                                            <th class="text-center align-middle" style="width: 20%">OPÇÃO @(i + 1)</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold fs-7">PRÊMIO TOTAL</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.PremioTotal</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">SUBVENÇÃO FEDERAL</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.SubvencaoFederal</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">SUBVENÇÃO ESTADUAL</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.SubvencaoEstadual</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">PARCELA SEGURADO</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.ParcelaSegurado</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">CUSTO EM R$/HECTARE</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            var custoHa = decimal.TryParse(System.Text.RegularExpressions.Regex.Replace(item.CustoHectare ?? "", @"[^\d,.-]", "").Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var ch) ? ch : 0m;
+                                            var custoAlq = custoHa * 2.42m;
+                                            <td class="text-center fs-7">@item.CustoHectare/ha | @custoAlq.ToString("C2")/alq</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold fs-7">CUSTO EM SACAS</td>
+                                        @foreach (var item in Model.Coberturas)
+                                        {
+                                            <td class="text-center fs-7">@item.SacasPorHa sacas/ha | @item.SacasPorAlqueire sacas/alq</td>
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações Adicionais -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <h5 class="border-bottom fs-6">INFORMAÇÕES ADICIONAIS</h5>
+                        <ul class="list-unstyled">
+                            <li>• Essa Pré-cotação está sujeita a sofrer alterações de acordo com as políticas de subscrição das seguradoras</li>
+                            <li>• O aceite da proposta dependerá da oferta de capacidade e da análise técnica da seguradora para o referido risco</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Botão Download -->
+                <div class="row">
+                    <div class="col-12 text-end">
+                        <a asp-action="DownloadPDF" asp-controller="CotacaoAgricola" asp-route-id="@Model.CotacaoAgricolaId" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-file-pdf me-2"></i>Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+        }
+
+        h5 {
+            color: #333;
+            font-weight: bold;
+            padding-bottom: 5px;
+        }
+
+        .border-bottom {
+            border-bottom: 2px solid #333 !important;
+        }
+
+        .fw-bold {
+            color: #333;
+        }
+
+        ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            padding: 8px 20px;
+        }
+
+            .btn-primary:hover {
+                background-color: #0b5ed7;
+                border-color: #0a58ca;
+            }
+
+        .table-light {
+            background-color: #f8f9fa;
+        }
+
+            .table-light td {
+                padding: 8px !important;
+                font-weight: bold;
+                border-top: 2px solid #dee2e6 !important;
+                border-bottom: 2px solid #dee2e6 !important;
+            }
+
+        .table-sm td {
+            padding: 0.25rem !important;
+            vertical-align: middle !important;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa;
+        }
+
+        .table-bordered > :not(caption) > * > * {
+            border-width: 1px;
+        }
+
+        .fw-bold {
+            font-weight: 600 !important;
+        }
+    </style>
+
+
+}
+
+
+
+

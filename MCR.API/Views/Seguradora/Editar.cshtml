@@ -1,0 +1,113 @@
+﻿@model MCR.API.Models.ViewModels.SeguradoraModel
+@{
+    ViewData["Title"] = "Seguradoras - Editar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Seguradoras - Editar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Seguradora" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="Seguradora" asp-action="Editar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.RazaoSocial" id="RazaoSocial" placeholder="Razão Social" required>
+                            <label for="RazaoSocial">Razão Social</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.NomeFantasia" id="NomeFantasia" placeholder="Nome Fantasia" required>
+                            <label for="NomeFantasia">Nome Fantasia</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Seguradora.Ativo" id="Ativo">
+                            <label class="form-check-label" for="Ativo">Ativo?</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <label>Logo</label>
+                        <div class="mb-3">
+                            <label for="imageUpload" class="form-label">Selecione uma imagem:</label>
+                            <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                        </div>
+                        <input type="text" asp-for="ObjectImagem" id="ObjectImagem" name="ObjectImagem" hidden>
+                        <input type="text" asp-for="Seguradora.Logo" id="Logo" hidden>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <img src="" id="imagePreview" class="img-fluid rounded" alt="Pré-visualização da Imagem" width="200">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+        <input type="hidden" id="Id" asp-for="Seguradora.Id" />
+    </form>
+    @if (Model != null && !Model.Seguradora.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Seguradora.Mensagem</h6>
+        </div>
+    }
+</div>
+<script>
+    // Captura os elementos
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const hiddenField = document.getElementById('ObjectImagem');
+
+    // Adiciona evento ao campo de upload
+    imageUpload.addEventListener('change', function () {
+        const file = this.files[0]; // Captura o arquivo selecionado
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const base64String = event.target.result;
+
+                // Valida se o Base64 contém o cabeçalho correto
+                if (base64String.startsWith('data:image/')) {
+                    hiddenField.value = base64String; // Atualiza o campo oculto
+                    imagePreview.src = base64String; // Atualiza a pré-visualização
+                } else {
+                    alert('Erro: O arquivo selecionado não é uma imagem válida.');
+                }
+            };
+
+            // Lê o arquivo como Base64
+            reader.readAsDataURL(file);
+        } else {
+            alert('Nenhum arquivo foi selecionado.');
+        }
+    });
+
+    // Recupera e processa a imagem Base64 do Model
+    const imagemBase64 = "@Html.Raw(Model?.Seguradora?.Logo ?? "")";
+    if (imagemBase64 && imagemBase64.trim() !== '') {
+        hiddenField.value = imagemBase64; // Preenche o campo oculto
+        imagePreview.src = imagemBase64; // Atualiza a pré-visualização
+    }
+</script>

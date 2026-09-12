@@ -1,0 +1,33 @@
+@*
+    Adicionar este item ao menu de navegação principal
+    Exemplo de uso no _Layout.cshtml ou _Navigation.cshtml:
+*@
+
+<li class="nav-item">
+    <a class="nav-link" href="@Url.Action("Index", "Dashboard")">
+        <i class="fas fa-chart-line"></i>
+        <span>Painel de Negócios</span>
+    </a>
+</li>
+
+@*
+    Ou se usar dropdown menus:
+*@
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="dashboardDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-chart-line"></i>
+        <span>Relatórios</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
+        <li><a class="dropdown-item" href="@Url.Action("Index", "Dashboard")">
+            <i class="fas fa-chart-pie"></i>
+            Painel de Negócios
+        </a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">
+            <i class="fas fa-file-excel"></i>
+            Relatórios Excel
+        </a></li>
+    </ul>
+</li>

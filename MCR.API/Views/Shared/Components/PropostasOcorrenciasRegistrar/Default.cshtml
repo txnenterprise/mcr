@@ -1,0 +1,37 @@
+<div class="modal-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); width: 75%; max-width: 90%;">
+
+    <!-- Cabeçalho Modal -->
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+        <h4 style="margin: 0;">Registrar Notificação</h4>
+        <button type="button" class="btn-fechar-modal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+    </div>
+
+    <!-- Corpo Modal -->
+    <div class="modal-body">
+        <form id="formRegistrarOcorrencia">
+            <input type="hidden" id="propostaIdOcorrencia" name="propostaId" value="@ViewBag.PropostaId" />
+            <input type="hidden" name="arquivoBase64" />
+            <input type="hidden" name="arquivoNome" />
+            
+            <div class="form-group mb-3">
+                <label for="descricaoOcorrencia">Descrição da Notificação</label>
+                <textarea class="form-control" id="descricaoOcorrencia" name="descricao" rows="4" placeholder="Descreva a Notificação..." required></textarea>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="UploadAnexoOcorrencia">Anexar Imagem (opcional)</label>
+                <button type="button" id="UploadAnexoOcorrencia" class="btn btn-outline-secondary">
+                    <i class="fas fa-upload me-1"></i> Selecionar Imagem
+                </button>
+                <div id="anexoInfo" class="mt-2"></div>
+                <small class="form-text text-muted">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB</small>
+            </div>
+        </form>
+    </div>
+
+    <!-- Rodapé Modal -->
+    <div class="modal-footer" style="display: flex; justify-content: flex-end; border-top: 1px solid #ddd; padding-top: 15px; margin-top: 15px;">
+        <button type="button" class="btn btn-primary" id="btnSalvarOcorrencia">Salvar</button>
+        <button type="button" class="btn-cancelar-modal" style="padding: 8px 15px; background-color: #ddd; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">Cancelar</button>
+    </div>
+</div> 

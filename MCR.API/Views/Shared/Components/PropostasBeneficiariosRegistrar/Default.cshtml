@@ -1,0 +1,192 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasBeneficiariosDTO
+
+<div class="modal-container"
+     style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: white; padding: 20px; border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 70%; max-width: 90%; z-index: 1001;">
+
+    <div class="modal-header"
+         style="display: flex; justify-content: space-between; align-items: center;
+                border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+        <h4 style="margin: 0;">Cadastro de Beneficiários</h4>
+        <button type="button" class="btn-fechar-modal"
+                style="background: none; border: none; font-size: 20px; cursor: pointer;">
+            &times;
+        </button>
+    </div>
+
+    <form id="PropostasBeneficiariosRegistrar"
+          asp-antiforgery="true"
+          asp-action="SalvarBeneficiarios"
+          asp-controller="PropostasBeneficiarios"
+          data-ajax="true" data-ajax-method="POST"
+          data-ajax-success="propostaJS.onSuccessCallbackBeneficiarios"
+          data-ajax-failure="gl.onFailed"
+          data-ajax-begin="gl.BeginAjax"
+          data-ajax-complete="gl.CompleteAjax">
+        <input type="hidden" asp-for="@Model.PropostaId" />
+
+        <div class="modal-body">
+            <!-- Tabela de Clientes -->
+            <div class="border p-3 mb-4">
+                <h5 class="mb-3">Cliente</h5>
+                @if (!Model.PessoasBeneficiarios.Any(x => x.ClienteId != null))
+                {
+                    <p class="text-muted">Nenhum cliente encontrado.</p>
+                }
+                else
+                {
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Documento</th>
+                                <th>Banco</th>
+                                <th>Agência</th>
+                                <th>Conta</th>
+                                <th>Percentual</th>
+                                <th>Selecionar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{var clienteIndex = 0;}
+                            @foreach (var cliente in Model.PessoasBeneficiarios.Where(x => x.ClienteId != null))
+                            {
+                                <tr>
+                                    <td>@cliente.Nome</td>
+                                    <td>@cliente.Documento?.FormatCpfCnpj()</td>
+                                    <td>@cliente.Banco</td>
+                                    <td>@cliente.Agencia</td>
+                                    <td>@cliente.Conta</td>
+                                    <td>
+                                        <input type="hidden" name="PessoasBeneficiarios[@clienteIndex].ClienteId" value="@cliente.ClienteId" />
+                                        <input type="text"
+                                               class="form-control form-control-sm percentual-input currency"
+                                               name="PessoasBeneficiarios[@clienteIndex].Percentual"
+                                               value="@cliente.Percentual"
+                                               @(!cliente.Selecionado ? "disabled" : "") />
+                                    </td>
+                                    <td>
+                                        <input type="checkbox"
+                                               class="form-check-input beneficiario-checkbox" style="width: 1.5em; height: 1.5em;"
+                                               name="PessoasBeneficiarios[@clienteIndex].Selecionado"
+                                               value="true"
+                                               @(cliente.Selecionado ? "checked" : "")
+                                               onchange="propostaJS.selecionarFamiliar(this, @clienteIndex)" />
+                                        <input type="hidden"
+                                               name="PessoasBeneficiarios[@clienteIndex].Selecionado"
+                                               value="false" />
+                                    </td>
+                                </tr>
+                                clienteIndex++;
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            <!-- Tabela de Beneficiários -->
+            <div class="border p-3">
+                <h5 class="mb-3">Beneficiários</h5>
+                @if (!Model.PessoasBeneficiarios.Any(x => x.BeneficiarioId != null))
+                {
+                    <p class="text-muted">Nenhum beneficiário encontrado.</p>
+                }
+                else
+                {
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Documento</th>
+                                <th>Banco</th>
+                                <th>Agência</th>
+                                <th>Conta</th>
+                                <th>Percentual</th>
+                                <th>Selecionar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{var beneficiarioIndex = Model.PessoasBeneficiarios.Count(x => x.ClienteId != null);}
+                            @foreach (var beneficiario in Model.PessoasBeneficiarios.Where(x => x.BeneficiarioId != null))
+                            {
+                                <tr>
+                                    <td>@beneficiario.Nome</td>
+                                    <td>@beneficiario.Documento?.FormatCpfCnpj()</td>
+                                    <td>@beneficiario.Banco</td>
+                                    <td>@beneficiario.Agencia</td>
+                                    <td>@beneficiario.Conta</td>
+                                    <td>
+                                        <input type="hidden" name="PessoasBeneficiarios[@beneficiarioIndex].BeneficiarioId" value="@beneficiario.BeneficiarioId" />
+                                        <input type="text"
+                                               class="form-control form-control-sm percentual-input currency"
+                                               name="PessoasBeneficiarios[@beneficiarioIndex].Percentual"
+                                               value="@beneficiario.Percentual"
+                                               @(!beneficiario.Selecionado ? "disabled" : "") />
+                                    </td>
+                                    <td>
+                                        <input type="checkbox"
+                                               class="form-check-input beneficiario-checkbox" style="width: 1.5em; height: 1.5em;"
+                                               name="PessoasBeneficiarios[@beneficiarioIndex].Selecionado"
+                                               @(beneficiario.Selecionado ? "checked" : "")
+                                               value="true"
+                                               onchange="propostaJS.selecionarFamiliar(this, @beneficiarioIndex)" />
+                                        <input type="hidden"
+                                               name="PessoasBeneficiarios[@beneficiarioIndex].Selecionado"
+                                               value="false" />
+                                    </td>
+                                </tr>
+                                beneficiarioIndex++;
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+
+        <!-- Rodapé Modal -->
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; border-top: 1px solid #ddd; padding-top: 15px; margin-top: 15px;">
+            <button type="submit" class="btn btn-primary">Confirmar</button>&nbsp;
+            <button type="button" class="btn-cancelar-modal"
+                    style="padding: 8px 15px; background-color: #ddd; border: none;
+                           border-radius: 4px; margin-right: 10px; cursor: pointer;">
+                Fechar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        function toggleFields(checkbox) {
+            var $row = $(checkbox).closest('tr');
+            var $percentualInput = $row.find('.percentual-input');
+
+            if (checkbox.checked) {
+                $percentualInput.prop('disabled', false);
+            } else {
+                $percentualInput.prop('disabled', true);
+            }
+        }
+
+        $('.beneficiario-checkbox').on('change', function() {
+            toggleFields(this);
+        });
+
+        $('.beneficiario-checkbox').each(function() {
+            toggleFields(this);
+        });
+    });
+
+    propostaJS.selecionarFamiliar = function(checkbox, index) {
+        var $row = $(checkbox).closest('tr');
+        var $percentualInput = $row.find('.percentual-input');
+
+        if (checkbox.checked) {
+            $percentualInput.prop('disabled', false);
+        } else {
+            $percentualInput.prop('disabled', true);
+        }
+    };
+</script>

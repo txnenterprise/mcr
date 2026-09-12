@@ -1,0 +1,19 @@
+@{
+    var logoParceiro = ViewData["LogoParceiro"] as string;
+    var corPredominante = ViewData["CorPredominante"] as string;
+    var nomeParceiro = ViewData["NomeParceiro"] as string;
+}
+
+<div class="d-flex align-items-center justify-content-between">
+    <a asp-controller="Home" asp-action="Index" class="logo d-flex align-items-center">
+        @if (!string.IsNullOrWhiteSpace(logoParceiro))
+        {
+            <img class="img-responsive" src="@logoParceiro" alt="@(nomeParceiro ?? "Logo")">
+        }
+        @if (!string.IsNullOrEmpty(nomeParceiro))
+        {
+            <span class="d-none d-lg-block">@nomeParceiro</span>
+        }
+    </a>
+    <i class="bi bi-list toggle-sidebar-btn"></i>
+</div>

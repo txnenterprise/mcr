@@ -1,0 +1,742 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="dashboard-container">
+    <!-- Header do Dashboard -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="fas fa-chart-line"></i>
+            Dashboard
+        </h1>
+        <div class="user-level-badge" id="userLevelBadge">
+            <span class="badge badge-primary" id="currentUserLevel">Carregando...</span>
+        </div>
+    </div>
+
+
+    <!-- Resumo do Dashboard -->
+    <div class="dashboard-summary">
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="summary-content">
+                    <h3 id="totalClientes">-</h3>
+                    <p>Total de Clientes</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="summary-content">
+                    <h3 id="totalPropostas">@(ViewBag.TotalPropostas ?? 0)</h3>
+                    <p>Total de Propostas</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-spinner"></i>
+                </div>
+                <div class="summary-content">
+                    <h3 id="propostasEmAndamento">-</h3>
+                    <p>Propostas em Andamento</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="summary-content">
+                    <h3 id="cotacoesHoje">-</h3>
+                    <p>Cotações Hoje (Negociação)</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-map"></i>
+                </div>
+                <div class="summary-content">
+                    <h3 id="areaTotal">@(((decimal)(ViewBag.TotalArea ?? 0m)).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")))</h3>
+                    <p>Área Total Segurada (ha)</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="summary-content">
+                    <h3 id="premioTotal">@((ViewBag.TotalPremio ?? 0).ToString("C"))</h3>
+                    <p>Prêmio Total</p>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="summary-content">
+                    <h3 id="lmiTotal">@((ViewBag.TotalLMI ?? 0).ToString("C"))</h3>
+                    <p>LMI Total</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros do Dashboard -->
+    <div class="dashboard-filters">
+        <div class="filters-card">
+            <h3 class="filters-title">
+                <i class="fas fa-filter"></i>
+                Filtros
+            </h3>
+            
+            <div class="filters-grid">
+                <!-- Filtro de Corretora (apenas Admin) -->
+                <div class="filter-group" id="corretoraFilter" style="display: none;">
+                    <label class="filter-label">Corretora</label>
+                    <select class="form-control filter-select" id="corretoraSelect" multiple>
+                        <option value="">Selecione as corretoras</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Canal -->
+                <div class="filter-group" id="canalFilter">
+                    <label class="filter-label">Canal</label>
+                    <select class="form-control filter-select" id="canalSelect" multiple>
+                        <option value="">Selecione os canais</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Ponto de Atendimento -->
+                <div class="filter-group" id="paFilter">
+                    <label class="filter-label">Ponto de Atendimento</label>
+                    <select class="form-control filter-select" id="paSelect" multiple>
+                        <option value="">Selecione os PAs</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Cultura -->
+                <div class="filter-group">
+                    <label class="filter-label">Cultura</label>
+                    <select class="form-control filter-select" id="culturaSelect" multiple>
+                        <option value="">Selecione as culturas</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Safra -->
+                <div class="filter-group">
+                    <label class="filter-label">Safra</label>
+                    <select class="form-control filter-select" id="safraSelect" multiple>
+                        <option value="">Selecione as safras</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Status Inicial -->
+                <div class="filter-group">
+                    <label class="filter-label">Status Inicial</label>
+                    <select class="form-control filter-select" id="statusInicialSelect" multiple>
+                        <option value="">Selecione os status iniciais</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Status Final -->
+                <div class="filter-group">
+                    <label class="filter-label">Status Final</label>
+                    <select class="form-control filter-select" id="statusFinalSelect" multiple>
+                        <option value="">Selecione os status finais</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Seguradora -->
+                <div class="filter-group">
+                    <label class="filter-label">Seguradora</label>
+                    <select class="form-control filter-select" id="seguradoraSelect" multiple>
+                        <option value="">Selecione as seguradoras</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="filters-actions">
+                <button type="button" class="btn btn-primary" id="applyFilters">
+                    <i class="fas fa-search"></i>
+                    Aplicar Filtros
+                </button>
+                <button type="button" class="btn btn-secondary" id="clearFilters">
+                    <i class="fas fa-times"></i>
+                    Limpar Filtros
+                </button>
+                <button type="button" class="btn btn-success" id="exportData">
+                    <i class="fas fa-download"></i>
+                    Exportar Dados
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Informações -->
+    <div class="dashboard-table">
+        <div class="table-card">
+            <h3 class="table-title">
+                <i class="fas fa-table"></i>
+                Resumo por Status
+            </h3>
+            
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="dashboardTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Status</th>
+                            <th>Área (ha)</th>
+                            <th>Qtd. Propostas</th>
+                            <th>LMI (R$)</th>
+                            <th>Prêmio Total (R$)</th>
+                            <th>Produtividade Segurada Média (sc/ha)</th>
+                            <th>Taxa Média (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardTableContainer">
+                        @{
+                            var dashboardData = ViewBag.DashboardData as MCR.API.Models.Dashboard.DashboardDataResponse;
+                        }
+                        @Html.Partial("_DashboardTable", dashboardData)
+                    </tbody>
+                    <tfoot id="dashboardSubtotalContainer">
+                        @{
+                            var subtotalData = ViewBag.Subtotal as MCR.API.Models.Dashboard.SubtotalData;
+                        }
+                        @Html.Partial("_DashboardSubtotal", subtotalData)
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão para mostrar gráficos -->
+    <div class="charts-toggle-section">
+        <button class="btn btn-primary" id="toggleChartsBtn">
+            <i class="fas fa-chart-bar"></i>
+            Mostrar Gráficos
+        </button>
+    </div>
+
+    <!-- Gráficos (Pós-MVP) -->
+    <div class="dashboard-charts" id="chartsSection" style="display: none;">
+        <div class="charts-row">
+            <!-- Gráfico 1: Área Segurada -->
+            <div class="chart-card">
+                <h4 class="chart-title">Área Segurada</h4>
+                <div class="chart-container">
+                    <canvas id="areaChart"></canvas>
+                </div>
+                <div class="chart-controls">
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="area" data-type="pie">Pizza</button>
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="area" data-type="bar">Barras</button>
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="area" data-type="line">Linhas</button>
+                </div>
+            </div>
+
+            <!-- Gráfico 2: Área Segurada por Seguradora -->
+            <div class="chart-card">
+                <h4 class="chart-title">Área Segurada por Seguradora</h4>
+                <div class="chart-container">
+                    <canvas id="seguradoraChart"></canvas>
+                </div>
+                <div class="chart-controls">
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="seguradora" data-type="pie">Pizza</button>
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="seguradora" data-type="bar">Barras</button>
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="seguradora" data-type="line">Linhas</button>
+                </div>
+            </div>
+
+            <!-- Gráfico 3: Área Segurada por Status -->
+            <div class="chart-card">
+                <h4 class="chart-title">Área Segurada por Status</h4>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="chart-controls">
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="status" data-type="pie">Pizza</button>
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="status" data-type="bar">Barras</button>
+                    <button class="btn btn-sm btn-outline-primary chart-type-btn" data-chart="status" data-type="line">Linhas</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <!-- Gráfico 4: Evolução Temporal -->
+            <div class="chart-card">
+                <h4 class="chart-title">Evolução Temporal - Prêmio por Mês</h4>
+                <div class="chart-container">
+                    <canvas id="evolucaoTemporalChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance por Corretora -->
+    <div class="dashboard-table" style="margin-top: 30px;">
+        <div class="table-card">
+            <h3 class="table-title">
+                <i class="fas fa-trophy"></i>
+                Performance por Corretora
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Corretora</th>
+                            <th>Propostas</th>
+                            <th>Prêmio Total (R$)</th>
+                            <th>Área Total (ha)</th>
+                            <th>LMI Total (R$)</th>
+                            <th>Taxa Conversão (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceCorretoraBody">
+                        <tr><td colspan="6" class="text-center text-muted">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Carregando...</span>
+            </div>
+            <p class="loading-text">Carregando dados do dashboard...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+    .dashboard-container {
+        padding: 20px;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-summary {
+        margin-bottom: 30px;
+    }
+
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .summary-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .summary-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        font-size: 24px;
+        color: white;
+    }
+
+    .summary-card:nth-child(1) .summary-icon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .summary-card:nth-child(2) .summary-icon {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    .summary-card:nth-child(3) .summary-icon {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+
+    .summary-card:nth-child(4) .summary-icon {
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+    }
+
+    .summary-card:nth-child(5) .summary-icon {
+        background: linear-gradient(135deg, #fa709a, #fee140);
+    }
+
+    .summary-card:nth-child(6) .summary-icon {
+        background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+    }
+
+    .summary-card:nth-child(7) .summary-icon {
+        background: linear-gradient(135deg, #fccb90, #d57eeb);
+    }
+
+    .summary-card:nth-child(8) .summary-icon {
+        background: linear-gradient(135deg, #89f7fe, #66a6ff);
+    }
+
+    .summary-card:nth-child(9) .summary-icon {
+        background: linear-gradient(135deg, #f6d365, #fda085);
+    }
+
+    .summary-card:nth-child(10) .summary-icon {
+        background: linear-gradient(135deg, #96fbc4, #f9f586);
+    }
+
+    .summary-content h3 {
+        margin: 0 0 5px 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .summary-content p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .dashboard-title {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .user-level-badge .badge {
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
+
+    .dashboard-filters {
+        margin-bottom: 30px;
+    }
+
+    .filters-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .filters-title {
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    .filter-select {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 10px;
+        transition: border-color 0.3s ease;
+    }
+
+    .filter-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .filters-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-table {
+        margin-bottom: 30px;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-title {
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .table th {
+        background-color: #343a40;
+        color: white;
+        font-weight: 600;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table tfoot th {
+        background-color: #17a2b8;
+        font-weight: bold;
+    }
+
+    .dashboard-charts {
+        margin-bottom: 30px;
+    }
+
+    .charts-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-title {
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin-bottom: 15px;
+    }
+
+    .chart-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .loading-spinner {
+        text-align: center;
+        color: white;
+    }
+
+    .loading-text {
+        margin-top: 15px;
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-type-btn.active {
+        background-color: #667eea;
+        border-color: #667eea;
+        color: white;
+    }
+
+    .charts-toggle-section {
+        text-align: center;
+        margin: 30px 0;
+    }
+
+    .charts-toggle-section .btn {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+
+    .charts-toggle-section .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    }
+
+    .status-clickable {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    // Controlar exibição dos gráficos
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('toggleChartsBtn');
+        const chartsSection = document.getElementById('chartsSection');
+        let chartsVisible = false;
+
+        toggleBtn.addEventListener('click', function() {
+            if (chartsVisible) {
+                chartsSection.style.display = 'none';
+                toggleBtn.innerHTML = '<i class="fas fa-chart-bar"></i> Mostrar Gráficos';
+                chartsVisible = false;
+            } else {
+                chartsSection.style.display = 'block';
+                toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar Gráficos';
+                chartsVisible = true;
+
+                if (window.dashboardManager && !window.dashboardManager.chartsInitialized) {
+                    window.dashboardManager.initializeCharts();
+                }
+            }
+        });
+
+        // Carregar Resumo Executivo
+        fetch('/api/dashboard/resumo-executivo')
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.totalClientes !== undefined) document.getElementById('totalClientes').textContent = d.totalClientes;
+                if (d.propostasEmAndamento !== undefined) document.getElementById('propostasEmAndamento').textContent = d.propostasEmAndamento;
+                if (d.cotacoesHoje !== undefined) document.getElementById('cotacoesHoje').textContent = d.cotacoesHoje;
+            })
+            .catch(function(e) { console.error('Erro ao carregar resumo:', e); });
+
+        // Carregar Performance por Corretora
+        var emptyRequest = { UserLevel: 'admin', CorretoraIds: [], CanalIds: [], PaIds: [], CulturaIds: [], SafraIds: [], StatusInicial: [], StatusFinal: [], SeguradoraIds: [] };
+        fetch('/api/dashboard/performance-corretora', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(emptyRequest)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var tbody = document.getElementById('performanceCorretoraBody');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum dado disponível</td></tr>';
+                return;
+            }
+            var html = '';
+            data.forEach(function(c) {
+                html += '<tr>';
+                html += '<td>' + (c.nome || '-') + '</td>';
+                html += '<td>' + (c.totalPropostas || 0) + '</td>';
+                html += '<td>' + new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.totalPremio || 0) + '</td>';
+                html += '<td>' + new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(c.totalArea || 0) + '</td>';
+                html += '<td>' + new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.totalLMI || 0) + '</td>';
+                html += '<td>' + new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 1 }).format(c.taxaConversao || 0) + '%</td>';
+                html += '</tr>';
+            });
+            tbody.innerHTML = html;
+        })
+        .catch(function(e) { console.error('Erro ao carregar performance:', e); });
+
+        // Carregar Evolução Temporal
+        fetch('/api/dashboard/evolucao-temporal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(emptyRequest)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (!d.meses || d.meses.length === 0) return;
+            var ctx = document.getElementById('evolucaoTemporalChart');
+            if (!ctx) return;
+            new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: d.meses,
+                    datasets: [{
+                        label: 'Prêmio (R$)',
+                        data: d.premioPorMes,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: function(v) { return 'R$ ' + v.toLocaleString('pt-BR'); } } }
+                    }
+                }
+            });
+        })
+        .catch(function(e) { console.error('Erro ao carregar evolução:', e); });
+    });
+</script>
+
+<!-- Dados do servidor -->
+<script>
+    window.serverData = {
+        dashboardData: @Html.Raw(Json.Serialize(ViewBag.DashboardData)),
+        userLevel: '@ViewBag.UserLevel',
+        initialData: @Html.Raw(Json.Serialize(ViewBag.InitialData))
+    };
+</script>
+
+<!-- Scripts do Dashboard -->
+<script src="~/js/dashboard.js"></script>

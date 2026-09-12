@@ -1,0 +1,138 @@
+﻿@using System.Globalization;
+@model MCR.API.Models.ViewModels.PontoAtendimentoModel
+@{
+    ViewData["Title"] = "Pontos de Atendimento";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Pontos de Atendimento</h4>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Cadastrar" asp-controller="PontoAtendimento" class="btn btn-secondary rounded-pill">
+                Cadastrar
+            </a>
+        </div>
+    </div>
+    <br />
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <h6>Filtros</h6>
+            <br />
+            <form asp-action="Index" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="dataHoraCotacaoInicio">Razão Social</label>
+                            <input type="text" class="form-control"
+                                   asp-for="PesquisaRazaoSocial" />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="canalRazaoSocial">Canal</label>
+                            <select class="form-select form-dropdownlist"
+                                    asp-for="PesquisaCanalRazaoSocial"
+                                    asp-items="@ViewData["Canais"] as List<SelectListItem>">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="corretoraId">Ativo?</label>
+                            <select class="form-select form-dropdownlist"
+                                    asp-for="PesquisaAtivoInativo">
+                                <option value="Todos">Todos</option>
+                                <option value="Sim">Sim</option>
+                                <option value="Não">Não</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <br />
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                        <a asp-action="Index" class="btn btn-secondary">Limpar Filtros</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <div style="overflow-x:auto;">
+        <table id="tblCadastro" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Ponto de Atendimento</th>
+                    <th>Nome</th>
+                    <th>Canal Vinculado</th>
+                    <th>Cidade/Estado</th>
+                    <th>Ativo?</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.ListaPontosAtendimento != null && Model.ListaPontosAtendimento.Count > 0 && Model.ListaPontosAtendimento[0].Sucesso)
+                {
+                    foreach (var item in Model.ListaPontosAtendimento)
+                    {
+                        <tr>
+                            <td>@item.RazaoSocial</td>
+                            <td>@item.NomeFantasia</td>
+                            <td>@item.Canal.RazaoSocial</td>
+                            <td>@($"{item.Cidade}/{item.Estado}")</td>
+                            @if (item.Ativo)
+                            {
+                                <td><span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Ativo</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge bg-danger"><i class="bi bi-exclamation-octagon me-1"></i> Inativo</span></td>
+                            }
+                            <td>
+                                <a asp-action="Gerenciar" asp-route-id="@item.Id" class="btn btn-info btn-sm">Gerenciar</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @if (Model.PaginaAtual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PaginaAtual - 1)"
+                           asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo"
+                           asp-route-pesquisaRazaoSocial="@Model.PesquisaRazaoSocial">Anterior</a>
+                    </li>
+                }
+
+                @for (var i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaAtual ? "active" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo"
+                           asp-route-pesquisaRazaoSocial="@Model.PesquisaRazaoSocial">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaAtual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PaginaAtual + 1)"
+                           asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo"
+                           asp-route-pesquisaRazaoSocial="@Model.PesquisaRazaoSocial">Próximo</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>

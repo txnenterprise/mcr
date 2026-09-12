@@ -1,0 +1,83 @@
+@model MCR.API.Models.ViewModels.SafraModel
+@{
+    ViewData["Title"] = "Safras - Cadastrar";
+    ViewData["Title"] = ViewBag.TipoOperacao == "Editar" ? "Safras - Editar" : "Safras - Cadastrar";
+}
+
+<br />
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Safras</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@(ViewBag.TipoOperacao == "Editar" ? "Editar" : "Cadastrar")</li>
+    </ol>
+</nav>
+
+
+<div class="form-box">
+    <h4 class="form-title form-box-title">@(ViewBag.TipoOperacao == "Editar" ? "Editar Safra" : "Nova Safra")</h4>
+    <br />
+    <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+        <h6>Atenção! Todos os campos com <span class="text-danger">*</span> são obrigatórios.</h6>
+    </div>
+    <br />
+    @if (Model != null && !Model.Safra.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Safra.Mensagem</h6>
+        </div>
+    }
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Safras - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Safra" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="Safra" asp-action="Cadastrar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Safra.Descricao" id="Descricao" placeholder="Descrição" required>
+                            <label for="Descricao">Descrição</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Safra.AnoReferencia" id="AnoReferencia" placeholder="Ano de Referência" required>
+                            <label for="AnoReferencia">Ano de Referência</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Safra.Ativo" id="Ativo">
+                            <label class="form-check-label" for="Ativo">Ativo?</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Mensagem</h6>
+        </div>
+    }
+</div>

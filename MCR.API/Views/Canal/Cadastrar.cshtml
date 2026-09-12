@@ -1,0 +1,184 @@
+﻿@model MCR.API.Models.ViewModels.CanalModel
+@{
+    ViewData["Title"] = "Canal - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Canal - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Canal" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-action="Cadastrar" asp-controller="Canal" method="post">
+        <input asp-for="Canal.Id" hidden />
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            @{
+                                var corretoraDisabled = (ViewBag.CorretoraCount == 1 ? "disabled" : null);
+                            }
+                            <select class="form-select form-input form-control-placeholder" asp-for="Canal.CorretoraId" asp-items="@ViewBag.Corretoras" disabled="@corretoraDisabled">
+                                @if (ViewBag.CorretoraCount > 1)
+                                {
+                                    <option value="">Selecione uma corretora</option>
+                                }
+                            </select>
+                            <label asp-for="Canal.CorretoraId">Corretora</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.RazaoSocial" id="RazaoSocial" placeholder="Razão Social">
+                            <label for="RazaoSocial">Razão Social</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.NomeFantasia" id="NomeFantasia" placeholder="Nome Fantasia">
+                            <label for="NomeFantasia">Nome Fantasia</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.CNPJ" id="CNPJ" placeholder="CNPJ">
+                            <label for="CNPJ">CNPJ</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.Telefone" id="Telefone" placeholder="Telefone">
+                            <label for="Telefone">Telefone</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.Celular" id="Celular" placeholder="Celular">
+                            <label for="Celular">Celular</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.Email" id="Email" placeholder="E-Mail">
+                            <label for="Email">E-Mail</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.CEP" id="CEP" placeholder="CEP">
+                            <label for="CEP">CEP</label>
+                        </div>
+                        <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.Endereco" id="Endereco" placeholder="Endereço">
+                            <label for="Endereco">Endereço</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.Bairro" id="Bairro" placeholder="Bairro">
+                            <label for="Bairro">Bairro</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" min="0" class="form-control form-input form-control-placeholder" asp-for="Canal.Numero" id="Numero" placeholder="Número">
+                            <label for="Numero">Número</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.Cidade" id="Cidade" placeholder="Cidade">
+                            <label for="Cidade">Cidade</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Canal.Estado" id="Estado" placeholder="Estado">
+                            <label for="Estado">Estado</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 mb-3">
+                        <label>Logo</label>
+                        <div class="mb-3">
+                            <label for="imageUpload" class="form-label">Selecione uma imagem:</label>
+                            <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                        </div>
+                        <input type="text" asp-for="ObjectImagem" id="ObjectImagem" name="ObjectImagem" hidden>
+                        <input type="text" asp-for="Canal.ImagemLogo" id="ImagemLogo" hidden>
+                    </div>
+                    <div class="col-sm-12 col-md-6 mb-3" id="imagePreviewContainer" style="@(string.IsNullOrEmpty(Model?.Canal?.ImagemLogo) ? "display:none" : "")">
+                        <img src="" id="imagePreview" class="img-fluid rounded" alt="Pré-visualização da Imagem" width="200">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+    document.getElementById('CNPJ').addEventListener('blur', function () {
+        const cnpj = this.value;
+        if (!validarCNPJ(cnpj)) {
+            alert("CNPJ inválido.")
+        }
+    });
+</script>
+
+<script>
+    // Captura os elementos
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const hiddenField = document.getElementById('ObjectImagem');
+
+    // Adiciona evento ao campo de upload
+    imageUpload.addEventListener('change', function () {
+        const file = this.files[0]; // Captura o arquivo selecionado
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const base64String = event.target.result;
+
+                // Valida se o Base64 contém o cabeçalho correto
+                if (base64String.startsWith('data:image/')) {
+                    hiddenField.value = base64String; // Atualiza o campo oculto
+                    imagePreview.src = base64String; // Atualiza a pré-visualização
+                } else {
+                    alert('Erro: O arquivo selecionado não é uma imagem válida.');
+                }
+            };
+
+            // Lê o arquivo como Base64
+            reader.readAsDataURL(file);
+        } else {
+            alert('Nenhum arquivo foi selecionado.');
+        }
+    });
+
+    // Recupera e processa a imagem Base64 do Model
+    const imagemBase64 = "@Html.Raw(Model?.Canal?.ImagemLogo ?? "")";
+    if (imagemBase64 && imagemBase64.trim() !== '') {
+        hiddenField.value = imagemBase64; // Preenche o campo oculto
+        imagePreview.src = imagemBase64; // Atualiza a pré-visualização
+    }
+</script>

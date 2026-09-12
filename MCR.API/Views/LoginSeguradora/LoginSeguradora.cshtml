@@ -1,0 +1,168 @@
+
+@model MCR.API.Entities.LoginSeguradoraEntity
+@{
+    ViewData["Title"] = "Seguradoras - Login";
+}
+
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Seguradoras - Login</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Home" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="LoginSeguradora" asp-action="LoginSeguradora" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+
+                @if (ViewBag.ListaCorretoras != null)
+                {
+                    <select class="form-select form-dropdownlist" aria-label="CorretoraId" asp-for="CorretoraId" id="CorretoraId" asp-items="ViewBag.ListaCorretoras">
+                        <option value="">Selecione uma Corretora</option>
+                    </select>
+                }
+                else
+                {
+                    <p>Não há corretoras disponíveis.</p>
+                }
+
+                @{
+                    var listaLoginSeguradoras = Model.ListaLoginSeguradoras ?? new List<LoginSeguradoraEntity>();
+                    if (!listaLoginSeguradoras.Any())
+                    {
+                        if(Model != null && Model.ListaSeguradoras != null)
+                        {
+                            foreach (var seguradora in Model.ListaSeguradoras)
+                            {
+                                var novoLogin = new LoginSeguradoraEntity
+                        {
+                            Seguradora = seguradora.RazaoSocial
+                        };
+                                listaLoginSeguradoras.Add(novoLogin);
+                            }
+                        }
+                    }
+                }
+                @if(listaLoginSeguradoras != null)
+                {
+                    @for (var i = 0; i < listaLoginSeguradoras.Count; i++)
+                    {
+                        <input type="hidden" asp-for="@listaLoginSeguradoras[i].Id" />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].Seguradora" readonly required value="@listaLoginSeguradoras[i].Seguradora">
+                                    <label>Seguradora</label>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].Link" placeholder="Link">
+                                    <label>Link</label>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].Usuario" placeholder="Usuário">
+                                    <label>Usuário</label>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].Senha" placeholder="Senha">
+                                    <label>Senha</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].Susep" placeholder="Susep">
+                                    <label>Susep</label>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].CodigoInterno" placeholder="Código Interno">
+                                    <label>Código Interno</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].Token" placeholder="Token">
+                                    <label>Token</label>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].ChaveAPIKey" placeholder="Chave API - Key">
+                                    <label>Chave API - Key</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="@listaLoginSeguradoras[i].ChaveAPIValue" placeholder="Chave API - Value">
+                                    <label>Chave API - Value</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <hr />
+                        <br />
+                    }
+                }
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <div class="social-login">
+            <button type="submit" class="login-btn btn d-flex justify-content-center align-items-center">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Sucesso && !string.IsNullOrEmpty(Model.Mensagem))
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Mensagem</h6>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Verifica se a lista de LoginSeguradoras não é nula e tem itens
+        var corretoraId = '@Model.ListaLoginSeguradoras != null && Model.ListaLoginSeguradoras.Count > 0 ? Model.ListaLoginSeguradoras.FirstOrDefault()?.CorretoraId : ""';
+
+        if (corretoraId) {
+            var selectElement = document.getElementById('CorretoraId');
+            var options = selectElement.options;
+
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === corretoraId) {
+                    selectElement.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    });
+</script>

@@ -1,0 +1,64 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasBeneficiariosDTO
+
+<div class="card pt-3">
+    <div class="card-header text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Beneficiários</h5>
+            @if (Model.PessoasBeneficiarios.Any())
+            {
+                <button type="button" class="btn btn-primary btn-sm" onclick="propostaJS.openBeneficiario()" proposal-status-permission="@ViewBag.PropostaStatus">
+                    <i class="fas fa-plus me-1"></i> Adicionar Beneficiários
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="card-body">
+        @if (Model == null || Model.PessoasBeneficiarios == null || !Model.PessoasBeneficiarios.Any())
+        {
+            <div class="text-center py-5">
+                <p class="text-muted mb-3">Nenhum beneficiário vinculado.</p>
+                <button type="button" class="btn btn-primary" onclick="propostaJS.openBeneficiario()" proposal-status-permission="@ViewBag.PropostaStatus">
+                    <i class="fas fa-plus me-2"></i> Adicionar Beneficiários
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Documento</th>
+                            <th>Banco</th>
+                            <th>Agência</th>
+                            <th>Conta</th>
+                            <th>Percentual</th>
+                            <th class="text-center" proposal-status-permission="@ViewBag.PropostaStatus">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pessoa in Model.PessoasBeneficiarios.OrderBy(x => !x.ClienteId.HasValue).ThenBy(x => x.Nome).ToList())
+                        {
+                            <tr>
+                                <td>@pessoa.Nome</td>
+                                <td>@pessoa.Documento.FormatCpfCnpj()</td>
+                                <td>@pessoa.Banco</td>
+                                <td>@pessoa.Agencia</td>
+                                <td>@pessoa.Conta</td>
+                                <td>@(pessoa.Percentual?.ToString("N2") ?? "0,00")%</td>
+                                <td class="text-center" proposal-status-permission="@ViewBag.PropostaStatus">
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger beneficiarioRemover" data-beneficiario="@pessoa.Id" data-nome="@pessoa.Nome">
+                                        Remover
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

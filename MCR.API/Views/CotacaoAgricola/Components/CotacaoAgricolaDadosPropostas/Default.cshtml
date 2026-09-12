@@ -1,0 +1,251 @@
+@model MCR.API.CotacoesAgricola.Domain.DTO.CotacaoAgricolaDadosPropostasDTO
+
+
+@if (Model.Coberturas.Any())
+{
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body  pt-3" style="color: var(--color-primary)">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="align-middle" style="width: 20%;">COBERTURAS</th>
+                            @for (int i = 0; i < Model.Coberturas.Count; i++)
+                            {
+                                <th class="text-center align-middle" style="width: 20%">OPÇÃO @(i + 1)</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados básicos -->
+                        <tr>
+                            <td class="fw-bold">SEGURADORA</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.Seguradora</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">TIPO DA OFERTA</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.TipoOferta</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">NOME PRODUTO</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.NomeProduto</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">TIPOS DE SOLO (PRODUTO)</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@(item.TiposSoloProduto ?? "—")</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">REGULAÇÃO DO SINISTRO</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.RegulacaoSinistro</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">PRODUTIVIDADE ESPERADA KG/HA</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@(decimal.TryParse(item.ProdutividadeEsperada, out var pe) ? pe.ToString("N2") : item.ProdutividadeEsperada)</td>
+                            }
+                        </tr>
+                        <!-- Dados de Cobertura -->
+                        <tr>
+                            <td class="fw-bold">NÍVEL DE COBERTURA</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.NivelCobertura%</td>
+                            }
+                        </tr>
+                        <!-- Dados de Cobertura -->
+                        <tr>
+                            <td class="fw-bold">PRODUTIVIDADE SEGURADA KG/HA</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                var scAlq = (item.ProdutividadeSegurada / 60m) * 2.42m;
+                                <td class="text-center">@item.ProdutividadeSegurada.ToString("N2") <span class="text-muted">(@scAlq.ToString("N2") sc/alq)</span></td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">LMI DE PRODUÇÃO/HECTARE</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.LMIProducaoHectare.FormatarMoeda()</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">LMI DE REPLANTIO/HECTARE</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.LMIReplantioHectare.FormatarMoeda()</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">LMI DE PRODUÇÃO TOTAL</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.LMIProducaoTotal.FormatarMoeda()</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">LMI DE REPLANTIO TOTAL</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.LMIReplantioTotal.FormatarMoeda()</td>
+                            }
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body  pt-3" style="color: var(--color-primary)">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="align-middle" style="width: 20%;">PRÊMIO/CUSTO DO SEGURO</th>
+                            @for (int i = 0; i < Model.Coberturas.Count; i++)
+                            {
+                                <th class="text-center align-middle" style="width: 20%">OPÇÃO @(i + 1)</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">PRÊMIO TOTAL</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.PremioTotal</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">SUBVENÇÃO FEDERAL</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.SubvencaoFederal</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">SUBVENÇÃO ESTADUAL</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.SubvencaoEstadual</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">PARCELA SEGURADO</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.ParcelaSegurado</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">CUSTO EM R$/HECTARE</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                var custoAlq = decimal.Parse(item.CustoHectare.Replace("R$", "").Replace(".", "").Trim(), new System.Globalization.NumberFormatInfo { NumberDecimalSeparator = "," }) * 2.42m;
+                                <td class="text-center">@item.CustoHectare/ha | @custoAlq.ToString("C2")/alq</td>
+                            }
+                        </tr>
+
+                        <tr>
+                            <td class="fw-bold">CUSTO EM SACAS</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">@item.SacasPorHa sacas/ha | @item.SacasPorAlqueire sacas/alq</td>
+                            }
+                        </tr>
+
+                        <!-- Botões -->
+                        <tr>
+                            <td class="fw-bold">AÇÕES</td>
+                            @foreach (var item in Model.Coberturas)
+                            {
+                                <td class="text-center">
+                                    @if (Model.HasClient)
+                                    {
+                                        <form asp-controller="Propostas" asp-action="GerarProposta" method="post" asp-antiforgery="true" data-ajax="true" data-ajax-method="POST"
+                                              data-ajax-complete="gl.CompleteAjax"
+                                              data-ajax-begin="gl.BeginAjax"
+                                              data-ajax-success="gl.onSuccess"
+                                              data-ajax-failure="gl.onFailed"
+                                              data-ajax-callback="cotacaoAgricolaJS.onSuccessCallbackProposta">
+                                            <input type="hidden" name="cotacaoAgricolaPropostaId" value="@item.CotacaoAgricolaPropostaId" />
+                                            <button type="submit" class="btn btn-primary btn-sm">Gerar Proposta</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="cotacaoAgricolaJS.abrirModalSelecionarCliente('@item.CotacaoAgricolaPropostaId')">Gerar Proposta</button>
+                                    }
+                                </td>
+                            }
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div id="sem-propostas-inicial" class="card pt-3">
+        <div class="card-body pt-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h5>Não há propostas disponíveis</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .table-sm td {
+        padding: 0.25rem !important;
+        vertical-align: middle !important;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa;
+    }
+
+    .table-bordered > :not(caption) > * > * {
+        border-width: 1px;
+    }
+
+    .fw-bold {
+        font-weight: 600 !important;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+
+@await Html.PartialAsync("_ModalClientes")
+

@@ -1,0 +1,208 @@
+﻿@model MCR.API.Models.ViewModels.UsuarioPontoAtendimentoModel
+@using System.Security.Claims
+@using System.Linq
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<UsuarioEntity> UserManager
+
+@{
+    ViewData["Title"] = "Usuário - Ponto de Atendimento - Cadastrar";
+    var user = await UserManager.GetUserAsync(User);
+    var role = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Usuário - Ponto de Atendimento - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="UsuarioPontoAtendimento" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="UsuarioPontoAtendimento" asp-action="Cadastrar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <h6>@($"Usuário: {user.Name} - {@user.Email}")</h6>
+                        <h6>@($"Perfil: {role.FirstOrDefault()}")</h6>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Selecione o P.A. que deseja associar e, após, clique em "Adicionar".</h6>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div style="overflow-x:auto;">
+                                    <table id="table-grid-without-buttons" class="table table-striped table-bordered" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Canal</th>
+                                                <th>Ponto de Atendimento</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="gridUsuarios">
+                                            @if (Model != null && Model.ListaUsuariosCadastrados?.Count > 0
+                                            && Model.ListaPontosAtendimento?.Count() > 0
+                                            && Model.ListaCanais?.Count() > 0)
+                                            {
+                                                foreach (var item in Model.ListaUsuariosCadastrados)
+                                                {
+                                                    <tr>
+                                                        <td>@($"{item.Name} - {item.Email}")</td>
+                                                        <td>
+                                                            <select class="form-select form-dropdownlist canal-select">
+                                                                <option value="">Canais</option>
+                                                                @foreach (var canal in Model.ListaCanais)
+                                                                {
+                                                                    <option value="@canal.Id">@canal.RazaoSocial</option>
+                                                                }
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-dropdownlist ponto-atendimento-select">
+                                                                <option value="">Pontos de Atendimento</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-primary btn-sm adicionar" data-nome="@item.Name" data-email="@item.Email">Adicionar</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div style="overflow-x:auto;">
+                                    <h6>Usuários Selecionados</h6>
+                                    <br />
+                                    <table class="table" id="tabelaSelecionados">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Canal</th>
+                                                <th>Ponto de Atendimento</th>
+                                                <th>Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="corpoTabelaSelecionados">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+        <input type="hidden" id="jsonUsuarios" name="jsonUsuarios" asp-for="jsonUsuarios" value='@Model?.jsonUsuarios' />
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var jsonElement = document.getElementById("jsonUsuarios");
+        let usuariosSelecionados = jsonElement?.value ? JSON.parse(jsonElement.value) : [];
+
+        function atualizarTabela() {
+            let tbody = document.getElementById("corpoTabelaSelecionados");
+            tbody.innerHTML = "";
+
+            usuariosSelecionados.forEach((usuario, index) => {
+                let row = tbody.insertRow();
+                row.insertCell(0).textContent = usuario.nome + " - " + usuario.email;
+                row.insertCell(1).textContent = usuario.canalNome;
+                row.insertCell(2).textContent = usuario.pontoAtendimentoNome;
+
+                let btnExcluir = document.createElement("button");
+                btnExcluir.textContent = "Excluir";
+                btnExcluir.className = "btn btn-danger btn-sm";
+                btnExcluir.onclick = function () {
+                    usuariosSelecionados.splice(index, 1);
+                    salvarNoLocalStorage();
+                    atualizarTabela();
+                };
+                row.insertCell(3).appendChild(btnExcluir);
+            });
+
+            jsonElement.value = JSON.stringify(usuariosSelecionados);
+        }
+
+        function salvarNoLocalStorage() {
+            localStorage.setItem("usuariosSelecionados", JSON.stringify(usuariosSelecionados));
+        }
+
+        document.querySelectorAll(".canal-select").forEach(select => {
+            select.addEventListener("change", function () {
+                let canalId = this.value.trim(); // Remove espaços extras
+                let pontoAtendimentoSelect = this.closest("tr").querySelector(".ponto-atendimento-select");
+
+                pontoAtendimentoSelect.innerHTML = '<option value="">Pontos de Atendimento</option>';
+
+                if (canalId) {
+                    let pontosFiltrados = @Html.Raw(Json.Serialize(Model?.ListaPontosAtendimento));
+
+                    // Verifica se os IDs são comparáveis
+                    pontosFiltrados = pontosFiltrados.filter(p => p.canalId === canalId);
+
+                    pontosFiltrados.forEach(ponto => {
+                        let option = document.createElement("option");
+                        option.value = ponto.id;
+                        option.textContent = ponto.razaoSocial;
+                        pontoAtendimentoSelect.appendChild(option);
+                    });
+                }
+            });
+        });
+
+
+        document.querySelectorAll(".adicionar").forEach(btn => {
+            btn.addEventListener("click", function () {
+                let nome = this.getAttribute("data-nome");
+                let email = this.getAttribute("data-email");
+
+                let canalSelect = this.closest("tr").querySelector(".canal-select");
+                let canalNome = canalSelect.options[canalSelect.selectedIndex].text;
+                let canalId = canalSelect.value;
+
+                let pontoAtendimentoSelect = this.closest("tr").querySelector(".ponto-atendimento-select");
+                let pontoAtendimentoNome = pontoAtendimentoSelect.options[pontoAtendimentoSelect.selectedIndex].text;
+                let pontoAtendimentoId = pontoAtendimentoSelect.value;
+
+                if (!canalId || !pontoAtendimentoId) {
+                    alert("Selecione um canal e um Ponto de Atendimento!");
+                    return;
+                }
+
+                let usuario = { nome, email, canalNome, canalId, pontoAtendimentoNome, pontoAtendimentoId };
+
+                if (!usuariosSelecionados.some(u => u.email === email)) {
+                    usuariosSelecionados.push(usuario);
+                    salvarNoLocalStorage();
+                    atualizarTabela();
+                } else {
+                    alert("Usuário já adicionado!");
+                }
+            });
+        });
+
+        atualizarTabela();
+    });
+</script>

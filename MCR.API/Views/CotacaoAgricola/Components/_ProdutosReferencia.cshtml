@@ -1,0 +1,32 @@
+<div id="container-produtos-referencia" style="display:none;">
+    <div class="card mb-3" style="border-radius:15px;border-color:var(--color-primary)">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color:var(--color-primary);color:white;cursor:pointer" onclick="$('#tabelaProdutosRef').slideToggle()">
+            <h6 class="mb-0">Análise de Elegibilidade</h6>
+            <i class="bi bi-chevron-down"></i>
+        </div>
+        <div class="card-body p-2" id="tabelaProdutosRef" style="display:none">
+            <input type="text" id="filtroProdutos" class="form-control form-control-sm mb-2" placeholder="Filtrar por nome, modalidade, solo..." />
+            <div style="overflow-x:auto;">
+                <table class="table table-bordered table-sm table-striped" id="tblProdutosRef" style="font-size:0.82rem">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Modalidade</th>
+                            <th>Solo</th>
+                            <th>Class. Solo</th>
+                            <th id="thPreco">Preço Saca</th>
+                            <th>Área Mín.</th>
+                            <th style="text-align:center" title="Produto vinculado ao Canal/PA selecionado">Canal/PA</th>
+                            <th style="text-align:center" title="Área informada atende ao mínimo">Área OK</th>
+                            <th>Taxa Município</th>
+                            <th>Nc65</th>
+                            <th>Nc70</th>
+                            <th>Nc75</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyProdutosRef"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

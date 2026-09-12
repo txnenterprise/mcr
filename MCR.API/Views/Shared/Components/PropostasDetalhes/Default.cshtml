@@ -1,0 +1,316 @@
+@model MCR.API.Propostas.Domain.DTO.PropostaDetalhesDTO
+
+@if (Model == null)
+{
+    <div class="alert alert-success text-center temporary-alert" role="alert" style="color: #28a745; border-radius: 15px">
+        <h6>Atenção</h6>
+        <h6>@ViewBag.Mensagem</h6>
+    </div>
+}
+else
+{
+    <div class="row mt-3">
+        <div class="col-md-12 col-sm-12 col-lg-12">
+            <div class="card pt-3">
+                <div class="card-body">
+                    <!-- Cabeçalho -->
+                    <div class="row mb-1 mt-3">
+                        <div class="col-12">
+                            <h4 class="text-center fw-bold">PROPOSTA SEGURO AGRÍCOLA</h4>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-9">
+                        </div>
+                        <div class="col-3">
+                            <div class="border p-2 text-center">
+                                <span class="fw-bold">Proposta: @Model.CodigoCotacao</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dados do Atendimento -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5 class="border-bottom">DADOS DO ATENDIMENTO</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">CORRETORA</div>
+                                        <div class="col-8">@Model.CorretoraName</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">CANAL</div>
+                                        <div class="col-8">@Model.CanalName</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">P.A.</div>
+                                        <div class="col-8">@Model.PontoAtendimentoName</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">CONSULTOR</div>
+                                        <div class="col-8">@Model.UsuarioName</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">CONTATO</div>
+                                        <div class="col-8">@Model.UsuarioTelefone.FormatCelular()</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">E-MAIL</div>
+                                        <div class="col-8">@Model.UsuarioEmail</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dados do Risco -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5 class="border-bottom">DADOS DO RISCO</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">CULTURA</div>
+                                        <div class="col-8">@Model.CulturaName</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">SAFRA</div>
+                                        <div class="col-8">@Model.SafraName</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">UF</div>
+                                        <div class="col-8">@Model.Estado</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">MUNICÍPIO</div>
+                                        <div class="col-8">@Model.Municipio</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">NOME DO CLIENTE</div>
+                                        <div class="col-8">@(!string.IsNullOrWhiteSpace(Model.ClienteName) ? Model.ClienteName : "")</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">CPF</div>
+                                        <div class="col-8">@(Model.ClienteCpf.FormatCpfCnpj() ?? "")</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">ÁREA TOTAL(Hectares)</div>
+                                        <div class="col-8">@Model.AreaTotal.ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")) ha</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-6 fw-bold">TIPO SOLO</div>
+                                        <div class="col-6">
+                                            @string.Join(", ", Model.TiposSolo.Select(t => t.TipoSoloName))
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 fw-bold">CLASSIFICAÇÃO SOLO</div>
+                                        <div class="col-6">
+                                            @string.Join(", ", Model.ClassificacoesSolo.Select(c => c.ClassificacaoSoloName))
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 fw-bold">PLANTIO CONSORCIADO</div>
+                                        <div class="col-6">@(Model.PlantioConsorciado ? "Sim" : "Não")</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 fw-bold">PLANTIO DIRETO</div>
+                                        <div class="col-6">@(Model.PlantioDireto ? "Sim" : "Não")</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 fw-bold">PLANTIO PÓS CANA</div>
+                                        <div class="col-6">@(Model.PosCana ? "Sim" : "Não")</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 fw-bold">LAVOURA IRRIGADA</div>
+                                        <div class="col-6">@(Model.LavouraIrrigada ? "Sim" : "Não")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dados do Seguro -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5 class="border-bottom">DADOS DO SEGURO</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-4 fw-bold">MODALIDADE</div>
+                                        <div class="col-8">@(Model.IsModalidadeProdutividade ? "Produtividade" : "Custeio")</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    @if (Model.IsModalidadeProdutividade)
+                                    {
+                                        <div class="row">
+                                            <div class="col-6 fw-bold">PREÇO SACA</div>
+                                            <div class="col-6">@Model.PrecoSaca?.ToString("C2")</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="col-6 fw-bold">R$ CUSTEIO/HA</div>
+                                            <div class="col-6">@(Model.ValorCusteio.HasValue && Model.AreaTotal != 0 ? (Model.ValorCusteio.Value / (Model.AreaTotal / 100m)).FormatarMoeda() : "")</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coberturas -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="align-middle" style="width: 20%;">COBERTURAS</th>
+                                            <th class="text-center align-middle" style="width: 20%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dados básicos -->
+                                        <tr>
+                                            <td class="fw-bold">SEGURADORA</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.SeguradoraName</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">NOME PRODUTO</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.ProdutoName</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">REGULAÇÃO DO SINISTRO</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.RegulacaoSinistro</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">PRODUTIVIDADE ESPERADA KG/HA</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.ProdutividadeEsperada</td>
+                                            }
+                                        </tr>
+
+                                        <!-- Dados de Cobertura -->
+                                        <tr>
+                                            <td class="fw-bold">NÍVEL DE COBERTURA</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.NivelCobertura.ToString("N2")%</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">PRODUTIVIDADE SEGURADA KG/HA</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                var scAlq = (produto.ProdutividadeSegurada / 60m) * 2.42m;
+                                                <td class="text-center">@produto.ProdutividadeSegurada.ToString("N2") <span class="text-muted">(@scAlq.ToString("N2") sc/alq)</span></td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">LMI DE PRODUÇÃO/HECTARE</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.LMIProducaoHectare.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">LMI DE REPLANTIO/HECTARE</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.LMIReplantioHectare.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">LMI DE PRODUÇÃO TOTAL</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.LMIProducaoTotal.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">LMI DE REPLANTIO TOTAL</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.LMIReplantioTotal.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-sm-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="align-middle" style="width: 20%;">PRÊMIO/CUSTO DO SEGURO</th>
+
+                                            <th class="text-center align-middle" style="width: 20%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold">PRÊMIO TOTAL</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.PremioTotal.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">SUBVENÇÃO FEDERAL</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.SubvencaoFederal.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">SUBVENÇÃO ESTADUAL</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.SubvencaoEstadual.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">PARCELA SEGURADO</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                <td class="text-center">@produto.ParcelaSegurado.ToString("C2")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">CUSTO EM R$/HECTARE</td>
+                                            @foreach (var produto in Model.Produtos)
+                                            {
+                                                var custoAlq = produto.CustoHectare * 2.42m;
+                                                <td class="text-center">@produto.CustoHectare.ToString("C2") <span class="text-muted">(@custoAlq.ToString("C2")/alq)</span></td>
+                                            }
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

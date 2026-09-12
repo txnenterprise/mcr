@@ -1,0 +1,50 @@
+@model List<MCR.API.Propostas.Domain.DTO.PropostasDocumentosListaDTO>
+
+<form>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome do Arquivo</th>
+                            <th>Tipo de Documento</th>
+                            <th>Data de Upload</th>
+                            <th>Realizado por</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var documento in Model)
+                            {
+                                <tr>
+                                    <td>@documento.NomeArquivo</td>
+                                    <td>@documento.TipoDocumento</td>
+                                    <td>@documento.DataUpload.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@documento.NomeUsuario</td>
+                                    <td>
+                                        <a asp-action="Download" asp-controller="PropostasDocumentos" asp-route-id="@documento.Id" target="_blank" class="btn  btn-primary  btn-sm ">
+                                            Download
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger excluir-documento"  proposal-status-permission="@ViewBag.PropostaStatus"
+                                                data-id="@documento.Id" data-nome="@documento.NomeArquivo">
+                                            Excluir
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">Nenhum documento encontrado.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

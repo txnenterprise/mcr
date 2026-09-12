@@ -1,0 +1,435 @@
+@model MCR.API.Models.ViewModels.ClienteModel
+@{
+    ViewData["Title"] = "Cliente - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Cliente - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Cliente" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form id="formCadastro"
+          asp-antiforgery="true"
+          asp-action="Cadastrar"
+          asp-controller="Cliente"
+          method="post"
+          novalidate
+          data-ajax-callback="clienteJS.onSuccessCallback">
+        <input type="hidden" asp-for="CotacaoId" />
+
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Dados Pessoais</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Nome" id="Nome" placeholder="Nome">
+                                    <label for="Nome">Nome</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control form-input form-control-placeholder" asp-for="Cliente.DataNascimento" id="DataNascimento">
+                                    <label for="DataNascimento">Data de Nascimento</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <select class="form-select form-dropdownlist" aria-label="EstadoCivil" asp-for="Cliente.EstadoCivil" id="EstadoCivil">
+                                        <option value="">Estado Civil</option>
+                                        <option value="Solteiro">Solteiro</option>
+                                        <option value="Casado">Casado</option>
+                                        <option value="Divorciado">Divorciado</option>
+                                        <option value="Viúvo">Viúvo</option>
+                                        <option value="Separado Judicialmente">Separado Judicialmente</option>
+                                    </select>
+                                    <label>Estado Civil</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <select class="form-select form-dropdownlist" aria-label="Sexo" asp-for="Cliente.Sexo" id="Sexo">
+                                        <option value="">Sexo</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Feminino">Feminino</option>
+                                    </select>
+                                    <label>Sexo</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Profissao" id="Profissao" placeholder="Profissão">
+                                    <label for="Profissao">Profissão</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-5 col-lg-5">
+                                <div class="form-floating">
+                                    <select class="form-select form-dropdownlist" aria-label="FaixaRenda" asp-for="Cliente.FaixaRenda" id="FaixaRenda" asp-items="ViewBag.FaixasRenda">
+                                        <option value="">Faixas de Renda</option>
+                                    </select>
+                                    <label>Faixas de Renda</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Documentos</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.CPF" id="CPF" placeholder="CPF">
+                                    <label for="CPF">CPF</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="mb-3">
+                                    <label for="imageUploadCPF" class="form-label">Selecione documento do CPF:</label>
+                                    <div class="custom-file-input">
+                                        <input type="file" class="form-control" id="imageUploadCPF" accept="image/*,.pdf">
+                                        <div class="file-name" id="fileNameCPF">Nenhum arquivo selecionado</div>
+                                    </div>
+                                </div>
+                                <input type="text" asp-for="ObjectImagemCPF" id="ObjectImagemCPF" name="ObjectImagemCPF" hidden>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.RG" id="RG" placeholder="RG">
+                                    <label for="RG">RG</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="mb-3">
+                                    <label for="imageUploadRG" class="form-label">Selecione documento do RG:</label>
+                                    <div class="custom-file-input">
+                                        <input type="file" class="form-control" id="imageUploadRG" accept="image/*,.pdf">
+                                        <div class="file-name" id="fileNameRG">Nenhum arquivo selecionado</div>
+                                    </div>
+                                </div>
+                                <input type="text" asp-for="ObjectImagemRG" id="ObjectImagemRG" name="ObjectImagemRG" hidden>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control form-input form-control-placeholder" asp-for="Cliente.DataExpedicaoRG" id="DataExpedicaoRG">
+                                    <label for="DataExpedicaoRG">Data de Exp. RG</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.OrgaoExpeditorRG" id="OrgaoExpeditorRG" placeholder="Orgao Exp. RG">
+                                    <label for="CPF">Orgão Exp. RG</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Contato</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Telefone" id="Telefone" placeholder="Telefone">
+                                    <label for="Telefone">Telefone</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Celular" id="Celular" placeholder="Celular">
+                                    <label for="Celular">Celular</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Email" id="Email" placeholder="E-Mail">
+                                    <label for="Email">E-Mail</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Endereço</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.CEP" id="CEP" placeholder="CEP">
+                                    <label for="CEP">CEP</label>
+                                </div>
+                                <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Endereco" id="Endereco" placeholder="Endereço">
+                                    <label for="Endereco">Endereço</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Bairro" id="Bairro" placeholder="Bairro">
+                                    <label for="Bairro">Bairro</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="number" min="0" class="form-control form-input form-control-placeholder" asp-for="Cliente.Numero" id="Numero" placeholder="Número">
+                                    <label for="Numero">Número</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Complemento" id="Complemento" placeholder="Complemento">
+                                    <label for="Complemento">Complemento</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Cidade" id="Cidade" placeholder="Cidade">
+                                    <label for="Cidade">Cidade</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-2 col-lg-2">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Estado" id="Estado" placeholder="Estado">
+                                    <label for="Estado">Estado</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Dados Bancário</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <select class="form-select form-dropdownlist select2-banco" aria-label="Banco" asp-for="Cliente.Banco" id="Banco" asp-items="ViewBag.Bancos" data-placeholder="Digite ou selecione o banco">
+                                        <option value="">Bancos</option>
+                                    </select>
+                                    <label>Bancos</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Agencia" id="Agencia" placeholder="Agência">
+                                    <label for="Agencia">Agência</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.Conta" id="Conta" placeholder="Conta">
+                                    <label for="Conta">Conta</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Cliente.ChavePIX" id="ChavePIX" placeholder="Chave PIX">
+                                    <label for="ChavePIX">Chave PIX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                @* <br />
+                <div class="row">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" asp-for="Cliente.Ativo" id="Ativo" checked>
+                <label class="form-check-label" for="Ativo">Ativo?</label>
+                </div>
+                </div>
+                </div> *@
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Vínculos Familiares</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" id="CpfVinculo" placeholder="CPF">
+                                    <label for="CPF">CPF</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" id="NomeVinculo" placeholder="Nome">
+                                    <label for="Nome">Nome</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <select class="form-select form-dropdownlist" aria-label="RelacaoParental" id="RelacaoParental">
+                                        <option value="">Relação Parental</option>
+                                        <option value="pai">Pai</option>
+                                        <option value="mae">Mãe</option>
+                                        <option value="conjuge">Cônjuge</option>
+                                        <option value="filho">Filho</option>
+                                        <option value="filha">Filha</option>
+                                        <option value="irmao">Irmão</option>
+                                        <option value="irma">Irmã</option>
+                                        <option value="avo">Avô</option>
+                                        <option value="avó">Avó</option>
+                                        <option value="neto">Neto</option>
+                                        <option value="neta">Neta</option>
+                                        <option value="tio">Tio</option>
+                                        <option value="tia">Tia</option>
+                                        <option value="sobrinho">Sobrinho</option>
+                                        <option value="sobrinha">Sobrinha</option>
+                                        <option value="primo">Primo</option>
+                                        <option value="prima">Prima</option>
+                                        <option value="padrasto">Padrasto</option>
+                                        <option value="madrasta">Madrasta</option>
+                                        <option value="enteado">Enteado</option>
+                                        <option value="enteada">Enteada</option>
+                                        <option value="genro">Genro</option>
+                                        <option value="nora">Nora</option>
+                                        <option value="cunhado">Cunhado</option>
+                                        <option value="cunhada">Cunhada</option>
+                                        <option value="bisavo">Bisavô</option>
+                                        <option value="bisavó">Bisavó</option>
+                                        <option value="bisneto">Bisneto</option>
+                                        <option value="bisneta">Bisneta</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                    <label>Vínculo Familiar</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" id="TelefoneVinculo" placeholder="Telefone">
+                                    <label for="Telefone">Telefone</label>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" id="CelularVinculo" placeholder="Celular">
+                                    <label for="Celular">Celular</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" id="EmailVinculo" placeholder="E-Mail">
+                                    <label for="Email">E-Mail</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-lg-3 col-sm-12">
+                                <a class="btn btn-primary" id="addVinculoBtn">
+                                    <svg width="24px" height="24px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#ffffff" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#ffffff"> <path d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z" id="plus-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div style="overflow-x:auto;">
+                                <table class="table table-striped table-bordered" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>CPF</th>
+                                            <th>Nome</th>
+                                            <th>Telefone</th>
+                                            <th>Celular</th>
+                                            <th>E-Mail</th>
+                                            <th>Vínculo</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vinculosTableBody"></tbody>
+                                </table>
+                            </div>
+                            <input type="hidden" id="JsonVinculosFamiliar" asp-for="JsonVinculosFamiliar" />
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Vínculos de Propriedades <span class="text-muted fw-normal">(opcional)</span></h6>
+                        <div class="mb-2">
+                            <a class="btn btn-primary rounded-pill" id="btnAdicionarPropriedade">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                                </svg>
+                                Adicionar Propriedade
+                            </a>
+                        </div>
+                        <div class="card pt-3">
+                            <div class="card-body">
+                                <h6>Propriedades Vinculadas ao Cliente</h6>
+                                <table id="tblPropriedadesSelecionadas" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Cidade/Estado</th>
+                                            <th>Área Total (ha)</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                <input type="hidden" id="selectedItems" name="selectedItems" asp-for="selectedItems" value='@Model?.PropriedadeModel?.SelectedItemsJson' />
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Cliente.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Cliente.Mensagem</h6>
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_ModalPropriedade")
+@await Html.PartialAsync("_ModalTalhao")
+@await Html.PartialAsync("_ModalGerenciarPropriedade")
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjUtP8FEbSpKjbU4JY6p9LU-vURNN7e48&libraries=places,drawing,geometry&v=3.64"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+@section Scripts {
+    <script src="~/app/Cliente/cliente.js"></script>
+}

@@ -1,0 +1,1109 @@
+@model MCR.API.Models.ViewModels.TalhaoModel
+@{
+    ViewData["Title"] = "Talhão - Cadastrar";
+}
+<style>
+    #map {
+        width: 100%;
+        height: 500px;
+        margin-top: 20px;
+    }
+
+    #screenshotContainer {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-arquivo-center align-items-center">Talhão - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Talhao" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form id="formCadastrarTalhao" asp-controller="Talhao" asp-action="Cadastrar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Talhao.Nome" id="Nome" placeholder="Nome do Talhão">
+                            <label for="Nome">Nome do Talhão</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="Talhao.PossuiAnaliseFisicaSolo" id="PossuiAnaliseFisicaSolo">
+                                <label class="form-check-label" for="flexSwitchCheckChecked">Análise Física do Solo?</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Talhao.PercentualAreia" id="PercentualAreia" placeholder="% Areia">
+                            <label for="PercentualAreia">% Areia</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Talhao.PercentualSilte" id="PercentualSilte" placeholder="% Silte">
+                            <label for="PercentualSilte">% Silte</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Talhao.PercentualArgila" id="PercentualArgila" placeholder="% Argila">
+                            <label for="PercentualArgila">% Argila</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <h5 id="classeAD"></h5>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-2 col-lg-2 col-sm-12">
+                        <p><span class="badge bg-secondary">AD0</span> Valores de AD menor do que 0,33 (solos nesta classe não são classificados para fins de risco climático).</p>
+                        <p><span class="badge bg-info">AD6</span> Valores de AD maiores ou iguais a 1,40 mm/cm.</p>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-12">
+                        <p><span class="badge bg-warning text-dark">AD1</span> Valores de AD maiores ou iguais a 0,34 e menores que 0,46 mm/cm.</p>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-12">
+                        <p><span class="badge text-dark" style="background-color: #fbeab7">AD2</span> Valores de AD maiores ou iguais a 0,46 e menores que 0,61 mm/cm.</p>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-12">
+                        <p><span class="badge text-dark" style="background-color: #ffeb00">AD3</span> Valores de AD maiores ou iguais a 0,61 e menores que 0,80 mm/cm.</p>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-12">
+                        <p><span class="badge bg-success">AD4</span> Valores de AD maiores ou iguais a 0,80 e menores que 1,06 mm/cm.</p>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-12">
+                        <p><span class="badge bg-primary">AD5</span> Valores de AD maiores ou iguais a 1,06 e menores que 1,40 mm/cm.</p>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="TipoSolo" asp-for="Talhao.TipoSolo" id="tipoSolo">
+                                <option value="">Selecione um Tipo de Solo</option>
+                                <option value="Tipo 1">Tipo 1</option>
+                                <option value="Tipo 2">Tipo 2</option>
+                                <option value="Tipo 3">Tipo 3</option>
+                            </select>
+                            <label for="TipoSolo">Tipo de Solo</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="ClassificacaoSolo" asp-for="Talhao.ClassificacaoSolo" id="classificacaoSoloAD">
+                                <option value="">Selecione uma Classificação do Solo</option>
+                                <option value="AD 1">AD 1</option>
+                                <option value="AD 2">AD 2</option>
+                                <option value="AD 3">AD 3</option>
+                                <option value="AD 4">AD 4</option>
+                                <option value="AD 5">AD 5</option>
+                                <option value="AD 6">AD 6</option>
+                            </select>
+                            <label for="ClassificacaoSolo">Classificação do Solo</label>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <label>
+                            Selecione a propriedade para que o endereço e o mapa sejam carregados.
+                            Depois, desenhe o polígono referente ao talhão para que os campos de latitude, longitude, roteiro de acesso e área sejam preenchidos.
+                        </label>
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="PropriedadeId" asp-for="Talhao.PropriedadeId" id="PropriedadeId" asp-items="ViewBag.Propriedades">
+                                <option value="">Propriedades</option>
+                            </select>
+                            <label>Propriedades</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="cep" placeholder="CEP" readonly>
+                            <label for="cep">CEP</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="endereco" placeholder="Endereço" readonly>
+                            <label for="endereco">Endereço</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-12 col-lg-12 col-sm-12">
+                        <p class="text-muted small mb-1">Mapa em modo satélite. Use o controle no canto superior direito para alternar entre <strong>Mapa</strong>, <strong>Satélite</strong> e <strong>Híbrido</strong>. Use o ícone de polígono para desenhar o talhão. O polígono deve estar dentro do <strong>município da propriedade</strong> selecionada; caso contrário será exibido aviso e o desenho não será aceito. <strong>Errou o desenho?</strong> Clique em <strong>Apagar polígono</strong>.</p>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" onclick="apagarPoligono()" title="Remove o polígono desenhado e limpa área, coordenadas e roteiro">
+                                <i class="bi bi-trash"></i> Apagar polígono
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" onclick="centralizarNoEndereco()" title="Centraliza e dá zoom no endereço da propriedade selecionada">
+                                <i class="bi bi-geo-alt"></i> Centralizar no endereço
+                            </button>
+                        </div>
+                        <div id="map"></div>
+                    </div>
+                </div>
+                <br />
+                <!-- NOVA SEÇÃO: Importar KML -->
+                <div class="row">
+                    <div class="col-md-12 col-lg-12 col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6>Importar KML</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-floating">
+                                            <input type="file" class="form-control" id="kmlFileInput" accept=".kml" onchange="handleKmlFileUpload(event)">
+                                            <label for="kmlFileInput">Selecione um arquivo KML</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="button" class="btn btn-info rounded-pill" onclick="importKmlFromFile()">
+                                            Importar KML
+                                        </button>
+                                        <button type="button" class="btn btn-secondary rounded-pill" onclick="clearImportedKml()">
+                                            Limpar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                        <small class="text-muted">
+                                            Você pode importar um arquivo KML para carregar automaticamente o polígono no mapa. O arquivo deve conter um ou mais polígonos válidos.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Talhao.Latitude" id="Latitude" placeholder="Latitude">
+                            <label for="Latitude">Latitude</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Talhao.Longitude" id="Longitude" placeholder="Longitude">
+                            <label for="Longitude">Longitude</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Talhao.Area" id="Area" placeholder="Área">
+                            <label for="Area">Área</label>
+                        </div>
+                    </div>
+                    <br />
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" asp-for="Talhao.RoteiroAcesso" id="RoteiroAcesso" placeholder="Roteiro de Acesso" style="height: 200px !important"></textarea>
+                            <label for="RoteiroAcesso">Roteiro de Acesso</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <label>Imagem Capturada</label>
+                        <img id="mapScreenshot" class="img-thumbnail" alt="Captura da Área" style="display: none;">
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-lg-4">
+                        <label>KML Gerado</label>
+                        <textarea class="form-control" id="kmlOutput" rows="10" cols="50" readonly style="display: none;"></textarea>
+                    </div>
+                    <div class="col-md-2 col-sm-12 col-lg-2">
+                        <a onclick="downloadFiles()" class="btn btn-primary rounded-pill">
+                            Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <input type="hidden" asp-for="ImageJson" id="imageJson" />
+        <input type="hidden" asp-for="KmlJson" id="kmlJson" name="kmlJson" />
+        
+        <!-- Campos hidden para evitar erros de ModelState -->
+        <input type="hidden" asp-for="ListaTalhoes" value="" />
+        <input type="hidden" asp-for="ListaKmlFiles" value="" />
+        <input type="hidden" asp-for="PaginaAtual" value="0" />
+        <input type="hidden" asp-for="ItensPorPagina" value="0" />
+        <input type="hidden" asp-for="TotalPaginas" value="0" />
+        <input type="hidden" asp-for="PesquisaAtivoInativo" value="" />
+        <input type="hidden" asp-for="PesquisaPropriedadeId" value="" />
+        <input type="hidden" asp-for="ImagensJson" value="" />
+        <input type="hidden" asp-for="KmlsJson" value="" />
+        
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model?.Talhao != null && !Model.Talhao.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px" data-talhao-mensagem="@System.Net.WebUtility.HtmlEncode(Model.Talhao.Mensagem ?? "")">
+            <h6>Atenção!</h6>
+            <h6>@Model.Talhao.Mensagem</h6>
+        </div>
+    }
+</div>
+
+<input type="text" id="propertyAddress" placeholder="Digite o endereço da propriedade" style="width: 300px;" hidden>
+<!-- Carrega a API do Google Maps com a biblioteca de desenho. Chave em appsettings.json (GoogleMaps:ApiKey) para produção sem aviso "For development purposes only". -->
+<script src="https://maps.googleapis.com/maps/api/js?key=@(ViewBag.GoogleMapsApiKey ?? "AIzaSyBjUtP8FEbSpKjbU4JY6p9LU-vURNN7e48")&libraries=places,drawing,geometry&v=3.64"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    // === LOGS DIAGNÓSTICO TALHÃO CADASTRAR (ver no Console do navegador: F12 > Console) ===
+    (function () {
+        var msg = document.querySelector('[data-talhao-mensagem]');
+        var origem = msg ? 'POST (retorno do servidor)' : 'GET (página nova)';
+        var mensagemServidor = msg ? msg.getAttribute('data-talhao-mensagem') || '' : '';
+        console.log('[Talhao Cadastrar] Página carregada - origem:', origem);
+        if (mensagemServidor) console.log('[Talhao Cadastrar] Mensagem do servidor:', mensagemServidor);
+        console.log('[Talhao Cadastrar] Dados no formulário (Model):', {
+            Nome: "@(Model?.Talhao?.Nome != null ? (Model.Talhao.Nome ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"") : "")",
+            PropriedadeId: "@(Model?.Talhao?.PropriedadeId ?? Guid.Empty)",
+            Area: "@(Model?.Talhao?.Area.ToString() ?? "")",
+            Latitude: "@(Model?.Talhao?.Latitude ?? "")",
+            Longitude: "@(Model?.Talhao?.Longitude ?? "")",
+            ImageJsonLength: @(Model?.ImageJson != null ? Model.ImageJson.Length : 0),
+            KmlJsonLength: @(Model?.KmlJson != null ? Model.KmlJson.Length : 0)
+        });
+    })();
+</script>
+<script>
+    let map;
+    let drawingManager;
+    let selectedShape;
+    let loadedPolygon = null; // Variável para armazenar o polígono carregado
+    const geocoder = new google.maps.Geocoder();
+    const directionsService = new google.maps.DirectionsService();
+    const addressInput = document.getElementById("propertyAddress");
+    const mapScreenshot = document.getElementById("mapScreenshot");
+    const kmlOutput = document.getElementById("kmlOutput");
+    const areaField = document.getElementById("Area");
+    const latitudeField = document.getElementById("Latitude");
+    const longitudeField = document.getElementById("Longitude");
+    const roteiroAcessoField = document.getElementById("RoteiroAcesso");
+    const imageJson = document.getElementById("imageJson");
+    const kmlJson = document.getElementById("kmlJson");
+    const tipoSoloAD = document.getElementById("TipoSoloAD");
+    const classificacaoSoloAD = document.getElementById("ClassificacaoSoloAD");
+
+    // Inicializa o mapa (modo satélite por padrão; controle no canto superior direito para alternar Mapa / Satélite / Híbrido)
+    function initializeMap(lat = -14.235004, lng = -51.92528) {
+        const mapOptions = {
+            zoom: 5,
+            center: new google.maps.LatLng(lat, lng),
+            mapTypeId: 'satellite',
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                position: google.maps.ControlPosition.TOP_RIGHT
+            }
+        };
+        map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+        // Configura o gerenciador de desenho
+        drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: google.maps.drawing.OverlayType.POLYGON,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: ["polygon"],
+            },
+            polygonOptions: {
+                editable: true,
+                draggable: false,
+            },
+        });
+        drawingManager.setMap(map);
+
+        // Evento de finalização do desenho (com validação de município)
+        google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
+            if (selectedShape) {
+                selectedShape.setMap(null);
+            }
+
+            selectedShape = event.overlay;
+            drawingManager.setDrawingMode(null);
+
+            validarPoligonoNoMunicipio(selectedShape, function (valido, municipioEncontrado, mensagemErro) {
+                if (!valido) {
+                    selectedShape.setMap(null);
+                    selectedShape = null;
+                    var msg = mensagemErro || "O polígono está fora do município da propriedade.";
+                    if (municipioEncontrado) msg += "\n\nMunicípio da propriedade: " + (window.propriedadeCidade || "") + "\nÁrea desenhada está em: " + municipioEncontrado;
+                    msg += "\n\nDesenhe o polígono apenas dentro dos limites do município onde o cliente está cadastrado.";
+                    alert(msg);
+                    return;
+                }
+                processPolygon(selectedShape);
+            });
+        });
+
+        google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
+            google.maps.event.addListener(event.overlay.getPath(), "set_at", () => processPolygon(selectedShape));
+            google.maps.event.addListener(event.overlay.getPath(), "insert_at", () => processPolygon(selectedShape));
+        });
+    }
+
+    // Normaliza texto para comparação (minúsculo, sem acentos)
+    function normalizarTexto(str) {
+        if (!str) return "";
+        return str.toLowerCase().trim()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    // Obtém o município do endereço retornado pelo geocoder (reverse).
+    // No Brasil: locality = cidade/município; administrative_area_level_2 também pode ser o município.
+    function obterMunicipioDeAddressComponents(components) {
+        var locality = "", admin2 = "";
+        for (var i = 0; i < components.length; i++) {
+            var types = components[i].types;
+            if (types.indexOf("locality") !== -1) locality = components[i].long_name;
+            if (types.indexOf("administrative_area_level_2") !== -1) admin2 = components[i].long_name;
+        }
+        return locality || admin2 || "";
+    }
+
+    // Valida se todos os pontos do polígono estão no município da propriedade (reverse geocode com region BR).
+    function validarPoligonoNoMunicipio(polygon, callback) {
+        var cidadePropriedade = (window.propriedadeCidade || "").trim();
+        if (!cidadePropriedade) {
+            callback(false, "", "Selecione uma propriedade antes de desenhar o polígono para validar o município.");
+            return;
+        }
+
+        var path = polygon.getPath();
+        var n = path.getLength();
+        if (n < 3) {
+            callback(false, "", "Polígono inválido.");
+            return;
+        }
+
+        var totalLat = 0, totalLng = 0;
+        path.forEach(function (latLng) {
+            totalLat += latLng.lat();
+            totalLng += latLng.lng();
+        });
+        var centerLat = totalLat / n, centerLng = totalLng / n;
+
+        var pontos = [
+            new google.maps.LatLng(centerLat, centerLng),
+            path.getAt(0),
+            path.getAt(Math.min(Math.floor(n / 3), n - 1)),
+            path.getAt(Math.min(Math.floor(2 * n / 3), n - 1))
+        ];
+
+        var normalizadoProp = normalizarTexto(cidadePropriedade);
+        var pendentes = pontos.length;
+        var municipiosEncontrados = [];
+        var primeiroMunicipioDiferente = "";
+        var algumPontoSemMunicipio = false;
+        var qtdFalhasGeocode = 0;
+
+        function processarResultado(latLng, results, status) {
+            var municipio = "";
+            if (status !== google.maps.GeocoderStatus.OK) qtdFalhasGeocode++;
+            else if (results && results.length > 0) {
+                municipio = obterMunicipioDeAddressComponents(results[0].address_components);
+            }
+            municipiosEncontrados.push(municipio);
+            var norm = normalizarTexto(municipio);
+            if (!municipio || !norm) algumPontoSemMunicipio = true;
+            else if (normalizadoProp !== norm) primeiroMunicipioDiferente = primeiroMunicipioDiferente || municipio;
+            pendentes--;
+            if (pendentes === 0) {
+                if (qtdFalhasGeocode === pontos.length) {
+                    callback(true, "", "");
+                    return;
+                }
+                var algumDentro = municipiosEncontrados.some(function (m) { return normalizarTexto(m) === normalizadoProp; });
+                var valido = !algumPontoSemMunicipio && !primeiroMunicipioDiferente && algumDentro;
+                var msg = valido ? "" : (algumPontoSemMunicipio ? "Não foi possível verificar o município em todos os pontos. Tente desenhar mais próximo da área da propriedade." : "O polígono está fora do município da propriedade.");
+                callback(valido, primeiroMunicipioDiferente || municipiosEncontrados[0] || "", msg);
+            }
+        }
+
+        pontos.forEach(function (latLng) {
+            geocoder.geocode({ location: latLng, region: "br" }, function (results, status) {
+                processarResultado(latLng, results, status);
+            });
+        });
+    }
+
+    function processPolygon(polygon) {
+        const path = polygon.getPath();
+        const bounds = new google.maps.LatLngBounds();
+        let totalLat = 0;
+        let totalLng = 0;
+
+        path.forEach(latLng => {
+            bounds.extend(latLng);
+            totalLat += latLng.lat();
+            totalLng += latLng.lng();
+        });
+
+        // Calcula a área em hectares (usar ponto para o servidor aceitar o decimal)
+        const area = google.maps.geometry.spherical.computeArea(path) / 10000;
+        areaField.value = area.toFixed(2);
+
+        // Calcula a latitude e longitude médias
+        const centerLat = totalLat / path.getLength();
+        const centerLng = totalLng / path.getLength();
+        latitudeField.value = centerLat.toFixed(6);
+        longitudeField.value = centerLng.toFixed(6);
+
+        // Ajusta o mapa para o polígono
+        map.fitBounds(bounds);
+
+        // Gera o roteiro de acesso
+        generateRoute(centerLat, centerLng);
+    }
+
+    // Gera o roteiro de acesso ao polígono
+    function generateRoute(lat, lng) {
+        const address = addressInput.value.trim();
+
+        if (!address) {
+            roteiroAcessoField.value = "Endereço de origem não fornecido.";
+            return;
+        }
+
+        directionsService.route(
+            {
+                origin: address,
+                destination: { lat, lng },
+                travelMode: google.maps.TravelMode.DRIVING,
+            },
+            function (response, status) {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    // Processa cada instrução
+                    const steps = response.routes[0].legs[0].steps.map(step => {
+                        // Remove HTML e adiciona espaço ao final se necessário
+                        const instruction = stripHtml(step.instructions);
+
+                        // Garante que instruções consecutivas sejam separadas
+                        return instruction.endsWith('.') || instruction.endsWith(',')
+                            ? instruction
+                            : instruction + '.';
+                    });
+
+                    // Junta as instruções com quebra de linha
+                    roteiroAcessoField.value = steps.join("\n");
+                } else {
+                    roteiroAcessoField.value = "Não foi possível gerar o roteiro de acesso.";
+                }
+            }
+        );
+
+        setTimeout(capturarImagemMapa, 1000);
+        setTimeout(gerarKmlMapa, 1000);
+    }
+
+    function stripHtml(html) {
+        const div = document.createElement("div");
+        div.innerHTML = html;
+        return div.textContent || div.innerText || "";
+    }
+    // Geocodifica o endereço e centraliza o mapa com zoom no endereço (evita ficar só no Brasil)
+    let addressMarker = null; // Variável para armazenar o marcador do endereço
+    
+    function centralizarNoEndereco() {
+        var address = addressInput.value.trim();
+        if (!address) {
+            alert("Selecione uma propriedade primeiro para centralizar no endereço.");
+            return;
+        }
+        carregarMapa();
+    }
+
+    function carregarMapa(enderecoOpcional) {
+        var address = (enderecoOpcional && enderecoOpcional.trim()) ? enderecoOpcional.trim() : (addressInput && addressInput.value) ? addressInput.value.trim() : "";
+        if (!address) {
+            return;
+        }
+        if (addressInput) addressInput.value = address;
+
+        geocoder.geocode({ address: address, region: "br" }, function (results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                const result = results[0];
+                const location = result.geometry.location;
+                
+                if (addressMarker) {
+                    addressMarker.setMap(null);
+                }
+                
+                addressMarker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    title: `Local: ${address}`,
+                    icon: {
+                        url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+                    }
+                });
+                
+                // Zoom no endereço: priorizar setCenter + setZoom para não ficar no Brasil
+                var locationType = result.geometry.location_type || "";
+                var zoomLevel = 15; // padrão para endereço
+                if (locationType === "ROOFTOP" || locationType === "RANGE_INTERPOLATED") zoomLevel = 17;
+                else if (locationType === "GEOMETRIC_CENTER") zoomLevel = 14;
+                else if (locationType === "APPROXIMATE") zoomLevel = 13;
+
+                map.setCenter(location);
+                map.setZoom(zoomLevel);
+
+                // Se tiver viewport e for pequeno o suficiente, pode usar; senão mantém zoom garantido acima
+                if (result.geometry.viewport) {
+                    map.fitBounds(result.geometry.viewport);
+                    google.maps.event.addListenerOnce(map, "idle", function () {
+                        var z = map.getZoom();
+                        if (z < 13) {
+                            map.setCenter(location);
+                            map.setZoom(zoomLevel);
+                        } else if (z > 18) {
+                            map.setZoom(18);
+                        }
+                    });
+                }
+            } else {
+                // Modo desenvolvimento: Geocoding API pode não estar ativa; centraliza no Brasil para não quebrar
+                console.warn("Geocoding indisponível:", status);
+                var centroBrasil = new google.maps.LatLng(-14.235004, -51.92528);
+                if (map) {
+                    map.setCenter(centroBrasil);
+                    map.setZoom(5);
+                }
+                alert("Em modo de desenvolvimento a centralização pelo endereço não está disponível (ative a Geocoding API no Google Cloud ou use uma chave válida).\n\nO mapa foi centralizado no Brasil. Você pode dar zoom e desenhar o polígono normalmente.");
+            }
+        });
+    }
+
+    function capturarImagemMapa() {
+        if (!map) {
+            alert("Mapa não está carregado.");
+            return;
+        }
+
+        if (!selectedShape) {
+            alert("Desenhe um polígono antes de capturar a imagem.");
+            return;
+        }
+
+        // Obtém os limites do polígono
+        const bounds = new google.maps.LatLngBounds();
+        const path = selectedShape.getPath();
+
+        path.forEach(latLng => {
+            bounds.extend(latLng);
+        });
+
+        // Adiciona um padding (em graus)
+        const paddingDegrees = 0.002; // Ajuste este valor para mais ou menos padding
+        const northEast = bounds.getNorthEast();
+        const southWest = bounds.getSouthWest();
+
+        const paddedBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(southWest.lat() - paddingDegrees, southWest.lng() - paddingDegrees),
+            new google.maps.LatLng(northEast.lat() + paddingDegrees, northEast.lng() + paddingDegrees)
+        );
+
+        map.fitBounds(paddedBounds);
+
+        // Usa html2canvas para capturar a imagem do mapa
+        html2canvas(document.getElementById("map"), {
+            useCORS: true,
+            scale: 2,
+        }).then(function (canvas) {
+            const image = canvas.toDataURL("image/png");
+            mapScreenshot.src = image;
+            mapScreenshot.style.display = "block";
+            imageJson.value = image;
+        }).catch(function (error) {
+            console.error("Erro ao capturar a imagem:", error);
+        });
+    }
+
+    // Gera o KML do polígono desenhado
+    function gerarKmlMapa() {
+        if (!selectedShape) {
+            alert("Desenhe um polígono antes de gerar o KML.");
+            return;
+        }
+
+        const path = selectedShape.getPath();
+        let kml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+        kml += `<kml xmlns="http://www.opengis.net/kml/2.2">\n`;
+        kml += `  <Document>\n`;
+        kml += `    <Placemark>\n`;
+        kml += `      <Polygon>\n`;
+        kml += `        <outerBoundaryIs>\n`;
+        kml += `          <LinearRing>\n`;
+        kml += `            <coordinates>\n`;
+
+        path.forEach(function (latLng) {
+            kml += `              ${latLng.lng()},${latLng.lat()},0\n`;
+        });
+
+        kml += `            </coordinates>\n`;
+        kml += `          </LinearRing>\n`;
+        kml += `        </outerBoundaryIs>\n`;
+        kml += `      </Polygon>\n`;
+        kml += `    </Placemark>\n`;
+        kml += `  </Document>\n`;
+        kml += `</kml>`;
+
+        kmlOutput.style.display = "block";
+        kmlOutput.value = kml;
+        kmlJson.value = kml;
+    }
+
+    function getImageFormat(base64String) {
+        // Verifica se a string começa com "data:image/"
+        if (base64String.startsWith("data:image/")) {
+            // Divide a string pelo delimitador ";base64,"
+            const format = base64String.split(";")[0];
+            // Retorna o formato da imagem após "data:image/"
+            return format.split("/")[1];
+        }
+        return null; // Retorna null se não for uma string válida de imagem base64
+    }
+
+    function excluir() {
+        const tableBody = document.querySelector("#resultGrid tbody");
+        for (var i = tableBody.rows.length - 1; i > 0; i--) {
+            tableBody.deleteRow(i);
+        }
+
+        imageJson.value = '';
+        kmlJson.value = '';
+        mapScreenshot.value = '';
+        kmlOutput.value = '';
+    }
+
+    function downloadFiles() {
+        if (!imageJson.value || !kmlJson.value) {
+            alert("Nenhuma imagem ou KML disponível para download.");
+            return;
+        }
+
+        // Criar e baixar a imagem
+        const imageLink = document.createElement("a");
+        imageLink.href = imageJson.value;
+        imageLink.download = "map_screenshot.png";
+        document.body.appendChild(imageLink);
+        imageLink.click();
+        document.body.removeChild(imageLink);
+
+        // Criar e baixar o arquivo KML
+        const kmlBlob = new Blob([kmlJson.value], { type: "application/vnd.google-earth.kml+xml" });
+        const kmlUrl = URL.createObjectURL(kmlBlob);
+        const kmlLink = document.createElement("a");
+        kmlLink.href = kmlUrl;
+        kmlLink.download = "map_polygon.kml";
+        document.body.appendChild(kmlLink);
+        kmlLink.click();
+        document.body.removeChild(kmlLink);
+
+        URL.revokeObjectURL(kmlUrl);
+    }
+
+    function removeExistingPolygon() {
+        if (selectedShape) {
+            selectedShape.setMap(null);
+            selectedShape = null;
+        }
+        if (loadedPolygon) {
+            loadedPolygon.setMap(null);
+            loadedPolygon = null;
+        }
+    }
+
+    // Apaga o polígono desenhado e limpa os campos (área, coordenadas, roteiro, imagem e KML)
+    function apagarPoligono() {
+        removeExistingPolygon();
+        if (areaField) areaField.value = "";
+        if (latitudeField) latitudeField.value = "";
+        if (longitudeField) longitudeField.value = "";
+        if (roteiroAcessoField) roteiroAcessoField.value = "";
+        if (mapScreenshot) {
+            mapScreenshot.src = "";
+            mapScreenshot.style.display = "none";
+        }
+        if (imageJson) imageJson.value = "";
+        if (kmlOutput) {
+            kmlOutput.value = "";
+            kmlOutput.style.display = "none";
+        }
+        if (kmlJson) kmlJson.value = "";
+    }
+
+    function decodeHtmlEntities(encodedString) {
+        const textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
+
+    // skipMunicipioValidation: true = polígono já desenhado/salvo (não validar município); false = importação nova (validar)
+    function loadKmlFromJson(kmlString, skipMunicipioValidation) {
+        if (!kmlString) {
+            console.error("KML vazio ou não fornecido.");
+            return;
+        }
+        if (typeof skipMunicipioValidation === "undefined") skipMunicipioValidation = false;
+
+        const decodedKml = decodeHtmlEntities(kmlString);
+        const parser = new DOMParser();
+        const kmlDoc = parser.parseFromString(decodedKml, "text/xml");
+
+        document.getElementById("kmlOutput").value = decodedKml;
+        kmlJson.value = decodedKml;
+
+        if (kmlDoc.getElementsByTagName("parsererror").length > 0) {
+            console.error("Erro ao parsear o KML.");
+            return;
+        }
+
+        const coordinatesElement = kmlDoc.querySelector("LinearRing > coordinates");
+        if (!coordinatesElement) {
+            console.error("Elemento <coordinates> não encontrado.");
+            return;
+        }
+
+        const coordinatesText = coordinatesElement.textContent.trim();
+        const coordinates = coordinatesText.split(/\s+/).map(coord => {
+            const [lng, lat] = coord.split(",");
+            return new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+        });
+
+        if (coordinates.length > 0) {
+            removeExistingPolygon();
+
+            loadedPolygon = new google.maps.Polygon({
+                paths: coordinates,
+                map: map,
+                editable: true,
+                draggable: false,
+            });
+
+            selectedShape = loadedPolygon;
+
+            function aplicarPolygonCarregado() {
+                processPolygon(loadedPolygon);
+                const bounds = new google.maps.LatLngBounds();
+                coordinates.forEach(coord => bounds.extend(coord));
+                map.fitBounds(bounds);
+                google.maps.event.addListener(loadedPolygon.getPath(), "set_at", () => processPolygon(loadedPolygon));
+                google.maps.event.addListener(loadedPolygon.getPath(), "insert_at", () => processPolygon(loadedPolygon));
+            }
+
+            if (skipMunicipioValidation) {
+                aplicarPolygonCarregado();
+            } else {
+                validarPoligonoNoMunicipio(loadedPolygon, function (valido, municipioEncontrado, mensagemErro) {
+                    if (!valido) {
+                        apagarPoligono();
+                        var msg = mensagemErro || "O polígono do KML está fora do município da propriedade.";
+                        if (municipioEncontrado) msg += "\n\nMunicípio da propriedade: " + (window.propriedadeCidade || "") + "\nÁrea do KML está em: " + municipioEncontrado;
+                        msg += "\n\nImporte um KML dentro dos limites do município.";
+                        alert(msg);
+                        return;
+                    }
+                    aplicarPolygonCarregado();
+                });
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        initializeMap();
+    });
+</script>
+
+<script>
+    let importedKmlContent = "";
+
+    function handleKmlFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            importedKmlContent = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+
+    function importKmlFromFile() {
+        if (!importedKmlContent) {
+            alert("Selecione um arquivo KML primeiro.");
+            return;
+        }
+        loadKmlFromJson(importedKmlContent);
+    }
+
+    function clearImportedKml() {
+        importedKmlContent = "";
+        document.getElementById("kmlFileInput").value = "";
+        removeExistingPolygon();
+        kmlOutput.value = "";
+        kmlJson.value = "";
+    }
+</script>
+
+<script>
+    const imageJsonField = document.getElementById("imageJson");
+    const kmlJsonField = document.getElementById("kmlJson");
+    let images = [];
+    let kmlFiles = [];
+    // Aguarde até o DOM estar carregado
+    document.addEventListener("DOMContentLoaded", function () {
+        // Referência ao checkbox
+        const checkbox = document.getElementById("PossuiAnaliseFisicaSolo");
+
+        // Referências aos campos de percentual
+        const camposPercentual = [
+            document.getElementById("PercentualAreia"),
+            document.getElementById("PercentualSilte"),
+            document.getElementById("PercentualArgila")
+        ];
+
+        // Função para alternar o estado dos campos
+        const alternarCampos = () => {
+            const habilitar = checkbox.checked;
+            camposPercentual.forEach(campo => {
+                campo.disabled = !habilitar; // Desabilitar se não marcado
+            });
+        };
+
+        // Adicione um listener para o evento change do checkbox
+        checkbox.addEventListener("change", alternarCampos);
+
+        // Chame a função uma vez no início para garantir o estado correto
+        alternarCampos();
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const areiaInput = document.getElementById("PercentualAreia");
+        const silteInput = document.getElementById("PercentualSilte");
+        const argilaInput = document.getElementById("PercentualArgila");
+        const classeADElement = document.getElementById("classeAD");
+        const tipoSoloSelect = document.getElementById("tipoSolo");
+        const classificacaoSoloADSelect = document.getElementById("classificacaoSoloAD");
+
+        // Ranges e classes de AD
+        const rangesAD = [
+            { min: 0, max: 0.33, classe: "AD 1" },
+            { min: 0.34, max: 0.46, classe: "AD 2" },
+            { min: 0.46, max: 0.61, classe: "AD 3" },
+            { min: 0.61, max: 0.80, classe: "AD 4" },
+            { min: 0.80, max: 1.06, classe: "AD 5" },
+            { min: 1.06, max: Infinity, classe: "AD 6" }
+        ];
+
+        const calcularAD = () => {
+            const areia = parseFloat(areiaInput.value.replace(",", ".")) || 0;
+            const silte = parseFloat(silteInput.value.replace(",", ".")) || 0;
+            const argila = parseFloat(argilaInput.value.replace(",", ".")) || 0;
+
+            const somaTotal = areia + silte + argila;
+            if (somaTotal !== 100) {
+                classeADElement.textContent = "A soma dos percentuais deve ser 100%.";
+                classeADElement.className = "text-danger";
+                classificacaoSoloADSelect.value = "";
+                tipoSoloSelect.value = "";
+                return;
+            }
+
+            // Cálculo da Água Disponível (AD)
+            const part1 = (0.3591 * (
+                (-0.02128887 * areia) +
+                (-0.01005814 * silte) +
+                (-0.01901894 * argila) +
+                (0.0001171219 * areia * silte) +
+                (0.0002073924 * areia * argila) +
+                (0.00006118707 * silte * argila) +
+                (-0.000006373789 * areia * silte * argila)
+            ));
+            const part2 = 1 + part1;
+            const part3 = part2 ** 2.78474;
+            const ad = (part3 * 10).toFixed(2);
+
+            // Seleção da classificação do solo com base no AD
+            const classificacao = rangesAD.find(range => ad >= range.min && ad < range.max);
+            classificacaoSoloADSelect.value = classificacao ? classificacao.classe : "";
+
+            // Seleção do tipo de solo com base nas condições
+            const diferencaAreiaArgila = areia - argila;
+            if (argila >= 10 && argila < 15 && diferencaAreiaArgila >= 50) {
+                tipoSoloSelect.value = "Tipo 1";
+            } else if (argila >= 15 && argila < 35 && diferencaAreiaArgila < 50) {
+                tipoSoloSelect.value = "Tipo 2";
+            } else if (argila >= 35) {
+                tipoSoloSelect.value = "Tipo 3";
+            } else {
+                tipoSoloSelect.value = ""; // Nenhum tipo se aplica
+            }
+
+            // Exibição do resultado AD
+            classeADElement.textContent = `AD: ${ad}`;
+        };
+
+        // Eventos para calcular durante a digitação e ao sair do campo
+        [areiaInput, silteInput, argilaInput].forEach(input => {
+            input.addEventListener("input", calcularAD);
+            input.addEventListener("blur", calcularAD);
+        });
+    });
+</script>
+
+<script>
+    window.propriedadeIdPreSelecionado = "@(ViewBag.PropriedadeIdPreSelecionado ?? "")";
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const propriedadeSelect = document.getElementById("PropriedadeId");
+        const cepInput = document.getElementById("cep");
+        const enderecoInput = document.getElementById("endereco");
+
+        function carregarPropriedadeNoMapa(propriedadeId) {
+            if (!propriedadeId) return;
+
+            fetch(`/api/propriedades/${propriedadeId}`)
+                .then((response) => response.json())
+                .then((responseData) => {
+                    var ok = responseData.success === true;
+                    if (!ok || !responseData.data) {
+                        alert(responseData.message || "Erro ao buscar propriedade.");
+                        return;
+                    }
+
+                    var p = responseData.data;
+                    var cep = p.cep || p.CEP || "";
+                    var endereco = p.endereco || p.Endereco || "";
+                    cepInput.value = cep;
+                    enderecoInput.value = endereco;
+
+                    window.propriedadeCidade = (p.cidade || p.Cidade || "").trim();
+                    window.propriedadeEstado = (p.estado || p.Estado || "").trim();
+
+                    var enderecoStr = (p.endereco || p.Endereco || "").trim();
+                    var cepStr = (p.cep || p.CEP || "").trim();
+                    var queryEnderecoCompleto = enderecoStr + (cepStr ? ", " + cepStr : "");
+                    if (!queryEnderecoCompleto) return;
+
+                    var el = document.getElementById("propertyAddress");
+                    if (el) el.value = queryEnderecoCompleto;
+                    carregarMapa(queryEnderecoCompleto);
+                })
+                .catch((error) => console.error("Erro ao buscar propriedade:", error));
+        }
+
+        propriedadeSelect.addEventListener("change", function () {
+            carregarPropriedadeNoMapa(propriedadeSelect.value);
+        });
+
+        if (window.propriedadeIdPreSelecionado && window.propriedadeIdPreSelecionado.length > 0) {
+            propriedadeSelect.value = window.propriedadeIdPreSelecionado;
+            carregarPropriedadeNoMapa(window.propriedadeIdPreSelecionado);
+        }
+    });
+</script>
+
+<script>
+    const imagemBase64 = "@(Model != null && Model.ImageJson != null && !string.IsNullOrEmpty(Model.ImageJson) ? Model.ImageJson : "")";
+    if (imagemBase64 && imagemBase64.trim() !== '') {
+        const mapScreenshot = document.getElementById('mapScreenshot');
+        if (mapScreenshot) {
+            mapScreenshot.src = imagemBase64;
+            mapScreenshot.style.display = 'block';
+        }
+        
+        const objectImagem = document.getElementById('ObjectImagem');
+        if (objectImagem) {
+            objectImagem.value = imagemBase64;
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('formCadastrarTalhao');
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            var nome = document.getElementById('Nome') && document.getElementById('Nome').value.trim();
+            var propriedadeId = document.getElementById('PropriedadeId') && document.getElementById('PropriedadeId').value;
+            var latitude = document.getElementById('Latitude') && document.getElementById('Latitude').value.trim();
+            var longitude = document.getElementById('Longitude') && document.getElementById('Longitude').value.trim();
+            var area = document.getElementById('Area') && document.getElementById('Area').value.trim();
+            var tipoSolo = document.getElementById('tipoSolo') && document.getElementById('tipoSolo').value;
+            var classificacaoSolo = document.getElementById('classificacaoSoloAD') && document.getElementById('classificacaoSoloAD').value;
+            var roteiroAcesso = document.getElementById('RoteiroAcesso') && document.getElementById('RoteiroAcesso').value.trim();
+
+            var faltando = [];
+            if (!nome) faltando.push('Nome do Talhão');
+            if (!propriedadeId) faltando.push('Propriedade');
+            if (!latitude) faltando.push('Latitude');
+            if (!longitude) faltando.push('Longitude');
+            if (!area || parseFloat(String(area).replace(',', '.')) <= 0) faltando.push('Área (desenhe o polígono no mapa)');
+            if (!tipoSolo) faltando.push('Tipo de Solo');
+            if (!classificacaoSolo) faltando.push('Classificação do Solo');
+            if (!roteiroAcesso) faltando.push('Roteiro de Acesso');
+
+            if (faltando.length > 0) {
+                e.preventDefault();
+                console.warn('[Talhao Cadastrar] Submit bloqueado - campos faltando:', faltando);
+                alert('Preencha os campos obrigatórios:\n\n• ' + faltando.join('\n• '));
+                return;
+            }
+
+            var areaEl = document.getElementById('Area');
+            if (areaEl && areaEl.value.indexOf(',') !== -1) {
+                areaEl.value = areaEl.value.replace(',', '.');
+            }
+
+            var fd = new FormData(form);
+            var dadosLog = {};
+            fd.forEach(function (val, key) {
+                if (key === 'ImageJson' || key === 'KmlJson') dadosLog[key] = val ? '(preenchido, ' + (String(val).length) + ' chars)' : '(vazio)';
+                else dadosLog[key] = String(val).substring(0, 60);
+            });
+            console.log('[Talhao Cadastrar] Enviando formulário (POST) para:', form.action || window.location.href);
+            console.log('[Talhao Cadastrar] Dados enviados:', dadosLog);
+        });
+    });
+</script>
+

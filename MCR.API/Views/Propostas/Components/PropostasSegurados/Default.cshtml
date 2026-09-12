@@ -1,0 +1,54 @@
+@model List<MCR.API.Propostas.Domain.DTO.PropostasSeguradosDTO>
+
+<div class="card pt-3">
+    <div class="card-header text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Proponentes da Proposta</h5>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="text-center py-5" proposal-status-permission="@ViewBag.PropostaStatus">
+                <p class="text-muted mb-3">Nenhum proponente vinculado a esta proposta</p>
+                <button type="button" class="btn btn-primary" onclick="propostaJS.openSegurado()">
+                    <i class="fas fa-plus me-2"></i> Adicionar Proponente
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th>Relação</th>
+                            <th class="text-center" proposal-status-permission="@ViewBag.PropostaStatus">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var proponente in Model)
+                        {
+                            <tr>
+                                <td>@proponente.Nome</td>
+                                <td>@proponente.CPF</td>
+                                <td>@proponente.Telefone</td>
+                                <td>@proponente.Email</td>
+                                <td>@proponente.RelacaoParental</td>
+                                <td class="text-center" proposal-status-permission="@ViewBag.PropostaStatus">
+                                    <button type="button" class="btn btn-sm btn-danger seguradoRemove" data-id="@proponente.Id" data-nome="@proponente.Nome">
+                                        Remover
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

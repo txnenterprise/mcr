@@ -1,0 +1,7 @@
+# docker-compose.override.yml - usa imagem pre-compilada do GHCR
+# Copie este arquivo para docker-compose.override.yml ativar
+
+services:
+  mcr-api:
+    image: ghcr.io/txnenterprise/mcr/mcr-api:latest
+    build: null

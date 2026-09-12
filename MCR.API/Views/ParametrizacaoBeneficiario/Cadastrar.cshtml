@@ -1,0 +1,186 @@
+﻿@model MCR.API.Entities.ParametrizacaoBeneficiarioEntity
+@{
+    ViewData["Title"] = "Beneficiário - Parametrizações - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Beneficiário - Parametrizações - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Parametrizacao" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="ParametrizacaoBeneficiario" asp-action="Cadastrar" method="post">
+        <h6>Dados Bancários</h6>
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="BancoBeneficiario" asp-for="Beneficiario.Banco" id="Banco" required>
+                                <option value="">Banco</option>
+                                <option value="Next">Next</option>
+                                <option value="Banco Original">Banco Original</option>
+                                <option value="Nubank">Nubank</option>
+                                <option value="Banco Willbank">Banco Willbank</option>
+                                <option value="Albatross Ccv S.A">Albatross Ccv S.A</option>
+                                <option value="Mercado Pago">Mercado Pago</option>
+                                <option value="Ativa Investimentos S.A">Ativa Investimentos S.A</option>
+                                <option value="PicPay">PicPay</option>
+                                <option value="Avista S.A. Crédito, Financiamento e Investimento">Avista S.A. Crédito, Financiamento e Investimento</option>
+                                <option value="B&T Cc Ltda">B&T Cc Ltda</option>
+                                <option value="Banco A.J.Renner S.A.">Banco A.J.Renner S.A.</option>
+                                <option value="Banco ABC Brasil S.A.">Banco ABC Brasil S.A.</option>
+                                <option value="Banco ABN AMRO S.A">Banco ABN AMRO S.A</option>
+                                <option value="Banco Agibank S.A.">Banco Agibank S.A.</option>
+                                <option value="Banco Alfa S.A.">Banco Alfa S.A.</option>
+                                <option value="Banco Alvorada S.A.">Banco Alvorada S.A.</option>
+                                <option value="Banco Andbank (Brasil) S.A.">Banco Andbank (Brasil) S.A.</option>
+                                <option value="Banco Arbi S.A.">Banco Arbi S.A.</option>
+                                <option value="Banco B3 S.A.">Banco B3 S.A.</option>
+                                <option value="Banco SANTANDER">Banco SANTANDER</option>
+                                <option value="Banco BMG S.A.">Banco BMG S.A.</option>
+                                <option value="Banco BNP Paribas Brasil S.A.">Banco BNP Paribas Brasil S.A.</option>
+                                <option value="Banco BOCOM BBM S.A.">Banco BOCOM BBM S.A.</option>
+                                <option value="Banco Bradescard S.A.">Banco Bradescard S.A.</option>
+                                <option value="Código Banco Beg S.A.">Código Banco Beg S.A.</option>
+                                <option value="Banco Bradesco BERJ S.A.">Banco Bradesco BERJ S.A.</option>
+                                <option value="Banco Bradesco Cartões S.A.">Banco Bradesco Cartões S.A.</option>
+                                <option value="Banco Bradesco Financiamentos S.A.">Banco Bradesco Financiamentos S.A.</option>
+                                <option value="Banco Bradesco S.A.">Banco Bradesco S.A.</option>
+                                <option value="Banco BS2 S.A.">Banco BS2 S.A.</option>
+                                <option value="Banco BTG Pactual S.A.">Banco BTG Pactual S.A.</option>
+                                <option value="Banco C6 S.A – C6 Bank">Banco C6 S.A – C6 Bank</option>
+                                <option value="Banco Caixa Geral – Brasil S.A.">Banco Caixa Geral – Brasil S.A.</option>
+                                <option value="Banco Caixa Econômica Federal">Banco Caixa Econômica Federal</option>
+                                <option value="Banco Capital S.A.">Banco Capital S.A.</option>
+                                <option value="Banco Cargill S.A.">Banco Cargill S.A.</option>
+                                <option value="Banco Carrefour">Banco Carrefour</option>
+                                <option value="Banco Cédula S.A.">Banco Cédula S.A.</option>
+                                <option value="Banco Cetelem S.A.">Banco Cetelem S.A.</option>
+                                <option value="Banco Cifra S.A.">Banco Cifra S.A.</option>
+                                <option value="Banco Citibank S.A.">Banco Citibank S.A.</option>
+                                <option value="Banco Clássico S.A.">Banco Clássico S.A.</option>
+                                <option value="Banco Cooperativo do Brasil S.A. – BANCOOB">Banco Cooperativo do Brasil S.A. – BANCOOB</option>
+                                <option value="Banco Cooperativo Sicredi S.A.">Banco Cooperativo Sicredi S.A.</option>
+                                <option value="Banco Credit Agricole Brasil S.A.">Banco Credit Agricole Brasil S.A.</option>
+                                <option value="Banco Credit Suisse (Brasil) S.A.">Banco Credit Suisse (Brasil) S.A.</option>
+                                <option value="Banco Crefisa S.A.">Banco Crefisa S.A.</option>
+                                <option value="Banco da Amazônia S.A.">Banco da Amazônia S.A.</option>
+                                <option value="Banco da China Brasil S.A.">Banco da China Brasil S.A.</option>
+                                <option value="Banco Daycoval S.A.">Banco Daycoval S.A.</option>
+                                <option value="Banco de Desenvolvimento do Espírito Santo S.A.">Banco de Desenvolvimento do Espírito Santo S.A.</option>
+                                <option value="Banco de La Nacion Argentina">Banco de La Nacion Argentina</option>
+                                <option value="Banco de La Provincia de Buenos Aires">Banco de La Provincia de Buenos Aires</option>
+                                <option value="Banco de La Republica Oriental del Uruguay">Banco de La Republica Oriental del Uruguay</option>
+                                <option value="Banco Digio S.A">Banco Digio S.A</option>
+                                <option value="Banco do Brasil S.A.">Banco do Brasil S.A.</option>
+                                <option value="Banco do Estado de Sergipe S.A.">Banco do Estado de Sergipe S.A.</option>
+                                <option value="Banco do Estado do Pará S.A.">Banco do Estado do Pará S.A.</option>
+                                <option value="Banco do Estado do Rio Grande do Sul S.A.">Banco do Estado do Rio Grande do Sul S.A.</option>
+                                <option value="Banco do Nordeste do Brasil S.A.">Banco do Nordeste do Brasil S.A.</option>
+                                <option value="Banco Fair Corretora de Câmbio S.A">Banco Fair Corretora de Câmbio S.A</option>
+                                <option value="Banco Fator S.A.">Banco Fator S.A.</option>
+                                <option value="Banco Fibra S.A.">Banco Fibra S.A.</option>
+                                <option value="Banco Ficsa S.A.">Banco Ficsa S.A.</option>
+                                <option value="Banco Finaxis S.A.">Banco Finaxis S.A.</option>
+                                <option value="Banco Guanabara S.A.">Banco Guanabara S.A.</option>
+                                <option value="Banco Inbursa S.A.">Banco Inbursa S.A.</option>
+                                <option value="Banco Industrial do Brasil S.A.">Banco Industrial do Brasil S.A.</option>
+                                <option value="Banco Indusval S.A.">Banco Indusval S.A.</option>
+                                <option value="Banco Inter S.A.">Banco Inter S.A.</option>
+                                <option value="Banco Investcred Unibanco S.A.">Banco Investcred Unibanco S.A.</option>
+                                <option value="Banco Itaú BBA S.A.">Banco Itaú BBA S.A.</option>
+                                <option value="Banco Itaú Consignado S.A.">Banco Itaú Consignado S.A.</option>
+                                <option value="Banco ItauBank S.A.">Banco ItauBank S.A.</option>
+                                <option value="Banco Itaú">Banco Itaú</option>
+                                <option value="Banco J. P. Morgan S.A.">Banco J. P. Morgan S.A.</option>
+                                <option value="Banco Safra">Banco Safra</option>
+                                <option value="Banco John Deere S.A.">Banco John Deere S.A.</option>
+                                <option value="Banco KDB S.A.">Banco KDB S.A.</option>
+                                <option value="Banco KEB HANA do Brasil S.A.">Banco KEB HANA do Brasil S.A.</option>
+                                <option value="Banco Luso Brasileiro S.A.">Banco Luso Brasileiro S.A.</option>
+                                <option value="Banco Máxima S.A.">Banco Máxima S.A.</option>
+                                <option value="Banco Maxinvest S.A.">Banco Maxinvest S.A.</option>
+                                <option value="Banco Mercantil do Brasil S.A.">Banco Mercantil do Brasil S.A.</option>
+                                <option value="Banco Mizuho do Brasil S.A.">Banco Mizuho do Brasil S.A.</option>
+                                <option value="Banco Modal S.A.">Banco Modal S.A.</option>
+                                <option value="Banco Morgan Stanley S.A.">Banco Morgan Stanley S.A.</option>
+                                <option value="Banco MUFG Brasil S.A.">Banco MUFG Brasil S.A.</option>
+                                <option value="Banco Nacional de Desenvolvimento Econômico e Social – BNDES">Banco Nacional de Desenvolvimento Econômico e Social – BNDES</option>
+                                <option value="Banco Caterpillar S.A.">Banco Caterpillar S.A.</option>
+                                <option value="Banco Central do Brasil">Banco Central do Brasil</option>
+                                <option value="Banco CNH Industrial Capital S.A.">Banco CNH Industrial Capital S.A.</option>
+                                <option value="Banco de Lage Landen Brasil S.A.">Banco de Lage Landen Brasil S.A.</option>
+                                <option value="Banco Fidis S.A.">Banco Fidis S.A.</option>
+                                <option value="Banco Ford S.A.">Banco Ford S.A.</option>
+                                <option value="Banco GMAC S.A.">Banco GMAC S.A.</option>
+                                <option value="Banco Honda S.A.">Banco Honda S.A.</option>
+                                <option value="Banco IBM S.A.">Banco IBM S.A.</option>
+                                <option value="Banco Itaucard S.A.">Banco Itaucard S.A.</option>
+                                <option value="Banco Itauleasing S.A.">Banco Itauleasing S.A.</option>
+                                <option value="Banco Komatsu S.A.">Banco Komatsu S.A.</option>
+                                <option value="Banco Losango S.A. – Banco Múltiplo">Banco Losango S.A. – Banco Múltiplo</option>
+                                <option value="Banco Mercedes-Benz do Brasil S.A.">Banco Mercedes-Benz do Brasil S.A.</option>
+                                <option value="Banco Moneo S.A.">Banco Moneo S.A.</option>
+                                <option value="Banco PSA Finance Brasil S.A.">Banco PSA Finance Brasil S.A.</option>
+                                <option value="Banco Randon S.A.">Banco Randon S.A.</option>
+                                <option value="Banco RCI Brasil S.A.">Banco RCI Brasil S.A.</option>
+                                <option value="Banco Toyota do Brasil S.A.">Banco Toyota do Brasil S.A.</option>
+                                <option value="Banco Vipal S.A.">Banco Vipal S.A.</option>
+                                <option value="Banco Volkswagen S.A.">Banco Volkswagen S.A.</option>
+                                <option value="Banco Yamaha Motor do Brasil S.A.">Banco Yamaha Motor do Brasil S.A.</option>
+                                <option value="BB Banco de Investimento S.A.">BB Banco de Investimento S.A.</option>
+                                <option value="BMW Financeira S.A. – Crédito, Financiamento e Investimento">BMW Financeira S.A. – Crédito, Financiamento e Investimento</option>
+                                <option value="BV Financeira S.A. – Crédito, Financiamento e Investimento">BV Financeira S.A. – Crédito, Financiamento e Investimento</option>
+                                <option value="CCB Brasil S.A. – Crédito, Financiamentos e Investimentos">CCB Brasil S.A. – Crédito, Financiamentos e Investimentos</option>
+                                <option value="Finamax S.A. – Crédito, Financiamento e Investimento">Finamax S.A. – Crédito, Financiamento e Investimento</option>
+                                <option value="PortoSeg S.A. – Crédito, Financiamento e Investimento">PortoSeg S.A. – Crédito, Financiamento e Investimento</option>
+                                <option value="Redecard S.A.">Redecard S.A.</option>
+                                <option value="Santana S.A. – Crédito, Financiamento e Investimento">Santana S.A. – Crédito, Financiamento e Investimento</option>
+                                <option value="Santinvest S.A – Crédito, Financiamento e Investimentos">Santinvest S.A – Crédito, Financiamento e Investimentos</option>
+                                <option value="Scania Banco S.A.">Scania Banco S.A.</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Agencia" id="Agencia" placeholder="Agência" required>
+                            <label for="Agencia">Agência</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Conta" id="Conta" placeholder="Conta" required>
+                            <label for="Conta">Conta</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.DigitoConta" id="DigitoConta" placeholder="Díg. Conta" required>
+                            <label for="DigitoConta">Díg. Conta</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="social-login">
+            <button type="submit" class="login-btn btn d-flex justify-content-center align-items-center">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Beneficiario.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Beneficiario.Mensagem</h6>
+        </div>
+    }
+</div>

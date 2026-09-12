@@ -1,0 +1,72 @@
+@model MCR.API.Entities.CulturaEntity
+@{
+    if (Model.Cultura.Ativo)
+        ViewData["Title"] = "Culturas - Inativar";
+    else
+        ViewData["Title"] = "Culturas - Ativar";
+}
+<div class="form-box">
+    @if (Model.Cultura.Ativo)
+    {
+        <h4 class="form-title form-box-title justify-content-center align-items-center">Culturas - Inativar</h4>
+    }
+    else
+    {
+        <h4 class="form-title form-box-title justify-content-center align-items-center">Culturas - Ativar</h4>
+    }
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Cultura" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <form asp-controller="Cultura" method="post" id="inativarCultura">
+                <ul class="list-group">
+                    <li class="list-group-item">Nome: @Model.Cultura.Nome</li>
+                    <li class="list-group-item">Ativo? @(Model.Cultura.Ativo ? "Sim" : "Não")</li>
+                </ul>
+                <input asp-for="Cultura.Id" value="@Model.Cultura.Id" hidden>
+                <br />
+                <br />
+                @if (Model.Cultura.Ativo)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <h6>Deseja, realmente, inativar este cadastro?</h6>
+                    </div>
+                    <br />
+                    <div class="social-login">
+                        <button type="submit" action="Inativar" class="login-btn btn d-flex justify-content-center align-items-center" onclick="setAction('Inativar')">
+                            Inativar
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="social-login">
+                        <button type="submit" class="login-btn btn d-flex justify-content-center align-items-center" onclick="setAction('Ativar')">
+                            Ativar
+                        </button>
+                    </div>
+                }
+            </form>
+            @if (Model != null && !Model.Cultura.Sucesso)
+            {
+                <br />
+                <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+                    <h6>Atenção!</h6>
+                    <h6>@Model.Cultura.Mensagem</h6>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    function setAction(action) {
+        document.getElementById("inativarCultura").action = '/Cultura/' + action;
+    }
+</script>

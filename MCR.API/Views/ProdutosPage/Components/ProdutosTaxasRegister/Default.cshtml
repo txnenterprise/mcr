@@ -1,0 +1,138 @@
+﻿@model MCR.API.Produto.Domain.DTO.ProdutosTaxasDTO
+
+@if (Model != null)
+{
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Taxas</h5>
+
+            <button type="button" id="importarTaxasBtn" class="btn btn-secondary btn-sm">Importar Taxas via CSV</button>
+        </div>
+        <div class="card-body">
+            <div class="channel-block border p-2 mb-2">
+                <form id="formProdutosCanal"
+                      asp-antiforgery="true"
+                      asp-action="Adicionar"
+                      asp-controller="ProdutosTaxas"
+                      data-ajax="true" data-ajax-method="POST"
+                      data-ajax-complete="gl.CompleteAjax"
+                      data-ajax-begin="gl.BeginAjax"
+                      data-ajax-success="gl.onSuccess"
+                      data-ajax-failure="gl.onFailed"
+                      data-ajax-callback="produtosJS.taxaOnSuccessCallback">
+                    <div class="row mb-2">
+                        <input type="hidden" asp-for="ProdutoId" />
+                        <input type="hidden" asp-for="ProdutoTaxaId" />
+
+                        <div class="taxa-row">
+                            <div class="row mb-2">
+                                <!-- UF: dropdown fixo -->
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <select class="form-select taxa-uf selected2" asp-for="UF">
+                                            <option value="">Selecione um Estado</option>
+                                            <option value="AC">Acre (AC)</option>
+                                            <option value="AL">Alagoas (AL)</option>
+                                            <option value="AP">Amapá (AP)</option>
+                                            <option value="AM">Amazonas (AM)</option>
+                                            <option value="BA">Bahia (BA)</option>
+                                            <option value="CE">Ceará (CE)</option>
+                                            <option value="DF">Distrito Federal (DF)</option>
+                                            <option value="ES">Espírito Santo (ES)</option>
+                                            <option value="GO">Goiás (GO)</option>
+                                            <option value="MA">Maranhão (MA)</option>
+                                            <option value="MT">Mato Grosso (MT)</option>
+                                            <option value="MS">Mato Grosso do Sul (MS)</option>
+                                            <option value="MG">Minas Gerais (MG)</option>
+                                            <option value="PA">Pará (PA)</option>
+                                            <option value="PB">Paraíba (PB)</option>
+                                            <option value="PR">Paraná (PR)</option>
+                                            <option value="PE">Pernambuco (PE)</option>
+                                            <option value="PI">Piauí (PI)</option>
+                                            <option value="RJ">Rio de Janeiro (RJ)</option>
+                                            <option value="RN">Rio Grande do Norte (RN)</option>
+                                            <option value="RS">Rio Grande do Sul (RS)</option>
+                                            <option value="RO">Rondônia (RO)</option>
+                                            <option value="RR">Roraima (RR)</option>
+                                            <option value="SC">Santa Catarina (SC)</option>
+                                            <option value="SP">São Paulo (SP)</option>
+                                            <option value="SE">Sergipe (SE)</option>
+                                            <option value="TO">Tocantins (TO)</option>
+                                        </select>
+                                        <label>UF</label>
+                                        <span asp-validation-for="UF" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <!-- Município -->
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <select class="form-select taxa-municipio selected2" asp-for="Municipio" data-municipio-padrao="true">
+                                            <option value="">Selecione um Município</option>
+                                            <option value="@Model.Municipio" selected>
+                                                @Model.Municipio
+                                            </option>
+                                        </select>
+                                        <label>Município</label>
+                                        <span asp-validation-for="Municipio" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <!-- Produtividade Esperada -->
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control taxa-produtividade currency" asp-for="ProdutividadeEsperada" placeholder="Produtividade Esperada Kg/HÁ" />
+                                        <label for="ProdutosTaxas_taxa_produtividade">Produtividade Esperada Kg/HÁ</label>
+                                        <span asp-validation-for="ProdutividadeEsperada" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <!-- Taxa NC65 -->
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control taxa-taxaNc65 taxamask" asp-for="TaxaNc65" placeholder="Taxa NC 65%" />
+                                        <label for="ProdutosTaxas_taxa_taxaNc65">Taxa NC 65%</label>
+                                        <span asp-validation-for="TaxaNc65" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control taxa-taxaNc70 taxamask" asp-for="TaxaNc70" placeholder="Taxa NC 70%" />
+                                        <label for="ProdutosTaxas_taxa_taxaNc70">Taxa NC 70%</label>
+                                        <span asp-validation-for="TaxaNc70" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control taxa-taxaNc75 taxamask" asp-for="TaxaNc75" placeholder="Taxa NC 75%" />
+                                        <label for="ProdutosTaxas_taxa_taxaNc75">Taxa NC 75%</label>
+                                        <span asp-validation-for="TaxaNc75" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control taxa-cpf" asp-for="Cpf" placeholder="CPF" />
+                                        <label>CPF</label>
+                                        <span asp-validation-for="Cpf" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button type="submit" id="btTaxaAdd" class="btn btn-success ">Adicionar Taxa</button>
+                                    <button type="button" id="removerTodasTaxasBtn" class="btn btn-danger" onclick="excluirTodasTaxas()">Remover Todas as Taxas</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center">
+                        </div>
+                    </div>
+                </form>
+                <div class="row" id="taxaList">
+                    @await Component.InvokeAsync("ProdutosTaxasList", new { produtoId = Model.ProdutoId })
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+}

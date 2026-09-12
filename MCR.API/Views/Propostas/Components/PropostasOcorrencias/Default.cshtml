@@ -1,0 +1,81 @@
+@using System.IO
+@model List<MCR.API.Propostas.Domain.DTO.PropostasOcorrenciaDTO>
+@{
+    Layout = null;
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h5>Histórico de Ocorrências da Proposta</h5>
+    </div>
+    <div class="col text-end">
+        <button type="button"
+                class="btn btn-primary btn-sm btRegistrarOcorrencia"
+                data-proposta="@ViewBag.PropostaId">
+             Registrar Ocorrência
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info">
+                Nenhuma ocorrência encontrada para esta proposta.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Usuário</th>
+                            <th>Descrição</th>
+                            <th>Anexo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ocorrencia in Model)
+                        {
+                            <tr>
+                                <td>@ocorrencia.DataCriacao.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                <td>@(ocorrencia.NomeUsuario ?? "Usuário não encontrado")</td>
+                                <td>@ocorrencia.Descricao</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(ocorrencia.NomeArquivo))
+                                    {
+                                        <div>
+                                            <span class="badge bg-info me-2">
+                                                <i class="fas fa-paperclip me-1"></i> @ocorrencia.NomeArquivo
+                                            </span>
+                                            @{
+                                                var isImage = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" }
+                                                                .Contains(System.IO.Path.GetExtension(ocorrencia.NomeArquivo).ToLowerInvariant());
+                                            }
+                                            @if (isImage)
+                                            {
+                                                <button type="button"
+                                                onclick="propostaJS.downloadAnexoOcorrencia('@ocorrencia.Id', true)"
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="Download do arquivo">
+                                                    <i class="fas fa-download me-1"></i> Download
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sem anexo</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

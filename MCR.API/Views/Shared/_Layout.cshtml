@@ -1,0 +1,594 @@
+﻿@using System.Security.Claims
+@using System.Linq
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<UsuarioEntity> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var role = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+    string currentUrl = Context.Request.Path;
+    if (!currentUrl.Equals(Url.Action("Authentication", "Login"), StringComparison.OrdinalIgnoreCase) &&
+    !currentUrl.Equals(Url.Action("LogOff", "Login"), StringComparison.OrdinalIgnoreCase) &&
+    !currentUrl.Equals(Url.Action("ForgotPassword", "Login"), StringComparison.OrdinalIgnoreCase) &&
+    !currentUrl.Equals(Url.Action("CheckEmail", "Login"), StringComparison.OrdinalIgnoreCase) &&
+    !currentUrl.Equals(Url.Action("ResetPassword", "Login"), StringComparison.OrdinalIgnoreCase) &&
+    !currentUrl.Equals(Url.Action("ResetPasswordConfirmation", "Login"), StringComparison.OrdinalIgnoreCase) &&
+    !currentUrl.Equals(Url.Action("AccessDenied", "Login"), StringComparison.OrdinalIgnoreCase))
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            string loginUrl = Url.Action("Authentication", "Login");
+            <script>window.location.href = '@loginUrl';</script>
+        }
+    }
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Multi-Cálculo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400&display=swap" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="~/DataTables/DataTables-1.13.8/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="~/DataTables/DataTables-1.13.8/css/dataTables.bootstrap5.css" />
+    <link rel="stylesheet" href="~/DataTables/Responsive-2.5.0/css/responsive.dataTables.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+          integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/lib/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/lib/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="~/lib/quill/quill.snow.css" rel="stylesheet">
+    <link href="~/lib/quill/quill.bubble.css" rel="stylesheet">
+    <link href="~/lib/remixicon/remixicon.css" rel="stylesheet">
+    <link href="~/lib/simple-datatables/style.css" rel="stylesheet">
+    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/sweetalert2/sweetalert2.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cliente.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+
+</head>
+
+<body>
+    @if (User.Identity.IsAuthenticated)
+    {
+
+        <!-- ======= Header ======= -->
+        <header id="header" class="header fixed-top d-flex align-items-center">
+
+            @await Component.InvokeAsync("LayoutLogo")
+
+            <nav class="header-nav ms-auto">
+                <ul class="d-flex align-items-center">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item me-3">
+                            <a asp-controller="CotacaoAgricola" asp-action="Cadastrar"
+                               class="btn btn-success btn-sm rounded-pill d-flex align-items-center gap-1"
+                               style="font-weight: 600; white-space: nowrap;">
+                                <i class="bi bi-plus-lg"></i> Nova Cotação
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item dropdown pe-3">
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0" asp-controller="Home"
+                           asp-action="Index" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="d-none d-md-block dropdown-toggle ps-2">@(user?.Name ?? "Usuário")</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                            <li class="dropdown-header">
+                                <h6>@(user?.Name ?? "Usuário")</h6>
+                                <p>@(user?.Email ?? "")</p>
+                                <p>@role.FirstOrDefault()</p>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" asp-controller="Login"
+                                   asp-action="Logoff">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Sair</span>
+                                </a>
+                            </li>
+
+                        </ul><!-- End Profile Dropdown Items -->
+                    </li><!-- End Profile Nav -->
+
+                </ul>
+            </nav><!-- End Icons Navigation -->
+
+        </header>
+
+        <!-- End Header -->
+        <!-- ======= Sidebar ======= -->
+        <aside id="sidebar" class="sidebar">
+            <ul class="sidebar-nav" id="sidebar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link " asp-controller="Dashboard"
+                       asp-action="Index">
+                        <i class="bi bi-grid"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-heading" menu-permission="Administrador, Corretor, Consultor, Assistente, Gestor do Canal">Seguro Agrícola</li>
+                @*<li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#cotacao-maquinas-equipamentos" data-bs-toggle="collapse">
+        <i>
+        <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+        fill="#899bbd">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+        <path d="M5,4v7.26C3.2,11.9,2,13.6,2,15.5C2,18,4,20,6.5,20c2.29,0,4.21-1.72,4.47-4h4.2C15.06,16.32,15,16.66,15,17 c0,1.66,1.34,3,3,3s3-1.34,3-3c0-0.34-0.06-0.68-0.18-1H22v-3c0-1.11-0.89-2-2-2h-4.96l-1.39-7H5 M7,6h5l1,5v3h-2.26 c-0.58-1.62-2.03-2.77-3.74-2.97V6 M6.5,13.25c1.24,0,2.25,1.01,2.25,2.25s-1.01,2.25-2.25,2.25s-2.25-1.01-2.25-2.25 S5.26,13.25,6.5,13.25 M18,15.5c0.83,0,1.5,0.67,1.5,1.5s-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5S17.17,15.5,18,15.5z">
+        </path>
+        <rect fill="none" width="24" height="24"></rect>
+        </g>
+        </svg>
+        </i><span>Máquinas e Equipamentos</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="cotacao-maquinas-equipamentos" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+        <a asp-controller="Cotacao" asp-action="NovaCotacao">
+        <i class="bi bi-circle"></i><span>Nova Cotação</span>
+        </a>
+        </li>
+        <li>
+        <a asp-controller="Cotacao" asp-action="Index">
+        <i class="bi bi-circle"></i><span>Cotações Realizadas</span>
+        </a>
+        </li>
+        <li>
+        <a asp-controller="Cotacao" asp-action="DashboardGeral">
+        <i class="bi bi-circle"></i><span>Dashboard Geral</span>
+        </a>
+        </li>
+        </ul>
+        </li>*@
+                <a class="nav-link collapsed" asp-controller="ProdutosPage" asp-action="Index" menu-permission="Administrador, Corretor">
+
+                    <i>
+                        <svg width="24px" height="24px" viewBox="0 0 220 220" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path d="M211.5,15.022C211.5,6.726,204.774,0,196.478,0H23.522C15.226,0,8.5,6.726,8.5,15.022v189.955C8.5,213.274,15.226,220,23.522,220h172.955c8.297,0,15.022-6.726,15.022-15.022V15.022z M88.5,199h-49v-45h49V199z M88.5,132h-49V88h49V132z M88.5,66h-49V21h49V66z M144.803,199.63l-26.306-26.306l11.205-11.205l15.101,15.102l23.65-23.65l11.205,11.205L144.803,199.63z M144.803,133.03l-26.306-26.306l11.205-11.205l15.101,15.101l23.65-23.65l11.205,11.205L144.803,133.03z M144.803,66.429l-26.306-26.306l11.205-11.205l15.101,15.101l23.65-23.65l11.205,11.205L144.803,66.429z"
+                                      fill="#899bbd" />
+                            </g>
+                        </svg>
+                    </i>
+                    <span>Produtos</span>
+                </a>
+                <li class="nav-item" menu-permission="Administrador, Corretor, Consultor, Assistente, Gestor do Canal">
+                    <a class="nav-link" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+                        <i>
+                            <svg width="24px" height="24px" viewBox="0 0 1024 1024" fill="#899bbd" class="icon" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path d="M598.672 109.44a229.52 229.52 0 0 0 26.496-7.216 180.848 180.848 0 0 0-35.168-28.288c3.264 11.136 6.144 23.04 8.672 35.504zM471.904 70.496c-13.856 7.536-27.2 17.776-39.856 30.48 8.768 3.184 18.864 6.08 30.176 8.448a413.12 413.12 0 0 1 9.68-38.928zM476.912 320.08c16.064 2.512 34 4.048 53.552 4.048s37.472-1.536 53.536-4.048a1545.728 1545.728 0 0 0-1.872-74.592 437.088 437.088 0 0 1-103.344 0 1505.568 1505.568 0 0 0-1.872 74.592zM378.256 177.264c11.344 11.536 36 23.456 70.992 31.088a977.44 977.44 0 0 1 7.488-67.328c-17.216-3.488-33.104-8.272-46.848-14.304a355.728 355.728 0 0 0-31.632 50.544zM572.464 449.68c2.896-10 5.792-20.048 8.816-29.6 1.216-21.248 2.064-43.776 2.448-67.632a391.68 391.68 0 0 1-53.28 3.664c-18.016 0-36.032-1.28-53.296-3.664 0.528 33.376 1.968 64.176 4.08 92.448l1.136 3.952c14.656 2.032 30.688 3.264 48.064 3.264a351.04 351.04 0 0 0 42.032-2.432zM530.096 657.648a1378.624 1378.624 0 0 1 33.344-174.896c-10.88 0.896-21.936 1.376-32.992 1.376-13.008 0-26-0.704-38.736-1.952 13.536 51.504 24.736 108.176 32.816 170.144 1.968 2.608 3.84 4.528 5.568 5.328zM647.376 128.352c-12.88 5.28-27.52 9.504-43.216 12.672a977.44 977.44 0 0 1 7.488 67.328c31.92-6.96 55.232-17.488 67.696-28.032a362.8 362.8 0 0 0-31.968-51.968zM480.784 213.632c15.28 1.84 31.872 2.912 49.68 2.912a415.68 415.68 0 0 0 49.664-2.912 876.336 876.336 0 0 0-7.728-67.776c-13.744 1.456-27.84 2.272-41.936 2.272s-28.192-0.8-41.952-2.272a876.336 876.336 0 0 0-7.728 67.776zM566.752 114.256c-5.28-25.04-11.168-43.408-16.816-56.496a109.472 109.472 0 0 0-21.92-2.256c-5.632 0-11.2 0.576-16.72 1.44-5.744 13.12-11.776 31.776-17.168 57.312a354.528 354.528 0 0 0 72.624 0zM444.912 313.088a1588.32 1588.32 0 0 1 2.208-72.72c-23.056-4.704-44.224-11.44-61.632-20.08a935.728 935.728 0 0 1 45.36 88.272c4.32 1.6 9.072 3.104 14.064 4.528zM622.384 311.168a916.416 916.416 0 0 1 43.232-85.616l0.672-1.12c-15.504 6.672-33.328 12.032-52.528 15.952 1.536 28.432 2.08 53.888 2.208 72.72 2.208-0.64 4.352-1.28 6.416-1.936zM362.448 210.944c-2.48-4.016-4.96-8.032-7.44-11.904a827.616 827.616 0 0 0-12.4-18.72c-38-55.552-74.4-93.328-99.776-116.112 39.888 89.536 58.304 268.592 66.544 391.248 4.688 69.856 6.08 121.488 6.24 127.712 6.352 98.832 23.216 171.712 44.816 225.648 5.92 14.768 12.16 28.144 18.672 40.176 0.352 0.656 0.688 1.36 1.04 2 0.224 0.432 0.464 0.832 0.704 1.248 50.624 91.296 114.832 106.176 138.464 108.464-2.928-66.448-2.64-128.688 0.464-186.608a1623.072 1623.072 0 0 0-7.52-90.336c-8.368-76.08-21.392-143.824-37.264-203.632a1147.744 1147.744 0 0 0-9.616-34.128 1135.392 1135.392 0 0 0-19.296-59.52 1021.92 1021.92 0 0 0-17.296-44.64 971.904 971.904 0 0 0-19.008-43.232 887.712 887.712 0 0 0-33.088-64.048c-4.752-8.24-9.504-15.936-14.24-23.616zM573.024 510.848a1341.504 1341.504 0 0 0-20.496 103.584 1466.96 1466.96 0 0 0-9.68 72.784c-3.04 28.192-5.424 57.472-7.056 87.872a1887.2 1887.2 0 0 0-0.624 185.76l1.12-0.112c38.144-3.696 182.016-40.144 203.696-377.872 0.144-6.208 1.584-59.456 6.464-131.136 8.336-122.224 26.72-298.176 66.064-386.976-23.536 21.408-56.48 55.76-91.504 105.424a792.624 792.624 0 0 0-24.944 37.632c-0.752 1.216-1.52 2.368-2.272 3.616a902.064 902.064 0 0 0-48.768 90.624c-6.176 13.184-12.208 27.04-18.144 41.376a1112.512 1112.512 0 0 0-46.32 137.488c-2.608 9.76-5.104 19.792-7.536 29.936z">
+                                    </path>
+                                </g>
+                            </svg>
+                        </i><span>Negócios</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="forms-nav" class="nav-content collapse">
+                        <li>
+                            <a asp-action="Cadastrar" asp-controller="CotacaoAgricola">
+                                <i class="bi bi-circle"></i><span>Nova Cotação</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="Index" asp-controller="CotacaoAgricola">
+                                <i class="bi bi-circle"></i><span>Cotações Realizadas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="Index" asp-controller="Propostas">
+                                <i class="bi bi-circle"></i><span>Propostas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="Index" asp-controller="Apolices">
+                                <i class="bi bi-circle"></i><span>Apólices</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="Index" asp-controller="Endosso">
+                                <i class="bi bi-circle"></i><span>Endossos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="Index" asp-controller="Sinistro">
+                                <i class="bi bi-circle"></i><span>Sinistros</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @*<li class="nav-item" menu-permission="Administrador, Corretor, Consultor, Assistente">
+        <a class="nav-link collapsed" data-bs-target="#propostas-nav" data-bs-toggle="collapse" href="#">
+        <i>
+        <svg width="24px" height="24px" viewBox="0 0 1024 1024" fill="#899bbd" class="icon" version="1.1"
+        xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+        <path d="M598.672 109.44a229.52 229.52 0 0 0 26.496-7.216 180.848 180.848 0 0 0-35.168-28.288c3.264 11.136 6.144 23.04 8.672 35.504zM471.904 70.496c-13.856 7.536-27.2 17.776-39.856 30.48 8.768 3.184 18.864 6.08 30.176 8.448a413.12 413.12 0 0 1 9.68-38.928zM476.912 320.08c16.064 2.512 34 4.048 53.552 4.048s37.472-1.536 53.536-4.048a1545.728 1545.728 0 0 0-1.872-74.592 437.088 437.088 0 0 1-103.344 0 1505.568 1505.568 0 0 0-1.872 74.592zM378.256 177.264c11.344 11.536 36 23.456 70.992 31.088a977.44 977.44 0 0 1 7.488-67.328c-17.216-3.488-33.104-8.272-46.848-14.304a355.728 355.728 0 0 0-31.632 50.544zM572.464 449.68c2.896-10 5.792-20.048 8.816-29.6 1.216-21.248 2.064-43.776 2.448-67.632a391.68 391.68 0 0 1-53.28 3.664c-18.016 0-36.032-1.28-53.296-3.664 0.528 33.376 1.968 64.176 4.08 92.448l1.136 3.952c14.656 2.032 30.688 3.264 48.064 3.264a351.04 351.04 0 0 0 42.032-2.432zM530.096 657.648a1378.624 1378.624 0 0 1 33.344-174.896c-10.88 0.896-21.936 1.376-32.992 1.376-13.008 0-26-0.704-38.736-1.952 13.536 51.504 24.736 108.176 32.816 170.144 1.968 2.608 3.84 4.528 5.568 5.328zM647.376 128.352c-12.88 5.28-27.52 9.504-43.216 12.672a977.44 977.44 0 0 1 7.488 67.328c31.92-6.96 55.232-17.488 67.696-28.032a362.8 362.8 0 0 0-31.968-51.968zM480.784 213.632c15.28 1.84 31.872 2.912 49.68 2.912a415.68 415.68 0 0 0 49.664-2.912 876.336 876.336 0 0 0-7.728-67.776c-13.744 1.456-27.84 2.272-41.936 2.272s-28.192-0.8-41.952-2.272a876.336 876.336 0 0 0-7.728 67.776zM566.752 114.256c-5.28-25.04-11.168-43.408-16.816-56.496a109.472 109.472 0 0 0-21.92-2.256c-5.632 0-11.2 0.576-16.72 1.44-5.744 13.12-11.776 31.776-17.168 57.312a354.528 354.528 0 0 0 72.624 0zM444.912 313.088a1588.32 1588.32 0 0 1 2.208-72.72c-23.056-4.704-44.224-11.44-61.632-20.08a935.728 935.728 0 0 1 45.36 88.272c4.32 1.6 9.072 3.104 14.064 4.528zM622.384 311.168a916.416 916.416 0 0 1 43.232-85.616l0.672-1.12c-15.504 6.672-33.328 12.032-52.528 15.952 1.536 28.432 2.08 53.888 2.208 72.72 2.208-0.64 4.352-1.28 6.416-1.936zM362.448 210.944c-2.48-4.016-4.96-8.032-7.44-11.904a827.616 827.616 0 0 0-12.4-18.72c-38-55.552-74.4-93.328-99.776-116.112 39.888 89.536 58.304 268.592 66.544 391.248 4.688 69.856 6.08 121.488 6.24 127.712 6.352 98.832 23.216 171.712 44.816 225.648 5.92 14.768 12.16 28.144 18.672 40.176 0.352 0.656 0.688 1.36 1.04 2 0.224 0.432 0.464 0.832 0.704 1.248 50.624 91.296 114.832 106.176 138.464 108.464-2.928-66.448-2.64-128.688 0.464-186.608a1623.072 1623.072 0 0 0-7.52-90.336c-8.368-76.08-21.392-143.824-37.264-203.632a1147.744 1147.744 0 0 0-9.616-34.128 1135.392 1135.392 0 0 0-19.296-59.52 1021.92 1021.92 0 0 0-17.296-44.64 971.904 971.904 0 0 0-19.008-43.232 887.712 887.712 0 0 0-33.088-64.048c-4.752-8.24-9.504-15.936-14.24-23.616zM573.024 510.848a1341.504 1341.504 0 0 0-20.496 103.584 1466.96 1466.96 0 0 0-9.68 72.784c-3.04 28.192-5.424 57.472-7.056 87.872a1887.2 1887.2 0 0 0-0.624 185.76l1.12-0.112c38.144-3.696 182.016-40.144 203.696-377.872 0.144-6.208 1.584-59.456 6.464-131.136 8.336-122.224 26.72-298.176 66.064-386.976-23.536 21.408-56.48 55.76-91.504 105.424a792.624 792.624 0 0 0-24.944 37.632c-0.752 1.216-1.52 2.368-2.272 3.616a902.064 902.064 0 0 0-48.768 90.624c-6.176 13.184-12.208 27.04-18.144 41.376a1112.512 1112.512 0 0 0-46.32 137.488c-2.608 9.76-5.104 19.792-7.536 29.936z">
+        </path>
+        </g>
+        </svg>
+        </i><span>Propostas</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="propostas-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+        <a asp-action="Cadastrar" asp-controller="Propostas">
+        <i class="bi bi-circle"></i><span>Nova Proposta</span>
+        </a>
+        </li>
+        <li>
+        <a asp-action="Index" asp-controller="Propostas">
+        <i class="bi bi-circle"></i><span>Propostas Realizadas</span>
+        </a>
+        </li>
+        </ul>
+        </li>*@
+                <li class="nav-heading" menu-permission="Administrador, Corretor, Gestor do Canal">Estruturas de Negócio</li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="Canal" asp-action="Index" menu-permission="Administrador, Corretor">
+                        <i>
+                            <svg fill="#899bbd" width="24px" height="24px" viewBox="0 0 50 50"
+                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path d="M8 2L8 6L4 6L4 48L46 48L46 14L30 14L30 6L26 6L26 2 Z M 10 4L24 4L24 8L28 8L28 46L19 46L19 39L15 39L15 46L6 46L6 8L10 8 Z M 10 10L10 12L12 12L12 10 Z M 14 10L14 12L16 12L16 10 Z M 18 10L18 12L20 12L20 10 Z M 22 10L22 12L24 12L24 10 Z M 10 15L10 19L12 19L12 15 Z M 14 15L14 19L16 19L16 15 Z M 18 15L18 19L20 19L20 15 Z M 22 15L22 19L24 19L24 15 Z M 30 16L44 16L44 46L30 46 Z M 32 18L32 20L34 20L34 18 Z M 36 18L36 20L38 20L38 18 Z M 40 18L40 20L42 20L42 18 Z M 10 21L10 25L12 25L12 21 Z M 14 21L14 25L16 25L16 21 Z M 18 21L18 25L20 25L20 21 Z M 22 21L22 25L24 25L24 21 Z M 32 22L32 24L34 24L34 22 Z M 36 22L36 24L38 24L38 22 Z M 40 22L40 24L42 24L42 22 Z M 32 26L32 28L34 28L34 26 Z M 36 26L36 28L38 28L38 26 Z M 40 26L40 28L42 28L42 26 Z M 10 27L10 31L12 31L12 27 Z M 14 27L14 31L16 31L16 27 Z M 18 27L18 31L20 31L20 27 Z M 22 27L22 31L24 31L24 27 Z M 32 30L32 32L34 32L34 30 Z M 36 30L36 32L38 32L38 30 Z M 40 30L40 32L42 32L42 30 Z M 10 33L10 37L12 37L12 33 Z M 14 33L14 37L16 37L16 33 Z M 18 33L18 37L20 37L20 33 Z M 22 33L22 37L24 37L24 33 Z M 32 34L32 36L34 36L34 34 Z M 36 34L36 36L38 36L38 34 Z M 40 34L40 36L42 36L42 34 Z M 32 38L32 40L34 40L34 38 Z M 36 38L36 40L38 40L38 38 Z M 40 38L40 40L42 40L42 38 Z M 10 39L10 44L12 44L12 39 Z M 22 39L22 44L24 44L24 39 Z M 32 42L32 44L34 44L34 42 Z M 36 42L36 44L38 44L38 42 Z M 40 42L40 44L42 44L42 42Z">
+                                    </path>
+                                </g>
+                            </svg>
+                        </i>
+                        <span>Canais</span>
+                    </a>
+                    <a class="nav-link collapsed" asp-controller="PontoAtendimento" asp-action="Index" menu-permission="Administrador, Corretor, Gestor do Canal, Consultor">
+                        <i>
+                            <svg width="24px" height="24px" viewBox="0 0 16 16" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path d="M1 6V15H6V11C6 9.89543 6.89543 9 8 9C9.10457 9 10 9.89543 10 11V15H15V6L8 0L1 6Z"
+                                          fill="#899bbd"></path>
+                                </g>
+                            </svg>
+                        </i>
+                        <span>Pontos de Atendimento</span>
+                    </a>
+                    <a class="nav-link collapsed" asp-controller="EstruturaNegocio" asp-action="Index" menu-permission="Administrador, Corretor">
+                        <i>
+                            <svg width="24px" height="24px" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1"
+                                 xmlns="http://www.w3.org/2000/svg" fill="#899bbd">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <defs>
+                                        <style>
+                                            .cls-1 {
+                                                fill: none;
+                                                stroke: #899bbd;
+                                                stroke-miterlimit: 10;
+                                                stroke-width: 1.91px;
+                                            }
+                                        </style>
+                                    </defs>
+                                    <polygon class="cls-1"
+                                             points="12.96 11.04 12.96 18.68 1.5 18.68 1.5 11.04 7.23 5.32 12.96 11.04">
+                                    </polygon>
+                                    <polygon class="cls-1"
+                                             points="17.73 11.04 17.73 18.68 12.96 18.68 12.96 11.04 9.61 7.71 12 5.32 17.73 11.04">
+                                    </polygon>
+                                    <polygon class="cls-1"
+                                             points="22.5 11.04 22.5 18.68 17.73 18.68 17.73 11.04 14.39 7.71 16.77 5.32 22.5 11.04">
+                                    </polygon>
+                                    <rect class="cls-1" x="5.32" y="13.91" width="3.82" height="4.77"></rect>
+                                </g>
+                            </svg>
+                        </i>
+                        <span>Estruturas de Negócio</span>
+                    </a>
+
+                </li>
+                <li class="nav-heading" menu-permission="Administrador, Consultor, Assistente">Riscos</li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="Cliente" asp-action="Index" menu-permission="Administrador, Consultor, Assistente">
+                        <i>
+                            <svg fill="#899bbd" width="24px" height="24px" viewBox="0 0 14 14" role="img" focusable="false"
+                                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path d="M 5.5075,1 C 4.7215,1 4.31614,2.06224 3.8875,3.19 3.74326,3.56896 3.5983,3.9556 3.4375,4.3 4.44814,3.95128 5.662,3.7525 7,3.7525 c 1.35072,0 2.57658,0.20004 3.5925,0.555 C 10.44946,3.9931 10.3132,3.64738 10.18,3.3025 9.72328,2.11906 9.29242,1 8.4925,1 8.1145,1 7.849,1.21588 7.615,1.405 7.4086,1.5718 7.23208,1.7125 7,1.7125 6.76792,1.7125 6.5914,1.5718 6.385,1.405 6.15076,1.21588 5.88574,1 5.5075,1 Z M 7,4.2325 C 3.63544,4.2325 1,5.5648 1,7.27 1,8.33344 2.03992,9.29632 3.79,9.85 4.43608,11.36224 5.4304,13 7,13 8.56984,13 9.56392,11.35522 10.21,9.8425 11.95864,9.28858 13,8.33248 13,7.27 13,5.56504 10.36456,4.2325 7,4.2325 Z M 7,6.28 c 2.7432,0 3.09192,0.71376 3.12,0.78 l 0,0.57 0.2775,-0.0375 c 0.0017,0 0.1737,-0.01998 0.2925,0.0825 0.12504,0.10824 0.15,0.32064 0.15,0.48 0,0.34824 -0.25848,0.63174 -0.6,0.6675 L 10.0975,8.8375 10.045,8.98 C 9.13972,11.36296 8.14096,12.52 7,12.52 5.85928,12.52 4.8673,11.36272 3.9625,8.98 L 3.91,8.8375 3.76,8.8225 C 3.41728,8.7877 3.16,8.5042 3.16,8.155 3.16,7.93636 3.2116,7.77904 3.31,7.69 3.43336,7.5784 3.60952,7.59298 3.61,7.5925 l 0.27,0.03 0,-0.555 C 3.9148,6.97942 4.28152,6.28 7,6.28 Z">
+                                    </path>
+                                </g>
+                            </svg>
+                        </i>
+                        <span>Clientes</span>
+                    </a>
+                </li>
+                <li class="nav-heading" menu-permission="Administrador, Gestor do Canal, Consultor">Beneficiários</li>
+                <li class="nav-item" menu-permission="Administrador, Gestor do Canal, Consultor">
+                    <a class="nav-link collapsed" asp-controller="Beneficiario" asp-action="Index">
+                        <i>
+                            <svg fill="#899bbd" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        </i>
+                        <span>Beneficiário</span>
+                    </a>
+                </li>
+                <li class="nav-heading" menu-permission="Administrador, Corretor, Gestor do Canal, Consultor">Acessos</li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="Usuario" asp-action="Index" menu-permission="Administrador, Corretor, Gestor do Canal, Consultor">
+                        <i>
+                            <svg width="24px" height="24px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#899bbd"></path> <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#899bbd"></path> </g></svg>
+                        </i>
+                        <span>Usuários</span>
+                    </a>
+                </li>
+                @* 
+                <li class="nav-item">
+                    <a class="nav-link collapsed" asp-controller="Corretora" asp-action="Configurar" menu-permission="Corretor">
+                        <i>
+                            <svg width="24px" height="24px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#899bbd"></path> <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.34315 2 12V15H14V12Z" fill="#899bbd"></path> </g></svg>
+                        </i>
+                        <span>Configurações</span>
+                    </a>
+                </li>
+                *@
+                @if (User.IsInRole("Administrador"))
+                {
+                    <li class="nav-heading">Cadastros Gerais</li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="Seguradora" asp-action="Index">
+                            <i class="bi bi-shield-check"></i>
+                            <span>Seguradoras</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="Safra" asp-action="Index">
+                            <i class="bi bi-calendar3"></i>
+                            <span>Safras</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="Cultura" asp-action="Index">
+                            <i class="bi bi-flower1"></i>
+                            <span>Culturas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="SubvencaoFederal" asp-action="Index">
+                            <i class="bi bi-bank"></i>
+                            <span>Subvenções Federais</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="SubvencaoEstadual" asp-action="Index">
+                            <i class="bi bi-building"></i>
+                            <span>Subvenções Estaduais</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="Corretora" asp-action="Index">
+                            <i class="bi bi-building-add"></i>
+                            <span>Corretora</span>
+                        </a>
+                    </li>
+                    <li class="nav-heading">Administração</li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
+                            <i>
+                                <svg fill="#899bbd" height="24px" width="24px" version="1.1" id="Capa_1"
+                                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     viewBox="0 0 474.565 474.565" xml:space="preserve">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                <g>
+                                <path d="M255.204,102.3c-0.606-11.321-12.176-9.395-23.465-9.395C240.078,95.126,247.967,98.216,255.204,102.3z">
+                                                                    </path>
+                                <path d="M134.524,73.928c-43.825,0-63.997,55.471-28.963,83.37c11.943-31.89,35.718-54.788,66.886-63.826 C163.921,81.685,150.146,73.928,134.524,73.928z">
+                                                                    </path>
+                                <path d="M43.987,148.617c1.786,5.731,4.1,11.229,6.849,16.438L36.44,179.459c-3.866,3.866-3.866,10.141,0,14.015l25.375,25.383 c1.848,1.848,4.38,2.888,7.019,2.888c2.61,0,5.125-1.04,7.005-2.888l14.38-14.404c2.158,1.142,4.55,1.842,6.785,2.827 c0-0.164-0.016-0.334-0.016-0.498c0-11.771,1.352-22.875,3.759-33.302c-17.362-11.174-28.947-30.57-28.947-52.715 c0-34.592,28.139-62.739,62.723-62.739c23.418,0,43.637,13.037,54.43,32.084c11.523-1.429,22.347-1.429,35.376,1.033 c-1.676-5.07-3.648-10.032-6.118-14.683l14.396-14.411c1.878-1.856,2.918-4.38,2.918-7.004c0-2.625-1.04-5.148-2.918-7.004 l-25.361-25.367c-1.94-1.941-4.472-2.904-7.003-2.904c-2.532,0-5.063,0.963-6.989,2.904l-14.442,14.411 c-5.217-2.764-10.699-5.078-16.444-6.825V9.9c0-5.466-4.411-9.9-9.893-9.9h-35.888c-5.451,0-9.909,4.434-9.909,9.9v20.359 c-5.73,1.747-11.213,4.061-16.446,6.825L75.839,22.689c-1.942-1.941-4.473-2.904-7.005-2.904c-2.531,0-5.077,0.963-7.003,2.896 L36.44,48.048c-1.848,1.864-2.888,4.379-2.888,7.012c0,2.632,1.04,5.148,2.888,7.004l14.396,14.403 c-2.75,5.218-5.063,10.708-6.817,16.438H23.675c-5.482,0-9.909,4.441-9.909,9.915v35.889c0,5.458,4.427,9.908,9.909,9.908H43.987z">
+                                                                    </path>
+                                <path d="M354.871,340.654c15.872-8.705,26.773-25.367,26.773-44.703c0-28.217-22.967-51.168-51.184-51.168 c-9.923,0-19.118,2.966-26.975,7.873c-4.705,18.728-12.113,36.642-21.803,52.202C309.152,310.022,334.357,322.531,354.871,340.654z ">
+                                                                    </path>
+                                <path d="M460.782,276.588c0-5.909-4.799-10.693-10.685-10.693H428.14c-1.896-6.189-4.411-12.121-7.393-17.75l15.544-15.544 c2.02-2.004,3.137-4.721,3.137-7.555c0-2.835-1.118-5.553-3.137-7.563l-27.363-27.371c-2.08-2.09-4.829-3.138-7.561-3.138 c-2.734,0-5.467,1.048-7.547,3.138l-15.576,15.552c-5.623-2.982-11.539-5.481-17.751-7.369v-21.958 c0-5.901-4.768-10.685-10.669-10.685H311.11c-2.594,0-4.877,1.04-6.739,2.578c3.26,11.895,5.046,24.793,5.046,38.552 c0,8.735-0.682,17.604-1.956,26.423c7.205-2.656,14.876-4.324,22.999-4.324c36.99,0,67.086,30.089,67.086,67.07 c0,23.637-12.345,44.353-30.872,56.303c13.48,14.784,24.195,32.324,31.168,51.976c1.148,0.396,2.344,0.684,3.54,0.684 c2.733,0,5.467-1.04,7.563-3.13l27.379-27.371c2.004-2.004,3.106-4.721,3.106-7.555s-1.102-5.551-3.106-7.563l-15.576-15.552 c2.982-5.621,5.497-11.555,7.393-17.75h21.957c2.826,0,5.575-1.118,7.563-3.138c2.004-1.996,3.138-4.72,3.138-7.555 L460.782,276.588z">
+                                                                    </path>
+                                <path d="M376.038,413.906c-16.602-48.848-60.471-82.445-111.113-87.018c-16.958,17.958-37.954,29.351-61.731,29.351 c-23.759,0-44.771-11.392-61.713-29.351c-50.672,4.573-94.543,38.17-111.145,87.026l-9.177,27.013 c-2.625,7.773-1.368,16.338,3.416,23.007c4.783,6.671,12.486,10.631,20.685,10.631h315.853c8.215,0,15.918-3.96,20.702-10.631 c4.767-6.669,6.041-15.234,3.4-23.007L376.038,413.906z">
+                                                                    </path>
+                                <path d="M120.842,206.782c0,60.589,36.883,125.603,82.352,125.603c45.487,0,82.368-65.014,82.368-125.603 C285.563,81.188,120.842,80.939,120.842,206.782z">
+                                                                    </path>
+                                                                </g>
+                                                            </g>
+                                                        </svg>
+                            </i>
+                            <span>Administrador</span><i class="bi bi-chevron-down ms-auto"></i>
+                        </a>
+                        <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                            <li>
+                                <a asp-controller="Corretora" asp-action="Index">
+                                    <i class="bi bi-circle"></i><span>Filiais</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Parametrizacao" asp-action="Index">
+                                    <i class="bi bi-circle"></i><span>Parametrização</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                }
+                @if (User.IsInRole("SuperUsuario"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="Seguradora" asp-action="Index">
+                            <i class="bi bi-shield-check"></i>
+                            <span>Seguradoras</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" asp-controller="Seguradora" asp-action="Index">
+                            <i class="bi bi-grid"></i>
+                            <span>Estrutura Multi-Cálculo</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </aside>
+
+        <main id="main" class="main">
+            <section class="section dashboard">
+                <div class="row">
+                    <div class="row">
+                        @RenderBody()
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer id="footer" class="footer">
+            <div class="copyright">
+                &copy; Copyright <strong><span>TXN enterprise</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                um produto <a href="https://txnenterprise.com.br/">TXN enterprise</a>
+            </div>
+        </footer>
+
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+            <i class="bi bi-arrow-up-short"></i>
+        </a>
+    }
+    else
+    {
+        <main id="main" class="main">
+            <section class="section dashboard">
+                <div class="row">
+                    <div class="row">
+                        @RenderBody()
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    }
+
+    <!-- jQuery completo (não slim) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- jQuery Validate -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="~/DataTables/DataTables-1.13.8/js/jquery.dataTables.js"></script>
+    <script src="~/DataTables/DataTables-1.13.8/js/dataTables.bootstrap5.js"></script>
+    <script src="~/DataTables/Responsive-2.5.0/js/dataTables.responsive.js"></script>
+
+    <!-- Bibliotecas básicas de UI -->
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bibliotecas de validação na ordem correta -->
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validate/additional-methods.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <!-- Plugins jQuery utilitários -->
+    <script src="~/lib/custom/jquery.mask.min.js"></script>
+    <script src="~/lib/custom/jquery.maskMoney.min.js"></script>
+
+    <script src="~/lib/jquery-confirm/jquery-confirm.min.js"></script>
+
+    <!-- utilitários customizados -->
+    <script src="~/lib/custom/linq.min.js" asp-append-version="true"></script>
+    <script src="~/lib/custom/jquery.blockUI.min.js" asp-append-version="true"></script>
+
+    <!-- Bibliotecas externas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+    @*<script src="~/DataTables/datatables.min.js"></script>*@
+
+    <!-- Bibliotecas de visualização -->
+    <script src="~/lib/apexcharts/apexcharts.min.js"></script>
+    <script src="~/lib/chart.js/chart.umd.js"></script>
+    <script src="~/lib/echarts/echarts.min.js"></script>
+    <script src="~/lib/quill/quill.js"></script>
+    <script src="~/lib/simple-datatables/simple-datatables.js"></script>
+    <script src="~/lib/tinymce/tinymce.min.js"></script>
+    <script src="~/lib/php-email-form/validate.js"></script>
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/lib/dropzone/min/dropzone.min.js"></script>
+    <script src="~/lib/custom/upload/mod-upload.min.js"></script>
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+
+    <!-- Scripts da aplicação -->
+    <script src="~/lib/custom/global.js" asp-append-version="true"></script>
+    <script src="~/js/main.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/mcr.js" asp-append-version="true"></script>
+    @*<script src="~/js/table.js" asp-append-version="true"></script>*@
+
+    <!-- Script de configuração validação de decimais -->
+    <script>
+        $(document).ready(function () {
+            // Verifica se o jQuery Validate está disponível
+            if (typeof $.validator !== 'undefined' && $.validator && $.validator.methods) {
+                // Configurar o jQuery Validate para aceitar vírgula como separador decimal
+                $.validator.methods.number = function (value, element) {
+                    return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+                };
+
+                // Configurar o jQuery Validate para analisar corretamente números decimais com vírgula
+                $.validator.methods.range = function (value, element, param) {
+                    var normalizedValue = value.replace(",", ".");
+                    return this.optional(element) || (normalizedValue >= param[0] && normalizedValue <= param[1]);
+                };
+            } else {
+                console.warn("jQuery Validate não está carregado corretamente");
+            }
+        });
+    </script>
+
+       <!-- Scripts adicionais da seção -->
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+<!-- 2.0.0.0 -->
+<!-- um produto TXN enterprise | https://txnenterprise.com.br/ | contato@txnenterprise.com.br -->
+
+</html>

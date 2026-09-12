@@ -1,0 +1,163 @@
+﻿@model MCR.API.Models.ViewModels.UsuarioModel
+@{
+    ViewData["Title"] = "Usuários - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Usuários - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Usuario" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="Usuario" asp-action="Cadastrar" method="post" id="formCadastro">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <select class="form-select form-input form-control-placeholder" aria-label="PerfilAcesso" asp-for="PerfilAcesso" id="PerfilAcesso" asp-items="ViewBag.ListaPerfis">
+                                <option value="">Selecione um perfil</option>
+                            </select>
+                            <label for="PerfilAcesso">Perfil de Acesso</label>
+                            <span asp-validation-for="PerfilAcesso" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Nome" id="Nome" placeholder="Nome" required>
+                            <label for="Nome">Nome</label>
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="email" class="form-control form-input form-control-placeholder" asp-for="Email" id="Email" placeholder="E-Mail" required>
+                            <label for="Email">E-Mail</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Document" id="Document" placeholder="Documento">
+                            <label for="Document">Documento</label>
+                            <span asp-validation-for="Document" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Telefone">
+                            <label for="PhoneNumber">Telefone</label>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-check form-switch mt-4">
+                            <input class="form-check-input" type="checkbox" role="switch" asp-for="UtilizaOAuth" id="UtilizaOAuth">
+                            <label class="form-check-label" for="UtilizaOAuth">Utilizará oAuth?</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="senhaContainer">
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="password" class="form-control form-input form-control-placeholder" asp-for="Password" id="Password" placeholder="Senha" required>
+                            <label for="Password">Senha</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="form-floating">
+                            <input type="password" class="form-control form-input form-control-placeholder" asp-for="ConfirmPassword" id="ConfirmPassword" placeholder="Confirmar Senha" required>
+                            <label for="ConfirmPassword">Confirmar Senha</label>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                        <div class="accordion" id="accordionPassword">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        Dicas para a Senha
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionPassword">
+                                    <div class="accordion-body">
+                                        <p>A senha deve conter no mínimo 8 caracteres;</p>
+                                        <p>A senha deve conter pelo menos uma letra maiúscula;</p>
+                                        <p>A senha deve conter pelo menos uma letra minúscula;</p>
+                                        <p>A senha deve conter pelo menos um número;</p>
+                                        <p>A senha deve conter pelo menos um caractere especial.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select selected2" asp-items="@ViewBag.Corretora" name="CorretoraId" id="CorretoraId">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <label for="CorretoraId">Corretora</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select" asp-items="@ViewBag.Canal" name="CanalId" id="CanalId" >
+                                <option value="">Selecione...</option>
+                            </select>
+                           
+                            <label for="CanalId">Canal</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select selected2"  asp-items="@ViewBag.PontoAtendimento" name="PontoAtendimentoId" id="PontoAtendimentoId">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <label for="PontoAtendimentoId">Ponto de Atendimento</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Sucesso && !string.IsNullOrEmpty(Model.Mensagem))
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Mensagem</h6>
+        </div>
+    }
+</div>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            document.getElementById('UtilizaOAuth').onchange = function () {
+                document.getElementById('Password').disabled = this.checked;
+                document.getElementById('ConfirmPassword').disabled = this.checked;
+            };
+
+            Basics.maskCpf("#formCadastro input[name=Document]");
+            Basics.maskPhone("#formCadastro input[name=PhoneNumber]");
+
+        });
+
+    </script>
+}

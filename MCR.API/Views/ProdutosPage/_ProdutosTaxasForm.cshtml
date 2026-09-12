@@ -1,0 +1,604 @@
+@model MCR.API.Models.ProdutosViewModel
+<!-- Campos Hidden -->
+<input type="hidden" asp-for="Produto.Id" />
+<input type="hidden" asp-for="Produto.Ativo" value="true" />
+
+<!-- Seção: Dados do Produto -->
+<div class="card mb-3" style="border-radius: 15px; border-color: var(--color-primary)">
+    <div class="card-body" style="color: var(--color-primary)">
+        <div class="row  mt-4">
+            <!-- Safra -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select asp-for="Produto.SafraId" class="form-select" asp-items="Model.SafraOptions">
+                        <option value="" selected disabled hidden>Selecione uma Safra</option>
+                    </select>
+                    <label for="Produto_SafraId">Safra</label>
+                    <span asp-validation-for="Produto.SafraId" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- Cultura/Variedade -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select asp-for="Produto.CulturaId" class="form-control" asp-items="Model.CulturaOptions">
+                        <option value="" selected disabled hidden>Selecione uma Cultura</option>
+                    </select>
+                    <label for="Produto_CulturaId">Cultura</label>
+                    <span asp-validation-for="Produto.CulturaId" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- Seguradora -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select asp-for="Produto.SeguradoraId" class="form-select" asp-items="Model.SeguradoraOptions">
+                        <option value="" selected disabled hidden>Selecione uma Seguradora</option>
+                    </select>
+                    <label for="Produto_SeguradoraId">Seguradora</label>
+                    <span asp-validation-for="Produto.SeguradoraId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <!-- Nome do Produto -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" asp-for="Produto.NomeProduto" placeholder="Nome do Produto" />
+                    <label asp-for="Produto.NomeProduto"></label>
+                    <span asp-validation-for="Produto.NomeProduto" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- Comissão -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency" asp-for="Produto.PorcentagemComissao" placeholder="Porcentagem de Comissão" />
+                    <label asp-for="Produto.PorcentagemComissao"></label>
+                    <span asp-validation-for="Produto.PorcentagemComissao" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- Repasse -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency" asp-for="Produto.PorcentagemRepasse" placeholder="Porcentagem de Repasse" />
+                    <label asp-for="Produto.PorcentagemRepasse"></label>
+                    <span asp-validation-for="Produto.PorcentagemRepasse" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <!-- Processo SUSEP -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control" asp-for="Produto.ProcessoSusep" placeholder="Código Processo SUSEP" />
+                    <label asp-for="Produto.ProcessoSusep"></label>
+                    <span asp-validation-for="Produto.ProcessoSusep" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- Modalidade -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select asp-for="Produto.Modalidade" class="form-select" id="modalidadeDropdown">
+                        <option value="" selected disabled hidden>Selecione a Modalidade</option>
+                        <option value="Produtividade">Produtividade</option>
+                        <option value="Custeio">Custeio</option>
+                    </select>
+                    <label asp-for="Produto.Modalidade"></label>
+                    <span asp-validation-for="Produto.Modalidade" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <!-- Campos Condicionais para Modalidade -->
+        <div id="produtividadeFields" style="display:none;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control currency" asp-for="Produto.ValorSacaMinimo" placeholder="Valor Saca Mínimo" />
+                        <label asp-for="Produto.ValorSacaMinimo"></label>
+                        <span asp-validation-for="Produto.ValorSacaMinimo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control currency" asp-for="Produto.ValorSacaMaximo" placeholder="Valor Saca Máximo" />
+                        <label asp-for="Produto.ValorSacaMaximo"></label>
+                        <span asp-validation-for="Produto.ValorSacaMaximo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control currency" asp-for="Produto.ValorSacaSugerido" placeholder="Valor Saca Sugerido" />
+                        <label asp-for="Produto.ValorSacaSugerido"></label>
+                        <span asp-validation-for="Produto.ValorSacaSugerido" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="custeioFields" style="display:none;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control currency" asp-for="Produto.ValorCusteioMinimo" placeholder="Valor Custeio Mínimo" />
+                        <label asp-for="Produto.ValorCusteioMinimo"></label>
+                        <span asp-validation-for="Produto.ValorCusteioMinimo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control currency" asp-for="Produto.ValorCusteioMaximo" placeholder="Valor Custeio Máximo" />
+                        <label asp-for="Produto.ValorCusteioMaximo"></label>
+                        <span asp-validation-for="Produto.ValorCusteioMaximo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="text" class="form-control currency" asp-for="Produto.ValorCusteioSugerido" placeholder="Valor Custeio Sugerido" />
+                        <label asp-for="Produto.ValorCusteioSugerido"></label>
+                        <span asp-validation-for="Produto.ValorCusteioSugerido" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <!-- Área e Prêmio -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency" asp-for="Produto.AreaMinimaItem" placeholder="Área Mínima por Item" />
+                    <label asp-for="Produto.AreaMinimaItem"></label>
+                    <span asp-validation-for="Produto.AreaMinimaItem" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency" asp-for="Produto.AreaMinimaTotal" placeholder="Área Mínima Total" />
+                    <label asp-for="Produto.AreaMinimaTotal"></label>
+                    <span asp-validation-for="Produto.AreaMinimaTotal" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency" asp-for="Produto.PremioMinimo" placeholder="Prêmio Mínimo" />
+                    <label asp-for="Produto.PremioMinimo"></label>
+                    <span asp-validation-for="Produto.PremioMinimo" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <!-- Forma de Pagamento -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency" asp-for="Produto.KiloPorSaca" placeholder="Valor Kilo por Saca" />
+                    <label asp-for="Produto.KiloPorSaca"></label>
+                    <span asp-validation-for="Produto.KiloPorSaca" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select asp-for="Produto.FormaDePagamento" class="form-select">
+                        <option value="" selected disabled hidden>Selecione a Forma de Pagamento</option>
+                        <option value="Boleto">Boleto</option>
+                        <option value="DebitoEmConta">Débito em Conta</option>
+                        <option value="CartaoDeCredito">Cartão de Crédito</option>
+                    </select>
+                    <label asp-for="Produto.FormaDePagamento"></label>
+                    <span asp-validation-for="Produto.FormaDePagamento" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- Parcelamento -->
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select asp-for="Produto.Parcelamento" class="form-select">
+                        <option value="" selected disabled hidden>Selecione o Parcelamento</option>
+                        <option value="Avista">À vista</option>
+                        <option value="DuasVezes">Duas vezes</option>
+                        <option value="TresVezes">Três vezes</option>
+                    </select>
+                    <label asp-for="Produto.Parcelamento"></label>
+                    <span asp-validation-for="Produto.Parcelamento" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <!-- Tipo de Solo - Agora como Checkboxes -->
+            <div class="col-md-6 col-sm-12">
+                <label>Escolha os tipos de solos aceitos</label>
+                <div class="d-flex">
+                    <div class="form-check me-3">
+                        @{
+                            bool isTipo1 = Model.Produto.TipoSolo != null && Model.Produto.TipoSolo.Contains("Tipo1");
+                        }
+                        <input class="form-check-input" type="checkbox" name="Produto.TipoSolo" value="Tipo1" id="chkTipo1" @(isTipo1 ? "checked" : "") />
+                        <label class="form-check-label" for="chkTipo1">Tipo 1</label>
+                        <span asp-validation-for="Produto.TipoSolo" class="text-danger"></span>
+                    </div>
+                    <div class="form-check me-3">
+                        @{
+                            bool isTipo2 = Model.Produto.TipoSolo != null && Model.Produto.TipoSolo.Contains("Tipo2");
+                        }
+                        <input class="form-check-input" type="checkbox" name="Produto.TipoSolo" value="Tipo2" id="chkTipo2" @(isTipo2 ? "checked" : "") />
+                        <label class="form-check-label" for="chkTipo2">Tipo 2</label>
+                    </div>
+                    <div class="form-check">
+                        @{
+                            bool isTipo3 = Model.Produto.TipoSolo != null && Model.Produto.TipoSolo.Contains("Tipo3");
+                        }
+                        <input class="form-check-input" type="checkbox" name="Produto.TipoSolo" value="Tipo3" id="chkTipo3" @(isTipo3 ? "checked" : "") />
+                        <label class="form-check-label" for="chkTipo3">Tipo 3</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Campos Condicionais para Tipo1 -->
+            <div class="col-md-3 col-sm-12 tipo1Fields hide">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency"
+                           asp-for="Produto.AjusteProdutividade"
+                           placeholder="Ajuste de Produtividade" />
+                    <label asp-for="Produto.AjusteProdutividade"></label>
+                    <span asp-validation-for="Produto.AjusteProdutividade" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12 tipo1Fields hide">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency"
+                           asp-for="Produto.AjusteTaxa"
+                           placeholder="Ajuste de Taxa" />
+                    <label asp-for="Produto.AjusteTaxa"></label>
+                    <span asp-validation-for="Produto.AjusteTaxa" class="text-danger"></span>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Classificação dos Solos Aceitos -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <label>Escolha as classificações dos solos aceitas</label>
+                <div class="d-flex flex-wrap">
+                    <div class="form-check me-3">
+                        @{
+                            bool isAD1 = Model.Produto.ClassificacaoSolosAceitos != null
+                            && Model.Produto.ClassificacaoSolosAceitos.Contains("AD1");
+                        }
+                        <input class="form-check-input" type="checkbox"
+                               name="Produto.ClassificacaoSolosAceitos"
+                               value="AD1" id="chkAD1" @(isAD1 ? "checked" : "") />
+                        <label class="form-check-label" for="chkAD1">AD1</label>
+                        <span asp-validation-for="Produto.ClassificacaoSolosAceitos" class="text-danger"></span>
+                    </div>
+                    <div class="form-check me-3">
+                        @{
+                            bool isAD2 = Model.Produto.ClassificacaoSolosAceitos != null
+                            && Model.Produto.ClassificacaoSolosAceitos.Contains("AD2");
+                        }
+                        <input class="form-check-input" type="checkbox"
+                               name="Produto.ClassificacaoSolosAceitos"
+                               value="AD2" id="chkAD2" @(isAD2 ? "checked" : "") />
+                        <label class="form-check-label" for="chkAD2">AD2</label>
+                    </div>
+                    <div class="form-check me-3">
+                        @{
+                            bool isAD3 = Model.Produto.ClassificacaoSolosAceitos != null
+                            && Model.Produto.ClassificacaoSolosAceitos.Contains("AD3");
+                        }
+                        <input class="form-check-input" type="checkbox"
+                               name="Produto.ClassificacaoSolosAceitos"
+                               value="AD3" id="chkAD3" @(isAD3 ? "checked" : "") />
+                        <label class="form-check-label" for="chkAD3">AD3</label>
+                    </div>
+                    <div class="form-check me-3">
+                        @{
+                            bool isAD4 = Model.Produto.ClassificacaoSolosAceitos != null
+                            && Model.Produto.ClassificacaoSolosAceitos.Contains("AD4");
+                        }
+                        <input class="form-check-input" type="checkbox"
+                               name="Produto.ClassificacaoSolosAceitos"
+                               value="AD4" id="chkAD4" @(isAD4 ? "checked" : "") />
+                        <label class="form-check-label" for="chkAD4">AD4</label>
+                    </div>
+                    <div class="form-check me-3">
+                        @{
+                            bool isAD5 = Model.Produto.ClassificacaoSolosAceitos != null
+                            && Model.Produto.ClassificacaoSolosAceitos.Contains("AD5");
+                        }
+                        <input class="form-check-input" type="checkbox"
+                               name="Produto.ClassificacaoSolosAceitos"
+                               value="AD5" id="chkAD5" @(isAD5 ? "checked" : "") />
+                        <label class="form-check-label" for="chkAD5">AD5</label>
+                    </div>
+                    <div class="form-check me-3">
+                        @{
+                            bool isAD6 = Model.Produto.ClassificacaoSolosAceitos != null
+                            && Model.Produto.ClassificacaoSolosAceitos.Contains("AD6");
+                        }
+                        <input class="form-check-input" type="checkbox"
+                               name="Produto.ClassificacaoSolosAceitos"
+                               value="AD6" id="chkAD6" @(isAD6 ? "checked" : "") />
+                        <label class="form-check-label" for="chkAD6">AD6</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <!-- Replantio -->
+        <div class="row mb-3">
+            <div class="col-md-4 col-sm-12">
+                <div class="form-floating">
+                    <select asp-for="Produto.Replantio" class="form-select" id="replantioDropdown">
+                        <option value="" selected disabled hidden>Selecione o Replantio</option>
+                        <option value="Cobertura de produção">Cobertura de produção</option>
+                        <option value="Cobertura adicional">Cobertura adicional</option>
+                    </select>
+                    <label asp-for="Produto.Replantio"></label>
+                    <span asp-validation-for="Produto.Replantio" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12 coberturaProducaoFields hide">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency"
+                           asp-for="Produto.PorcentagemCoberturaProducao"
+                           placeholder="Porcentagem de Cobertura de Produção" />
+                    <label asp-for="Produto.PorcentagemCoberturaProducao"></label>
+                    <span asp-validation-for="Produto.PorcentagemCoberturaProducao" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-12 coberturaAdicionalFields hide">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency" asp-for="Produto.ValorCoberturaAdicional" placeholder="Valor Cobertura Adicional" />
+                    <label asp-for="Produto.ValorCoberturaAdicional"></label>
+                    <span asp-validation-for="Produto.ValorCoberturaAdicional" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12 coberturaAdicionalFields hide">
+                <div class="form-floating">
+                    <input type="text" class="form-control currency"
+                           asp-for="Produto.TaxaCoberturaAdicional"
+                           placeholder="Taxa Cobertura Adicional" />
+                    <label asp-for="Produto.TaxaCoberturaAdicional"></label>
+                    <span asp-validation-for="Produto.TaxaCoberturaAdicional" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mb-3">
+            <!-- Regulação do Sinistro -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select asp-for="Produto.RegulacaoSinistro" class="form-select">
+                        <option value="" selected disabled hidden>Selecione a Regulação</option>
+                        <option value="AreaTotalMedia">Área Total (Média)</option>
+                        <option value="ItemTalhao">Item/Talhão (Média)</option>
+                    </select>
+                    <label asp-for="Produto.RegulacaoSinistro"></label>
+                    <span asp-validation-for="Produto.RegulacaoSinistro" class="text-danger"></span>
+                </div>
+            </div>
+            <br />
+            <!-- Subvenções com toggle switch -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="Produto.UtilizaSubvencaoFederal" id="utilizaSubvFederal" />
+                        <label class="form-check-label" for="utilizaSubvFederal">Utiliza Subvenção Federal?</label>
+                        <span asp-validation-for="Produto.UtilizaSubvencaoFederal" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <!-- Campos Condicionais para Subvenção Federal -->
+            <div class="row mb-3" id="subvContainer">
+                <div class="col-md-6" id="subvFederalContainer"
+                     style="display: @(Model.Produto.SubvencaoFederalId.HasValue && Model.Produto.SubvencaoFederalId.Value != Guid.Empty ? "block" : "none");">
+                    <div class="form-floating">
+                        <select asp-for="Produto.SubvencaoFederalId" class="form-select" asp-items="ViewBag.SubvencaoFederalList">
+                            <option value="" selected disabled hidden>Selecione a Subvenção Federal</option>
+                        </select>
+                        <label asp-for="Produto.SubvencaoFederalId"></label>
+                        <span asp-validation-for="Produto.SubvencaoFederalId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <!-- Subvenção Estadual: check logo acima do bloco -->
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="Produto.UtilizaSubvencaoEstadual" id="utilizaSubvEstadual" />
+                        <label class="form-check-label" for="utilizaSubvEstadual">Utiliza Subvenção Estadual?</label>
+                        <span asp-validation-for="Produto.UtilizaSubvencaoEstadual" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12" id="subvEstadualContainer"
+                     style="display: @(Model.Produto.UtilizaSubvencaoEstadual ? "block" : "none");">
+                    <div class="card border-secondary">
+                        <div class="card-header bg-light py-2">
+                            <strong>Subvenções Estaduais (várias por estado)</strong>
+                            <small class="text-muted d-block">Adicione uma subvenção por UF. Na cotação será usada a do estado do cliente.</small>
+                        </div>
+                        <div class="card-body py-2">
+                            <div class="row g-2 align-items-end mb-2">
+                                <div class="col-md-8">
+                                    <label for="subvencaoEstadualPicker" class="form-label small">Adicionar subvenção</label>
+                                    <select id="subvencaoEstadualPicker" class="form-select form-select-sm" asp-items="ViewBag.SubvencaoEstadualList">
+                                        <option value="" selected>— Escolha uma subvenção para adicionar —</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" id="btnAdicionarSubvencaoEstadual" class="btn btn-sm btn-outline-primary">
+                                        <span class="me-1">+</span> Adicionar
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="listaSubvencoesEstaduais" class="mt-2" data-empty-msg="Nenhuma subvenção adicionada. Use o seletor acima para adicionar."></div>
+                            <select asp-for="Produto.SubvencoesEstaduaisIds" id="produtoSubvencoesEstaduaisIds" class="d-none" asp-items="ViewBag.SubvencaoEstadualList" multiple></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row mb-3">
+                <!-- Termo de Ciência e Capacidade Disponível -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" asp-for="Produto.TermoDeCiencia" placeholder="Termo de Ciência" />
+                        <label asp-for="Produto.TermoDeCiencia"></label>
+                        <span asp-validation-for="Produto.TermoDeCiencia" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control currency" asp-for="Produto.CapacidadeDisponivel" placeholder="Capacidade Disponível" />
+                        <label asp-for="Produto.CapacidadeDisponivel"></label>
+                        <span asp-validation-for="Produto.CapacidadeDisponivel" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <!-- Canal -->
+
+
+
+
+            <br />
+            <!-- Toggles para Plantio / Lavoura -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="Produto.AceitaPlantioConsorciado" id="aceitaPlantioConsorciado" />
+                        <label class="form-check-label" for="aceitaPlantioConsorciado">Aceita Plantio Consorciado?</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div id="plantioConsorciadoFields" style="display: @(Model.Produto.AceitaPlantioConsorciado ? "block" : "none");">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.PlantioConsorciadoAjusteProdutividade" placeholder="Ajuste de Produtividade" />
+                            <label asp-for="Produto.PlantioConsorciadoAjusteProdutividade"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.PlantioConsorciadoAjusteTaxa" placeholder="Ajuste de Taxa" />
+                            <label asp-for="Produto.PlantioConsorciadoAjusteTaxa"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="Produto.AceitaPlantioConvencional" id="aceitaPlantioConvencional" />
+                        <label class="form-check-label" for="aceitaPlantioConvencional">Aceita Plantio Convencional?</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div id="plantioConvencionalFields" style="display: @(Model.Produto.AceitaPlantioConvencional ? "block" : "none");">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.PlantioConvencionalAjusteProdutividade" placeholder="Ajuste de Produtividade" />
+                            <label asp-for="Produto.PlantioConvencionalAjusteProdutividade"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.PlantioConvencionalAjusteTaxa" placeholder="Ajuste de Taxa" />
+                            <label asp-for="Produto.PlantioConvencionalAjusteTaxa"></label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+            </div>
+
+            <br />
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="Produto.LavouraIrrigada" id="lavouraIrrigada" />
+                        <label class="form-check-label" for="lavouraIrrigada">Lavoura Irrigada?</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div id="lavouraIrrigadaFields" style="display: @(Model.Produto.LavouraIrrigada ? "block" : "none");">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.LavouraIrrigadaAjusteProdutividade" placeholder="Ajuste de Produtividade" />
+                            <label for="ProdutosTaxas_LavouraIrrigadaAjusteProdutividade">Ajuste de Produtividade</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.LavouraIrrigadaAjusteTaxa" placeholder="Ajuste de Taxa" />
+                            <label for="ProdutosTaxas_LavouraIrrigadaAjusteTaxa">Ajuste de Taxa</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="Produto.AceitaPlantioPosCanaDeAcucar" id="aceitaPlantioPosCana" />
+                        <label class="form-check-label" for="aceitaPlantioPosCana">Aceita Plantio Pós Cana de Açúcar?</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div id="plantioPosCanaFields" style="display: @(Model.Produto.AceitaPlantioPosCanaDeAcucar ? "block" : "none");">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.PlantioPosCanaAjusteProdutividade" placeholder="Ajuste de Produtividade" />
+                            <label for="ProdutosTaxas_PlantioPosCanaAjusteProdutividade">Ajuste de Produtividade</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control currency" asp-for="Produto.PlantioPosCanaAjusteTaxa" placeholder="Ajuste de Taxa" />
+                            <label for="ProdutosTaxas_PlantioPosCanaAjusteTaxa">Ajuste de Taxa</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="row">
+    @if (Model.Produto.Id != Guid.Empty)
+    {
+        <div class="col-md-6 text-left p-4">
+            <button type="submit" class="btn btn-success">Atualizar</button>
+        </div>
+
+        <div class="col-md-6 text-right p-4">
+            <button type="button" class="btn btn-primary" data-id="@Model?.Produto?.Id" id="btDuplicar">Duplicar Produto</button>
+            <button type="button" class="btn btn-warning" data-id="@Model?.Produto?.Id" data-ativo="@Model?.Produto?.Ativo" id="btToggleAtivo">@(Model?.Produto?.Ativo == true ? "Inativar" : "Ativar") Produto</button>
+            <button type="button" class="btn btn-danger" data-id="@Model?.Produto?.Id" id="btDelete">Excluir Produto</button>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-6 text-left p-4">
+            <button type="submit" class="btn btn-success">Salvar</button>
+        </div>
+    }
+</div>
+

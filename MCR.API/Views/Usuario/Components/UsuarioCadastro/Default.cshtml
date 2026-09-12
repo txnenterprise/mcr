@@ -1,0 +1,157 @@
+@model MCR.API.Entities.UsuarioCadastroDTO
+<form id="formCadastro"
+      asp-antiforgery="true"
+      asp-action="Registrar"
+      asp-controller="Usuario"
+      data-ajax="true" data-ajax-method="POST"
+      data-ajax-success="userJs.OnSuccessCallback"
+      data-ajax-failure="gl.onFailed"
+      data-ajax-begin="gl.BeginAjax"
+      data-ajax-complete="gl.CompleteAjax">
+
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="form-floating">
+                        <select class="form-select form-input form-control-placeholder" aria-label="PerfilAcesso" asp-for="PerfilAcesso" id="PerfilAcesso" asp-items="ViewBag.ListaPerfis">
+                            <option value="">Selecione um perfil</option>
+                        </select>
+                        <label for="PerfilAcesso">Perfil de Acesso</label>
+                        <span asp-validation-for="PerfilAcesso" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="Nome" id="Nome" placeholder="Nome" required>
+                        <label for="Nome">Nome</label>
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="form-floating">
+                        <input type="email" class="form-control form-input form-control-placeholder" asp-for="Email" id="Email" placeholder="E-Mail" required>
+                        <label for="Email">E-Mail</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="Document" id="Document" placeholder="Documento">
+                        <label for="Document">Documento</label>
+                        <span asp-validation-for="Document" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Telefone">
+                        <label for="PhoneNumber">Telefone</label>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="senhaContainer">
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="form-floating">
+                        <input type="password" class="form-control form-input form-control-placeholder" asp-for="Password" id="Password" placeholder="Senha" required>
+                        <label for="Password">Senha</label>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="form-floating">
+                        <input type="password" class="form-control form-input form-control-placeholder" asp-for="ConfirmPassword" id="ConfirmPassword" placeholder="Confirmar Senha" required>
+                        <label for="ConfirmPassword">Confirmar Senha</label>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="accordion" id="accordionPassword">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Dicas para a Senha
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionPassword">
+                                <div class="accordion-body">
+                                    <p>A senha deve conter no mínimo 8 caracteres;</p>
+                                    <p>A senha deve conter pelo menos uma letra maiúscula;</p>
+                                    <p>A senha deve conter pelo menos uma letra minúscula;</p>
+                                    <p>A senha deve conter pelo menos um número;</p>
+                                    <p>A senha deve conter pelo menos um caractere especial.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Estrutura de Negócios</h5>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                    <div class="form-floating">
+                        @{
+                            var corretoraDisabled = (ViewBag.CorretoraCount == 1 ? "disabled" : null);
+                        }
+                        <select class="form-select selected2" asp-items="@ViewBag.Corretora" asp-for="DefaultCorretoraId" disabled="@corretoraDisabled">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <label asp-for="DefaultCorretoraId"></label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="form-floating">
+                        @{
+                            var canalDisabled = (ViewBag.CanalCount == 1 ? "disabled" : null);
+                        }
+                        <select class="form-select selected2" asp-items="@ViewBag.Canal" asp-for="DefaultCanalId" disabled="@canalDisabled">
+                            <option value="">Selecione...</option>
+                        </select>
+
+                        <label asp-for="DefaultCanalId"></label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="form-floating">
+                        @{
+                            var paDisabled = (ViewBag.PACount == 1 ? "disabled" : null);
+                        }
+                        <select class="form-select selected2" asp-items="@ViewBag.PontoAtendimento" asp-for="DefaultPontoAtendimentoId" disabled="@paDisabled">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <label asp-for="DefaultPontoAtendimentoId"></label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-1 col-lg-1 pt-2">
+                    <button type="button" id="btnAddEN" class="btn btn-primary">Adicionar</button>
+                </div>
+
+                <div class="col-sm-12 col-md-12 col-lg-12 pt-5">
+                    <table class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th style="width:30%;">Corretora</th>
+                                <th style="width:30%;">Canal</th>
+                                <th style="width:30%;">Ponto Atendimento</th>
+                                <th class="text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="social-login">
+        <button type="submit" class="btn btn-success rounded-pill">
+            Salvar
+        </button>
+    </div>
+</form>
+
+

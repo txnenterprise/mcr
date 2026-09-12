@@ -1,0 +1,158 @@
+﻿@model MCR.API.Models.ViewModels.CorretoraModel
+@{
+    ViewData["Title"] = "Filiais - Editar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Configurações da Corretora</h4>
+    <br /><br />
+
+    <form asp-controller="Corretora" asp-action="Configurar" method="post">
+        <input type="hidden" asp-for="Corretora.Id" />
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.RazaoSocial" id="RazaoSocial" placeholder="Razão Social" required>
+                            <label for="RazaoSocial">Razão Social</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.NomeFantasia" id="NomeFantasia" placeholder="Nome Fantasia">
+                            <label for="Unidade">NomeFantasia</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.CNPJ" id="CNPJ_Corretora" placeholder="CNPJ">
+                            <label for="CNPJ">CNPJ</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.CEP" id="CEP" placeholder="CEP" required>
+                            <label for="CEP">CEP</label>
+                        </div>
+                        <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.Endereco" id="Endereco" placeholder="Endereço" required>
+                            <label for="Endereco">Endereço</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.Bairro" id="Bairro" placeholder="Bairro" required>
+                            <label for="Bairro">Bairro</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="number" min="0" class="form-control form-input form-control-placeholder" asp-for="Corretora.Numero" id="Numero" placeholder="Número" required>
+                            <label for="Numero">Número</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.Cidade" id="Cidade" placeholder="Cidade" required>
+                            <label for="Cidade">Cidade</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.Estado" id="Estado" placeholder="Estado" required>
+                            <label for="Estado">Estado</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Corretora.Ativa" id="Ativo">
+                            <label class="form-check-label" for="Ativo">Ativo?</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <!-- Card para E-mails Específicos -->
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <h6 class="mb-3">E-mails Específicos</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.EmailSeguro" id="EmailSeguro" placeholder="E-mail para Seguros">
+                            <label for="EmailSeguro">E-mail para Seguros</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.EmailCopiaSeguro" id="EmailCopiaSeguro" placeholder="E-mail Cópia para Seguros">
+                            <label for="EmailCopiaSeguro">E-mail Cópia para Seguros</label>
+                        </div>
+                        <span class="text-danger" style="font-size: small">Pode digitar mais de um e-mail separado por ;</span>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.EmailSinistro" id="EmailSinistro" placeholder="E-mail para Sinistros">
+                            <label for="EmailSinistro">E-mail para Sinistros</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Corretora.EmailCopiaSinistro" id="EmailCopiaSinistro" placeholder="E-mail Cópia para Sinistros">
+                            <label for="EmailCopiaSinistro">E-mail Cópia para Sinistros</label>
+                        </div>
+                        <span class="text-danger" style="font-size: small">Pode digitar mais de um e-mail separado por ;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="social-login">
+            <button type="submit" class="btn btn-primary  px-5 me-md-2">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Corretora.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Corretora.Mensagem</h6>
+        </div>
+    }
+</div>
+<script>
+    function updateCorretoraAtiva(checkbox) {
+        const corretoraAtivaField = document.querySelector('input[name="Corretora.Ativa"]');
+        if (checkbox.checked) {
+            corretoraAtivaField.value = 'true';
+        } else {
+            corretoraAtivaField.value = 'false';
+        }
+    }
+
+    document.getElementById('CNPJ_Corretora').addEventListener('blur', function () {
+        const cnpj = this.value;
+        if (!validarCNPJ(cnpj)) {
+            alert("CNPJ inválido.")
+        }
+    });
+</script>

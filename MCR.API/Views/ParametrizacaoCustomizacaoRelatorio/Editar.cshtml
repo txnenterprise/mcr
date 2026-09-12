@@ -1,0 +1,273 @@
+﻿@model MCR.API.Entities.ParametrizacaoCustomizacaoRelatorioEntity
+@{
+    ViewData["Title"] = "Customização de Relatórios - Parametrizações - Editar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Customização de Relatórios - Parametrizações - Editar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Parametrizacao" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="ParametrizacaoCustomizacaoRelatorio" asp-action="Editar" method="post" enctype="multipart/form-data">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <h6>Customização I (obrigatória)</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.Titulo1" id="Titulo1" placeholder="Título 1" required>
+                            <label for="Titulo1">Título 1</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <input class="form-control form-input" type="color" id="colorPicker1">
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.CorTitulo1" id="CorTitulo1" placeholder="Cor Título 1" required name="ParametrizacaoCustomizacaoRelatorio.CorTitulo1">
+                            <label for="CorTitulo1">Cor Título 1</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="TamanhoTitulo1" asp-for="ParametrizacaoCustomizacaoRelatorio.TamanhoTitulo1" id="TamanhoTitulo1" required>
+                                <option value="12" style="font-size: 12px;">12px</option>
+                                <option value="16" style="font-size: 16px;">16px</option>
+                                <option value="20" style="font-size: 20px;">20px</option>
+                                <option value="24" style="font-size: 24px;">24px</option>
+                                <option value="28" style="font-size: 28px;">28px</option>
+                            </select>
+                            <label>Tamanho Título 1</label>
+                        </div>
+                    </div>
+                    <br />
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.Texto1" id="Texto1" placeholder="Texto 1" required>
+                            <label for="Texto1">Texto 1</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <input class="form-control form-input" type="color" id="colorPicker2">
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.CorTexto1" id="CorTexto1" placeholder="Cor Texto 1" required name="ParametrizacaoCustomizacaoRelatorio.CorTexto1">
+                            <label for="CorTexto1">Cor Texto 1</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="TamanhoTexto1" asp-for="ParametrizacaoCustomizacaoRelatorio.TamanhoTexto1" id="TamanhoTexto1" required>
+                                <option value="12" style="font-size: 12px;">12px</option>
+                                <option value="16" style="font-size: 16px;">16px</option>
+                                <option value="20" style="font-size: 20px;">20px</option>
+                                <option value="24" style="font-size: 24px;">24px</option>
+                                <option value="28" style="font-size: 28px;">28px</option>
+                            </select>
+                            <label>Tamanho Texto 1</label>
+                        </div>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <h6>Parte II (opcional)</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.Titulo2" id="Titulo2" placeholder="Título 2">
+                            <label for="Titulo2">Título 2</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-4 col-lg-4 col-sm-12">
+                        <input class="form-control form-input" type="color" id="colorPicker3">
+                    </div>
+                    <br />
+                    <div class="col-md-4 col-lg-4 col-sm-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.CorTitulo2" id="CorTitulo2" placeholder="Cor Título 2" name="ParametrizacaoCustomizacaoRelatorio.CorTitulo2">
+                            <label for="CorTitulo2">Cor Título 2</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-md-4 col-lg-4 col-sm-12">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="TamanhoTitulo2" asp-for="ParametrizacaoCustomizacaoRelatorio.TamanhoTitulo2" id="TamanhoTitulo2">
+                                <option value="12" style="font-size: 12px;">12px</option>
+                                <option value="16" style="font-size: 16px;">16px</option>
+                                <option value="20" style="font-size: 20px;">20px</option>
+                                <option value="24" style="font-size: 24px;">24px</option>
+                                <option value="28" style="font-size: 28px;">28px</option>
+                            </select>
+                            <label>Tamanho Título 2</label>
+                        </div>
+                    </div>
+                    <br />
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.Texto2" id="Texto2" placeholder="Texto 2">
+                            <label for="Texto2">Texto 2</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <input class="form-control form-input" type="color" id="colorPicker4">
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="ParametrizacaoCustomizacaoRelatorio.CorTexto2" id="CorTexto2" placeholder="Cor Título 2" name="ParametrizacaoCustomizacaoRelatorio.CorTexto2">
+                            <label for="Texto2">Cor Texto 2</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="TamanhoTexto2" asp-for="ParametrizacaoCustomizacaoRelatorio.TamanhoTexto2" id="TamanhoTexto2">
+                                <option value="12" style="font-size: 12px;">12px</option>
+                                <option value="16" style="font-size: 16px;">16px</option>
+                                <option value="20" style="font-size: 20px;">20px</option>
+                                <option value="24" style="font-size: 24px;">24px</option>
+                                <option value="28" style="font-size: 28px;">28px</option>
+                            </select>
+                            <label>Tamanho Texto 2</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <h6>Imagem (opcional)</h6>
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <div class="mb-3">
+                            <label for="imageUpload" class="form-label">Selecione uma imagem:</label>
+                            <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                        </div>
+                        <input type="text" asp-for="ObjectImagem" id="ObjectImagem" name="ObjectImagem" hidden>
+                        <input type="text" asp-for="ParametrizacaoCustomizacaoRelatorio.Imagem1" id="Imagem1" name="Imagem1" hidden>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        @if (Model != null && !string.IsNullOrEmpty(Model.ParametrizacaoCustomizacaoRelatorio.Imagem1))
+                        {
+                            <img src="@Model.ParametrizacaoCustomizacaoRelatorio.Imagem1" id="imagePreview" class="img-fluid rounded" alt="Pré-visualização da Imagem">
+                        }
+                        else
+                        {
+                            <img src="" id="imagePreview" class="img-fluid rounded" alt="Pré-visualização da Imagem">
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="social-login">
+            <button type="submit" class="login-btn btn d-flex justify-content-center align-items-center">
+                Salvar
+            </button>
+        </div>
+        <input asp-for="ParametrizacaoCustomizacaoRelatorio.Id" hidden />
+    </form>
+    @if (Model != null && !Model.ParametrizacaoCustomizacaoRelatorio.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.ParametrizacaoCustomizacaoRelatorio.Mensagem</h6>
+        </div>
+    }
+</div>
+<script>
+    const colorPicker1 = document.getElementById('colorPicker1');
+    const colorPicker2 = document.getElementById('colorPicker2');
+    const colorPicker3 = document.getElementById('colorPicker3');
+    const colorPicker4 = document.getElementById('colorPicker4');
+    const corTitulo1 = document.getElementById('CorTitulo1');
+    const corTexto1 = document.getElementById('CorTexto1');
+    const corTitulo2 = document.getElementById('CorTitulo2');
+    const corTexto2 = document.getElementById('CorTexto2');
+
+    colorPicker1.addEventListener('change', function () {
+        const selectedColor = colorPicker1.value;
+        corTitulo1.value = selectedColor;
+    });
+    colorPicker2.addEventListener('change', function () {
+        const selectedColor = colorPicker2.value;
+        corTexto1.value = selectedColor;
+    });
+
+    colorPicker3.addEventListener('change', function () {
+        const selectedColor = colorPicker3.value;
+        corTitulo2.value = selectedColor;
+    });
+    colorPicker4.addEventListener('change', function () {
+        const selectedColor = colorPicker4.value;
+        corTexto2.value = selectedColor;
+    });
+</script>
+
+<script>
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    imageUpload.addEventListener('change', function () {
+        const file = this.files[0];
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const base64String = event.target.result;
+            document.getElementById('ObjectImagem').value = base64String;
+            imagePreview.src = base64String;
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        colorPicker1.value = corTitulo1.value;
+        colorPicker2.value = corTexto1.value;
+        colorPicker3.value = corTitulo2.value;
+        colorPicker4.value = corTexto2.value;
+
+        const imagemBase64 = "@Model.ParametrizacaoCustomizacaoRelatorio.Imagem1";
+        if (imagemBase64 && imagemBase64.trim() !== '') {
+            imagePreview.src = document.getElementById('Imagem1').value;
+            document.getElementById('ObjectImagem').value = document.getElementById('Imagem1').value;
+        }
+    });
+</script>

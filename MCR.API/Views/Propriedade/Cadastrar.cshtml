@@ -1,0 +1,124 @@
+@using MCR.API.Models
+@model PropriedadeModel
+@{
+    ViewData["Title"] = "Propriedade - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Propriedade - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Propriedade" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="Propriedade" asp-action="Cadastrar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Nome" id="Nome" placeholder="Nome">
+                            <label for="Nome">Nome</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder bg-light" asp-for="Propriedade.SomaAreaTotalTalhao" id="SomaAreaTotalTalhao" placeholder="Soma da Área Total do Talhão" readonly>
+                            <label for="SomaAreaTotalTalhao">Soma da Área Total do Talhão</label>
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-calculator"></i> Calculado automaticamente
+                        </small>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.MatriculaLote" placeholder="Matrícula do Lote">
+                            <label for="MatriculaLote">Matrícula do Lote</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.CadastroAmbientalRural" placeholder="CAR (Cadastro Ambiental Rural)">
+                            <label for="CadastroAmbientalRural">CAR (Cadastro Ambiental Rural)</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.CEP" id="CEP" placeholder="CEP">
+                            <label for="CEP">CEP</label>
+                        </div>
+                        <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Endereco" id="Endereco" placeholder="Endereço">
+                            <label for="Endereco">Endereço</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Bairro" id="Bairro" placeholder="Bairro">
+                            <label for="Bairro">Bairro</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="number" min="0" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Numero" id="Numero" placeholder="Número">
+                            <label for="Numero">Número</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Cidade" id="Cidade" placeholder="Cidade">
+                            <label for="Cidade">Cidade</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Estado" id="Estado" placeholder="Estado">
+                            <label for="Estado">Estado</label>
+                        </div>
+                    </div>
+                </div>
+                @* <br />
+                <div class="row">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" asp-for="Propriedade.Ativo" id="Ativo" checked>
+                <label class="form-check-label" for="Ativo">Ativo?</label>
+                </div>
+                </div>
+                </div> *@
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Mensagem</h6>
+        </div>
+    }
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var somaInput = document.getElementById('SomaAreaTotalTalhao');
+        if (somaInput && !somaInput.value) somaInput.value = '0,00';
+    });
+</script>

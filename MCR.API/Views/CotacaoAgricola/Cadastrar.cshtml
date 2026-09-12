@@ -1,0 +1,297 @@
+@model MCR.API.CotacoesAgricola.Domain.DTO.CotacoesAgricolaCadastrarDTO
+@{
+    ViewData["Title"] = "Cotação Agrícola - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Cotação Agrícola - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2 mb-4">
+            <a asp-action="Index" asp-controller="CotacaoAgricola" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Erro"] != null)
+    {
+        <br />
+        <div class="alert alert-warning text-center temporary-alert" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@TempData["Erro"]</h6>
+        </div>
+    }
+    @if (TempData["Mensagem"] != null)
+    {
+        <br />
+        <div class="alert alert-success text-center temporary-alert" role="alert" style="color: #28a745; border-radius: 15px">
+            <h6>Sucesso!</h6>
+            <h6>@TempData["Mensagem"]</h6>
+        </div>
+    }
+
+    <form id="formCadastrar"
+          asp-antiforgery="true"
+          asp-action="Cadastrar"
+          asp-controller="CotacaoAgricola"
+          data-ajax="true" data-ajax-method="POST"
+          data-ajax-complete="gl.CompleteAjax"
+          data-ajax-begin="gl.BeginAjax"
+          data-ajax-success="gl.onSuccess"
+          data-ajax-failure="gl.onFailed"
+          data-ajax-callback="cotacaoAgricolaJS.onSuccessCallbackCadastrar">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" hidden />
+        <input asp-for="ClienteInfo.ClienteId" hidden />
+        @await Component.InvokeAsync("CotacaoAgricolaDadosAtendimento", new { model = Model })
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body pt-3" style="color: var(--color-primary)">
+                <h6>Dados do Cliente</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3" id="divClienteCpf">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" asp-for="ClienteInfo.Cpf" />
+                            <label asp-for="ClienteInfo.Cpf">CPF</label>
+                            <span asp-validation-for="ClienteInfo.Cpf" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-9 col-lg-9" id="divClienteNome">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" asp-for="ClienteInfo.Nome" />
+                            <label asp-for="ClienteInfo.Nome">Nome</label>
+                            <span asp-validation-for="ClienteInfo.Nome" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <h6>Dados do Risco</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <select class="form-select selected2" asp-for="CulturaId" asp-items="@ViewBag.Cultura">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <label for="CulturaId">Cultura</label>
+                            <span asp-validation-for="CulturaId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <select class="form-select selected2" asp-for="SafraId" asp-items="@ViewBag.Safra">
+                                <option value="">Selecione...</option>
+                                @* Add harvest options here *@
+                            </select>
+                            <label asp-for="SafraId">Safra</label>
+                            <span asp-validation-for="SafraId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <select class="form-select " asp-for="Estado">
+                                <option value="">Selecione um estado</option>
+                                <option value="AC">Acre (AC)</option>
+                                <option value="AL">Alagoas (AL)</option>
+                                <option value="AP">Amapá (AP)</option>
+                                <option value="AM">Amazonas (AM)</option>
+                                <option value="BA">Bahia (BA)</option>
+                                <option value="CE">Ceará (CE)</option>
+                                <option value="DF">Distrito Federal (DF)</option>
+                                <option value="ES">Espírito Santo (ES)</option>
+                                <option value="GO">Goiás (GO)</option>
+                                <option value="MA">Maranhão (MA)</option>
+                                <option value="MT">Mato Grosso (MT)</option>
+                                <option value="MS">Mato Grosso do Sul (MS)</option>
+                                <option value="MG">Minas Gerais (MG)</option>
+                                <option value="PA">Pará (PA)</option>
+                                <option value="PB">Paraíba (PB)</option>
+                                <option value="PR">Paraná (PR)</option>
+                                <option value="PE">Pernambuco (PE)</option>
+                                <option value="PI">Piauí (PI)</option>
+                                <option value="RJ">Rio de Janeiro (RJ)</option>
+                                <option value="RN">Rio Grande do Norte (RN)</option>
+                                <option value="RS">Rio Grande do Sul (RS)</option>
+                                <option value="RO">Rondônia (RO)</option>
+                                <option value="RR">Roraima (RR)</option>
+                                <option value="SC">Santa Catarina (SC)</option>
+                                <option value="SP">São Paulo (SP)</option>
+                                <option value="SE">Sergipe (SE)</option>
+                                <option value="TO">Tocantins (TO)</option>
+                            </select>
+                            <label asp-for="Estado">Estado</label>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select selected2" asp-for="Municipio" data-value="@Model.Municipio">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <label asp-for="Municipio">Município</label>
+                            <span asp-validation-for="Municipio" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" asp-for="AreaTotal" />
+                            <label asp-for="AreaTotal">Área Total (ha)</label>
+                            <span asp-validation-for="AreaTotal" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <h6>Modalidade e Informações do Solo</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="IsModalidadeProdutividade">
+                            <label class="form-check-label" for="IsModalidadeProdutividade">Modalidade Produtividade?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3 divPrecoSaca @(Model.IsModalidadeProdutividade ?"":"hide")">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" asp-for="PrecoSaca" />
+                            <label asp-for="PrecoSaca">Preço da Saca</label>
+                            <span asp-validation-for="PrecoSaca" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3 @(Model.IsModalidadeProdutividade ?"hide":"")" id="divValorCusteio">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" asp-for="ValorCusteio" />
+                            <label asp-for="ValorCusteio">Valor de Custeio</label>
+                            <span asp-validation-for="ValorCusteio" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <select class="form-select selected2" asp-for="TipoSolo">
+                                <option value="">Selecione...</option>
+                                <option value="1">Tipo 1</option>
+                                <option value="2">Tipo 2</option>
+                                <option value="3">Tipo 3</option>
+                            </select>
+                            <label asp-for="TipoSolo">Tipo de Solo</label>
+                            <span asp-validation-for="TipoSolo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <select class="form-select selected2" asp-for="ClassificacaoSolo">
+                                <option value="">Selecione...</option>
+                                <option value="AD1">AD1</option>
+                                <option value="AD2">AD2</option>
+                                <option value="AD3">AD3</option>
+                                <option value="AD4">AD4</option>
+                                <option value="AD5">AD5</option>
+                                <option value="AD6">AD6</option>
+                            </select>
+                            <label asp-for="ClassificacaoSolo">Classificação do Solo</label>
+                            <span asp-validation-for="ClassificacaoSolo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="PlantioConsorciado">
+                            <label class="form-check-label" for="PlantioConsorciado">Plantio Consorciado?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="LavouraIrrigada">
+                            <label class="form-check-label" for="LavouraIrrigada">Lavoura Irrigada?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="PlantioDireto">
+                            <label class="form-check-label" for="PlantioDireto">Plantio Convencional?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="PosCana">
+                            <label class="form-check-label" for="PosCana">Pós-Cana?</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row divPrecoSaca @(Model.IsModalidadeProdutividade ?"":"hide")">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" asp-for="CustoProducao" />
+                            <label asp-for="CustoProducao">Custo de Produção (R$/HA)</label>
+                            <span asp-validation-for="CustoProducao" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <h6>Subvenções</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="SubvencaoFederal">
+                            <label class="form-check-label" for="SubvencaoFederal">Subvenção Federal?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="SubvencaoEstadual">
+                            <label class="form-check-label" for="SubvencaoEstadual">Subvenção Estadual?</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 mb-3">
+                @await Html.PartialAsync("~/Views/CotacaoAgricola/Components/_ProdutosReferencia.cshtml")
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 mb-3">
+                <button type="submit" class="btn btn-success rounded-pill">
+                    Calcular
+                </button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+@section Scripts{
+    <environment include="Development">
+        <script src="~/app/cotacaoAgricola/produtosReferencia.js"></script>
+        <script src="~/app/cotacaoAgricola/cotacaoAgricola.js?v=@DateTime.UtcNow.Ticks"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/app/cotacaoAgricola/produtosReferencia.js?v=@DateTime.UtcNow.Ticks"></script>
+        <script src="~/app/cotacaoAgricola/cotacaoAgricola.min.js?v=@DateTime.UtcNow.Ticks"></script>
+    </environment>
+
+    <script>
+        $(document).ready(function () {
+            produtosReferencia.bindAutoRefresh('formCadastrar');
+        });
+
+        cotacaoAgricolaJS.onSuccessCallbackCadastrar = function (r) {
+            cotacaoAgricolaJS._submitting = false;
+            if (r.success === true && r.cotacaoId) {
+                notify.success("Cotação Salva", r.message);
+                setTimeout(function () {
+                    window.location.href = '/CotacaoAgricola/Gerenciar/' + r.cotacaoId;
+                }, 500);
+            } else {
+                notify.error(r.message || "Erro ao salvar cotação.");
+            }
+        };
+    </script>
+}

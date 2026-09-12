@@ -1,0 +1,73 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasObservacoesDTO
+
+<div class="row">
+    <div class="col-12">
+        <div class="card pt-3">
+            <div class="card-header text-white">
+                <h5 class="mb-0">Observações da Proposta</h5>
+            </div>
+            <div class="card-body">
+                <div class="row" proposal-status-permission="@ViewBag.PropostaStatus">
+                    <div class="col-12">
+                        <form id="formObservacoes" asp-controller="PropostasObservacoes" asp-action="SalvarObservacao" asp-antiforgery="true"
+                              data-ajax="true" data-ajax-method="POST"
+                                data-ajax-complete="gl.CompleteAjax"
+                                data-ajax-begin="gl.BeginAjax"
+                                data-ajax-success="gl.onSuccess"
+                                data-ajax-failure="gl.onFailed"
+                                data-ajax-callback="propostaJS.onSuccessCallbackObservacao">
+                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" asp-for="PropostaId" />
+                            <input type="hidden" asp-for="UsuarioId" />
+
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" asp-for="Observacao" style="height: 100px" placeholder="Observação"></textarea>
+                                        <label asp-for="Observacao">Observação</label>
+                                        <span asp-validation-for="Observacao" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-primary">Salvar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @if (Model.Observacoes != null && Model.Observacoes.Any())
+                {
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6>Histórico de Observações</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Usuário</th>
+                                            <th>Observação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var observacao in Model.Observacoes.OrderByDescending(x => x.DataCriacao))
+                                        {
+                                            <tr>
+                                                <td class="col-2">@observacao.DataCriacao.ToString("dd/MM/yyyy")</td>
+                                                <td class="col-2">@observacao.NomeUsuario</td>
+                                                <td class="col-8">@observacao.Observacao</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

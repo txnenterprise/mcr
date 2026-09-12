@@ -1,0 +1,155 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasVistoriaCadastrarDTO
+
+<div class="modal-container"
+     style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: white; padding: 20px; border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 70%; max-width: 90%;">
+    <!-- Cabeçalho Modal -->
+    <div class="modal-header"
+         style="display: flex; justify-content: space-between; align-items: center;
+                border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+        <h4 style="margin: 0;">Pessoa que acompanhará o perito na vistoria</h4>
+        <button type="button" class="btn-fechar-modal"
+                style="background: none; border: none; font-size: 20px; cursor: pointer;">
+            &times;
+        </button>
+    </div>
+
+    <form id="PropostasVistoriaRegistrar"
+          asp-antiforgery="true"
+          asp-action="VincularPropostaVistoria"
+          asp-controller="PropostasVistoria"
+          data-ajax="true" data-ajax-method="POST"
+          data-ajax-success="propostaJS.onSuccessCallbackVistoria"
+          data-ajax-failure="gl.onFailed"
+          data-ajax-begin="gl.BeginAjax"
+          data-ajax-complete="gl.CompleteAjax">
+        <input type="hidden" asp-for="@Model.PropostaId" />
+        <input type="hidden" asp-for="@Model.ClienteId" />
+        <input type="hidden" id="PessoasVistoria_PropostasSeguradoId" name="PessoasVistoria.PropostasSeguradoId" />
+        <input type="hidden" id="PessoasVistoria_Nome" name="PessoasVistoria.Nome" />
+        <input type="hidden" id="PessoasVistoria_CPF" name="PessoasVistoria.CPF" />
+        <input type="hidden" id="PessoasVistoria_Telefone" name="PessoasVistoria.Telefone" />
+
+        <div class="modal-body">
+            <!-- Lista de pessoas disponíveis -->
+            <div class="border p-3 mb-4">
+                <h5 class="mb-3">Pessoa vinculada ao grupo familiar</h5>
+                @if (Model.PessoasDisponiveis == null || !Model.PessoasDisponiveis.Any())
+                {
+                    <p class="text-muted">Nenhuma pessoa encontrada para este cliente.</p>
+                }
+                else
+                {
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th>Relação</th>
+                                <th class="text-center">Selecionar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pessoa in Model.PessoasDisponiveis)
+                            {
+                                <tr>
+                                    <td>@pessoa.Nome</td>
+                                    <td>@pessoa.CPF.FormatCpfCnpj()</td>
+                                    <td>@pessoa.Telefone.FormatCelular()</td>
+                                    <td>@pessoa.RelacaoParental</td>
+                                    <td class="text-center">
+                                        <button type="button"
+                                                class="btn btn-primary btnVistoriaSelecionar"
+                                                data-propostaseguradoid="@pessoa.PropostasSeguradoId"
+                                                data-nome="@pessoa.Nome"
+                                                data-cpf="@pessoa.CPF"
+                                                data-telefone="@pessoa.Telefone">
+                                            Selecionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            <!-- Campos para adicionar nova pessoa -->
+            <div class="border p-3">
+                <h5 class="mb-3">Adicionar Nova Pessoa</h5>
+                <div class="row mb-3">
+                    <div class="col-12 col-sm-6 col-md-3 mb-3">
+                        <label for="NomeNovo" class="form-label">Nome</label>
+                        <input type="text" asp-for="NomeNovo" class="form-control" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3 mb-3">
+                        <label for="CPFNovo" class="form-label">CPF</label>
+                        <input type="text" asp-for="CPFNovo" class="form-control" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3 mb-3">
+                        <label for="TelefoneNovo" class="form-label">Telefone</label>
+                        <input type="text" asp-for="TelefoneNovo" class="form-control" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3 mb-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary d-block w-100 btnVistoriaAdicionar">Adicionar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rodapé Modal -->
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; border-top: 1px solid #ddd; padding-top: 15px; margin-top: 15px;">
+
+            <button type="button" class="btn-cancelar-modal"
+                    style="padding: 8px 15px; background-color: #ddd; border: none;
+                           border-radius: 4px; margin-right: 10px; cursor: pointer;">
+                Fechar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    (function () {
+        const form = document.getElementById("PropostasVistoriaRegistrar");
+        if (!form) return;
+
+        const seguradoIdInput = document.getElementById("PessoasVistoria_PropostasSeguradoId");
+        const nomeInput = document.getElementById("PessoasVistoria_Nome");
+        const cpfInput = document.getElementById("PessoasVistoria_CPF");
+        const telefoneInput = document.getElementById("PessoasVistoria_Telefone");
+
+        form.querySelectorAll(".btnVistoriaSelecionar").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                seguradoIdInput.value = btn.getAttribute("data-propostaseguradoid") || "";
+                nomeInput.value = btn.getAttribute("data-nome") || "";
+                cpfInput.value = btn.getAttribute("data-cpf") || "";
+                telefoneInput.value = btn.getAttribute("data-telefone") || "";
+
+                // limpeza para garantir que foi escolha da lista, não cadastro manual
+                const nomeNovo = form.querySelector('input[name="NomeNovo"]');
+                const cpfNovo = form.querySelector('input[name="CPFNovo"]');
+                const telefoneNovo = form.querySelector('input[name="TelefoneNovo"]');
+                if (nomeNovo) nomeNovo.value = "";
+                if (cpfNovo) cpfNovo.value = "";
+                if (telefoneNovo) telefoneNovo.value = "";
+
+                form.requestSubmit();
+            });
+        });
+
+        const btnAdicionar = form.querySelector(".btnVistoriaAdicionar");
+        if (btnAdicionar) {
+            btnAdicionar.addEventListener("click", function () {
+                seguradoIdInput.value = "";
+                nomeInput.value = "";
+                cpfInput.value = "";
+                telefoneInput.value = "";
+            });
+        }
+    })();
+</script>

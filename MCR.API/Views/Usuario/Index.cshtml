@@ -1,0 +1,82 @@
+﻿@using System.Globalization;
+@model MCR.API.Models.ViewModels.UsuarioModel
+@{
+    ViewData["Title"] = "Usuários";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Usuários</h4>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Cadastrar" asp-controller="Usuario" class="btn btn-secondary rounded-pill">
+                Cadastrar
+            </a>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div style="overflow-x:auto;">
+        <table id="table-grid" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Corretora</th>
+                    <th>Nome</th>
+                    <th>E-Mail</th>
+                    <th>Perfil de Acesso</th>
+                    <th>Telefone</th>
+                    <th>Bloqueado?</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.ListaUsuarios != null && Model.ListaUsuarios.Count > 0)
+                {
+                    foreach (var usuario in Model.ListaUsuarios)
+                    {
+                        <tr>
+                            <td>@usuario.Corretora</td>
+                            <td>@usuario.Nome</td>
+                            <td>@usuario.Email</td>
+                            <td>@usuario.PerfilAcesso</td>
+                            <td>@usuario.PhoneNumber</td>
+                            <td>@(usuario.Bloqueado ? "Sim" : "Não")</td>
+                            <td>
+                                <a asp-action="Editar" asp-route-id="@usuario.Id" class="btn btn-primary btn-sm">Editar</a>
+                                @if (usuario.Bloqueado)
+                                {
+                                    <form asp-action="Desbloquear" asp-controller="UsuarioPage" asp-route-id="@usuario.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Tem certeza que deseja desbloquear este usuário?')">Desbloquear</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Bloquear" asp-controller="UsuarioPage" asp-route-id="@usuario.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja bloquear este usuário?')">Bloquear</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

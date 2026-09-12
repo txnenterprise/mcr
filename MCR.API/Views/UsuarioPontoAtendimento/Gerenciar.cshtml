@@ -1,0 +1,78 @@
+﻿@model MCR.API.Models.ViewModels.UsuarioPontoAtendimentoModel
+@using System.Security.Claims
+@using System.Linq
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<UsuarioEntity> UserManager
+
+@{
+    ViewData["Title"] = "Usuário - Ponto de Atendimento - Excluir";
+    var user = await UserManager.GetUserAsync(User);
+    var role = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Usuário - Ponto de Atendimento - Excluir</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="UsuarioPontoAtendimento" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="UsuarioPontoAtendimento" asp-action="Gerenciar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <h6>@($"Usuário: {user.Name} - {user.Email}")</h6>
+                            <h6>@($"Perfil: {role.FirstOrDefault()}")</h6>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="alert alert-warning" role="alert">
+                                    Caso exclua esse vínculo, o processo será irreversível.
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                @if (Model != null && !Model.UsuarioPontoAtendimentoDTO.Sucesso)
+                                {
+                                    <br />
+                                    <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+                                        <h6>Atenção!</h6>
+                                        <h6>@Model.UsuarioPontoAtendimentoDTO.Mensagem</h6>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <h6>Liderado - Nome: @Model.UsuarioPontoAtendimentoDTO.LideradoNome.</h6>
+                                    <h6>Liderado - E-Mail: @Model.UsuarioPontoAtendimentoDTO.LideradoEmail</h6>
+                                    <h6>Liderado - Ponto de Atendimento: @Model.UsuarioPontoAtendimentoDTO.PontoAtendimentoNome</h6>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-danger rounded-pill">
+                Excluir
+            </button>
+        </div>
+        <input type="hidden" id="jsonUsuarios" name="jsonUsuarios" asp-for="jsonUsuarios" value='@Html.Raw(Model?.jsonUsuarios)' />
+        <input asp-for="UsuarioPontoAtendimentoDTO.Id" hidden />
+    </form>
+
+</div>

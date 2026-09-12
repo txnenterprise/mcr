@@ -1,0 +1,1062 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasStatusDTO
+<form id="formStatus"
+      asp-antiforgery="true"
+      asp-action="SalvarStatus"
+      asp-controller="PropostasStatus">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="PropostaId" />
+    @if (ViewBag.UltimoStatus != null)
+    {
+        <input type="hidden" id="ultimoStatusAnterior" value="@ViewBag.UltimoStatus.Status" />
+        @if (ViewBag.UltimoStatus.Status == "Endosso com pendência" && ViewBag.UltimoStatus.EndossoPendenciaDTO != null)
+        {
+            <input type="hidden" id="ultimoDescricaoPendencia" value="@ViewBag.UltimoStatus.EndossoPendenciaDTO.DescricaoPendencia" />
+            <input type="hidden" id="ultimoTipoDocumento" value="@ViewBag.UltimoStatus.EndossoPendenciaDTO.TipoDocumento" />
+        }
+    }
+    <div class="modal-container" style="position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); width: 75%; max-width: 800px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+            <h4 class="modal-title">Atualizar Status da Proposta</h4>
+            <button type="button" class="btnFecharStatusModal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="form">
+                        <label asp-for="Status">Status</label>
+                        <select class="form-control form-control-sm select2" asp-for="Status" asp-items="@ViewBag.StatusList">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            @if (ViewBag.UltimoStatus != null && !string.IsNullOrEmpty(ViewBag.UltimoStatus.Status))
+            {
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label>Status Anterior</label>
+                            <input type="text" class="form-control" value="@ViewBag.UltimoStatus.Status" readonly style="background-color: #e9ecef; cursor: not-allowed;" />
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div id="secaoJustificativa" class="status-section" style="display:none;">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="JustificativaDTO.Justificativa">Justificativa</label>
+                            <textarea class="form-control" asp-for="JustificativaDTO.Justificativa" style="height: 100px" placeholder="Justificativa"></textarea>
+                            <span asp-validation-for="JustificativaDTO.Justificativa" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoPendencia" class="status-section" style="display:none;">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="PendenciaDTO.UploadArquivoNome"></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="PendenciaDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="PendenciaDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplPendencia" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplPendencia" name="UplPendencia" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="PendenciaDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="PendenciaDTO.RetornoPendencia">Retorno da Pendência</label>
+                            <textarea class="form-control" asp-for="PendenciaDTO.RetornoPendencia" style="height: 100px" placeholder="Retorno da Pendência"></textarea>
+                            <span asp-validation-for="PendenciaDTO.RetornoPendencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="PendenciaDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="PendenciaDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="PendenciaDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoPropostaAceita" class="status-section" style="display:none;">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.PropostaSeguradoraNome"></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="AceitaDTO.PropostaSeguradoraNome" />
+                                <input type="hidden" asp-for="AceitaDTO.PropostaSeguradora" />
+                                <div class="input-group-append">
+                                    <label for="UplPropostaAceita" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplPropostaAceita" name="UplPropostaAceita" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="AceitaDTO.PropostaSeguradora" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.NumeroProposta">Número da Proposta</label>
+                            <input type="text" class="form-control" asp-for="AceitaDTO.NumeroProposta" placeholder="Número da Proposta" />
+                            <span asp-validation-for="AceitaDTO.NumeroProposta" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.LmiTotal">LMI Total</label>
+                            <input type="text" class="form-control" asp-for="AceitaDTO.LmiTotal" placeholder="LMI Total" />
+                            <span asp-validation-for="AceitaDTO.LmiTotal" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.PremioTotal">Prêmio Total</label>
+                            <input type="text" class="form-control" asp-for="AceitaDTO.PremioTotal" placeholder="Prêmio Total" />
+                            <span asp-validation-for="AceitaDTO.PremioTotal" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.SubFederal">Sub Federal</label>
+                            <input type="text" class="form-control" asp-for="AceitaDTO.SubFederal" placeholder="Sub Federal" />
+                            <span asp-validation-for="AceitaDTO.SubFederal" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.SubEstadual">Sub Estadual</label>
+                            <input type="text" class="form-control" asp-for="AceitaDTO.SubEstadual" placeholder="Sub Estadual" />
+                            <span asp-validation-for="AceitaDTO.SubEstadual" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.ParcelaSegurado">Parcela do Segurado (valor)</label>
+                            <input type="text" class="form-control" asp-for="AceitaDTO.ParcelaSegurado" placeholder="0,00" autocomplete="off" />
+                            <span asp-validation-for="AceitaDTO.ParcelaSegurado" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.BoletoNome"></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="AceitaDTO.BoletoNome" />
+                                <input type="hidden" asp-for="AceitaDTO.Boleto" />
+                                <div class="input-group-append">
+                                    <label for="UplPropostaAceitaBoleto" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplPropostaAceitaBoleto" name="UplPropostaAceitaBoleto" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="AceitaDTO.Boleto" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="AceitaDTO.DataVencimento">Data de Vencimento</label>
+                            <input type="date" class="form-control" asp-for="AceitaDTO.DataVencimento" placeholder="Data de Vencimento" />
+                            <span asp-validation-for="AceitaDTO.DataVencimento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoApoliceEmitida" class="status-section" style="display:none;">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="ApoliceEmitidaDTO.ApoliceEmitidaNome"></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="ApoliceEmitidaDTO.ApoliceEmitidaNome" />
+                                <input type="hidden" asp-for="ApoliceEmitidaDTO.ApoliceEmitida" />
+                                <div class="input-group-append">
+                                    <label for="UplApoliceEmitida" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplApoliceEmitida" name="UplApoliceEmitida" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="ApoliceEmitidaDTO.ApoliceEmitida" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="ApoliceEmitidaDTO.NumeroApolice">Número da Apólice</label>
+                            <input type="text" class="form-control" asp-for="ApoliceEmitidaDTO.NumeroApolice" placeholder="Número da Apólice" />
+                            <span asp-validation-for="ApoliceEmitidaDTO.NumeroApolice" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="ApoliceEmitidaDTO.InicioVigencia">Início de Vigência</label>
+                            <input type="date" class="form-control" asp-for="ApoliceEmitidaDTO.InicioVigencia" placeholder="Início de Vigência" />
+                            <span asp-validation-for="ApoliceEmitidaDTO.InicioVigencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="ApoliceEmitidaDTO.FinalVigencia">Final de Vigência</label>
+                            <input type="date" class="form-control" asp-for="ApoliceEmitidaDTO.FinalVigencia" placeholder="Final de Vigência" />
+                            <span asp-validation-for="ApoliceEmitidaDTO.FinalVigencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div id="divBoletoApolice" class="col-md-6">
+                        <div class="form">
+                            <label asp-for="ApoliceEmitidaDTO.BoletoNome">Upload do Boleto</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="ApoliceEmitidaDTO.BoletoNome" />
+                                <input type="hidden" asp-for="ApoliceEmitidaDTO.Boleto" />
+                                <div class="input-group-append">
+                                    <label for="UplApoliceEmitidaBoleto" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplApoliceEmitidaBoleto" name="UplApoliceEmitidaBoleto" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="ApoliceEmitidaDTO.Boleto" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="ApoliceEmitidaDTO.DataVencimento">Data de Vencimento</label>
+                            <input type="date" class="form-control" asp-for="ApoliceEmitidaDTO.DataVencimento" placeholder="Data de Vencimento" />
+                            <span asp-validation-for="ApoliceEmitidaDTO.DataVencimento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoEndossoSolicitacao" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="EndossoSolicitacaoDTO.Acao" id="EndossoSolicitacaoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoSolicitacaoDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="EndossoSolicitacaoDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="EndossoSolicitacaoDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplEndossoSolicitacao" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplEndossoSolicitacao" name="UplEndossoSolicitacao" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="EndossoSolicitacaoDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoSolicitacaoDTO.DescricaoAlteracao">Descrição da Alteração</label>
+                            <textarea class="form-control" asp-for="EndossoSolicitacaoDTO.DescricaoAlteracao" style="height: 100px" placeholder="Descrição da Alteração"></textarea>
+                            <span asp-validation-for="EndossoSolicitacaoDTO.DescricaoAlteracao" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoSolicitacaoDTO.RetornoPendencia">Retorno da Pendência</label>
+                            <textarea class="form-control" asp-for="EndossoSolicitacaoDTO.RetornoPendencia" style="height: 100px" placeholder="Retorno da Pendência"></textarea>
+                            <span asp-validation-for="EndossoSolicitacaoDTO.RetornoPendencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoEndossoPendencia" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="EndossoPendenciaDTO.Acao" id="EndossoPendenciaDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoPendenciaDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="EndossoPendenciaDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="EndossoPendenciaDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplEndossoPendencia" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplEndossoPendencia" name="UplEndossoPendencia" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="EndossoPendenciaDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoPendenciaDTO.DescricaoPendencia">Descrição da Pendência</label>
+                            <textarea class="form-control" asp-for="EndossoPendenciaDTO.DescricaoPendencia" style="height: 100px" placeholder="Descrição da Pendência"></textarea>
+                            <span asp-validation-for="EndossoPendenciaDTO.DescricaoPendencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoPendenciaDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="EndossoPendenciaDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="EndossoPendenciaDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoEndossoTransmitido" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="EndossoTransmitidoDTO.Acao" id="EndossoTransmitidoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoTransmitidoDTO.NumeroEndosso">Número do Endosso</label>
+                            <input type="text" class="form-control" asp-for="EndossoTransmitidoDTO.NumeroEndosso" />
+                            <span asp-validation-for="EndossoTransmitidoDTO.NumeroEndosso" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoTransmitidoDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="EndossoTransmitidoDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="EndossoTransmitidoDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplEndossoTransmitido" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplEndossoTransmitido" name="UplEndossoTransmitido" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="EndossoTransmitidoDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoTransmitidoDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="EndossoTransmitidoDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="EndossoTransmitidoDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoTransmitidoDTO.Observacoes">Observações</label>
+                            <textarea class="form-control" asp-for="EndossoTransmitidoDTO.Observacoes" style="height: 100px" placeholder="Observações"></textarea>
+                            <span asp-validation-for="EndossoTransmitidoDTO.Observacoes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoEndossoEmitido" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="EndossoEmitidoDTO.Acao" id="EndossoEmitidoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.NumeroEndosso">Número do Endosso</label>
+                            <input type="text" class="form-control" asp-for="EndossoEmitidoDTO.NumeroEndosso" />
+                            <span asp-validation-for="EndossoEmitidoDTO.NumeroEndosso" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="EndossoEmitidoDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="EndossoEmitidoDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplEndossoEmitido" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplEndossoEmitido" name="UplEndossoEmitido" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="EndossoEmitidoDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="EndossoEmitidoDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="EndossoEmitidoDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.LMITotal">LMI Total</label>
+                            <input type="text" class="form-control" asp-for="EndossoEmitidoDTO.LMITotal" />
+                            <span asp-validation-for="EndossoEmitidoDTO.LMITotal" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.PremioTotal">Prêmio Total</label>
+                            <input type="text" class="form-control" asp-for="EndossoEmitidoDTO.PremioTotal" />
+                            <span asp-validation-for="EndossoEmitidoDTO.PremioTotal" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.SubFederal">Sub Federal</label>
+                            <input type="text" class="form-control" asp-for="EndossoEmitidoDTO.SubFederal" />
+                            <span asp-validation-for="EndossoEmitidoDTO.SubFederal" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.SubEstadual">Sub Estadual</label>
+                            <input type="text" class="form-control" asp-for="EndossoEmitidoDTO.SubEstadual" />
+                            <span asp-validation-for="EndossoEmitidoDTO.SubEstadual" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.ParcSegurado">Parcela do Segurado</label>
+                            <input type="text" inputmode="decimal" class="form-control" asp-for="EndossoEmitidoDTO.ParcSegurado" placeholder="0,00" autocomplete="off" />
+                            <span asp-validation-for="EndossoEmitidoDTO.ParcSegurado" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.AreaTotal">Área Total</label>
+                            <input type="number" step="0.01" class="form-control" asp-for="EndossoEmitidoDTO.AreaTotal" />
+                            <span asp-validation-for="EndossoEmitidoDTO.AreaTotal" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.InicioVigencia">Início de Vigência</label>
+                            <input type="date" class="form-control" asp-for="EndossoEmitidoDTO.InicioVigencia" />
+                            <span asp-validation-for="EndossoEmitidoDTO.InicioVigencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.FimVigencia">Fim de Vigência</label>
+                            <input type="date" class="form-control" asp-for="EndossoEmitidoDTO.FimVigencia" />
+                            <span asp-validation-for="EndossoEmitidoDTO.FimVigencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="EndossoEmitidoDTO.Observacoes">Observações</label>
+                            <textarea class="form-control" asp-for="EndossoEmitidoDTO.Observacoes" style="height: 100px" placeholder="Observações"></textarea>
+                            <span asp-validation-for="EndossoEmitidoDTO.Observacoes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoSinistroComunicar" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="SinistroComunicarDTO.Acao" id="SinistroComunicarDTO_Acao" />
+                @if (ViewBag.ApoliceEmitida != null)
+                {
+                    <input type="hidden" id="apoliceInicioVigencia" value="@ViewBag.ApoliceEmitida.InicioVigencia.ToString("yyyy-MM-dd")" />
+                    <input type="hidden" id="apoliceFinalVigencia" value="@ViewBag.ApoliceEmitida.FinalVigencia.ToString("yyyy-MM-dd")" />
+                }
+                @if (ViewBag.PropostaAreaTotal != null)
+                {
+                    <input type="hidden" id="propostaAreaTotal" value="@ViewBag.PropostaAreaTotal" />
+                }
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.Cobertura">Cobertura</label>
+                            <select class="form-control" asp-for="SinistroComunicarDTO.Cobertura" id="SinistroComunicarDTO_Cobertura" asp-items="ViewBag.CoberturaList">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <span asp-validation-for="SinistroComunicarDTO.Cobertura" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.Evento">Informe o Evento</label>
+                            <select class="form-control" asp-for="SinistroComunicarDTO.Evento" id="SinistroComunicarDTO_Evento">
+                                <option value="">Selecione a Cobertura primeiro...</option>
+                            </select>
+                            <span asp-validation-for="SinistroComunicarDTO.Evento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.SeveridadeDano">Severidade do Dano</label>
+                            <select class="form-control" asp-for="SinistroComunicarDTO.SeveridadeDano" id="SinistroComunicarDTO_SeveridadeDano" asp-items="ViewBag.SeveridadeDanoList">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <span asp-validation-for="SinistroComunicarDTO.SeveridadeDano" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.DanoEstimado">Dano % Estimado</label>
+                            <select class="form-control" asp-for="SinistroComunicarDTO.DanoEstimado" id="SinistroComunicarDTO_DanoEstimado">
+                                <option value="">Selecione...</option>
+                                <option value="10">10%</option>
+                                <option value="20">20%</option>
+                                <option value="30">30%</option>
+                                <option value="40">40%</option>
+                                <option value="50">50%</option>
+                                <option value="60">60%</option>
+                                <option value="70">70%</option>
+                                <option value="80">80%</option>
+                                <option value="90">90%</option>
+                                <option value="100">100%</option>
+                            </select>
+                            <span asp-validation-for="SinistroComunicarDTO.DanoEstimado" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.AreaTotalAfetada">Área Total Afetada</label>
+                            <div class="input-group">
+                                @if (ViewBag.PropostaAreaTotal != null)
+                                {
+                                    <input type="number" step="0.01" min="0" max="@ViewBag.PropostaAreaTotal" class="form-control" asp-for="SinistroComunicarDTO.AreaTotalAfetada" id="SinistroComunicarDTO_AreaTotalAfetada" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Área da Apólice: @(((decimal)ViewBag.PropostaAreaTotal).ToString("N2")) ha</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <input type="number" step="0.01" min="0" class="form-control" asp-for="SinistroComunicarDTO.AreaTotalAfetada" id="SinistroComunicarDTO_AreaTotalAfetada" />
+                                }
+                            </div>
+                            <span asp-validation-for="SinistroComunicarDTO.AreaTotalAfetada" class="text-danger"></span>
+                            @if (ViewBag.PropostaAreaTotal != null)
+                            {
+                                <small class="form-text text-muted">A área total afetada não pode ser maior que a área da apólice (@(((decimal)ViewBag.PropostaAreaTotal).ToString("N2")) ha)</small>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.DataInicio">Data Início</label>
+                            <input type="date" class="form-control" asp-for="SinistroComunicarDTO.DataInicio" id="SinistroComunicarDTO_DataInicio" />
+                            <span asp-validation-for="SinistroComunicarDTO.DataInicio" class="text-danger"></span>
+                            @if (ViewBag.ApoliceEmitida != null)
+                            {
+                                <small class="form-text text-muted">Vigência da Apólice: @ViewBag.ApoliceEmitida.InicioVigencia.ToString("dd/MM/yyyy") a @ViewBag.ApoliceEmitida.FinalVigencia.ToString("dd/MM/yyyy")</small>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.DataFinal">Data Final</label>
+                            <input type="date" class="form-control" asp-for="SinistroComunicarDTO.DataFinal" id="SinistroComunicarDTO_DataFinal" />
+                            <span asp-validation-for="SinistroComunicarDTO.DataFinal" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.TipoRespVistoria">Tipo do Responsável pela Vistoria</label>
+                            <select class="form-control" asp-for="SinistroComunicarDTO.TipoRespVistoria" id="SinistroComunicarDTO_TipoRespVistoria">
+                                <option value="">Selecione...</option>
+                                <option value="Segurado">Segurado</option>
+                                <option value="Grupo Familiar">Grupo Familiar</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                            <span asp-validation-for="SinistroComunicarDTO.TipoRespVistoria" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3" id="divSeguradoGrupoFamiliar" style="display:none;">
+                    <div class="col-12">
+                        <div class="form">
+                            <label>Selecione o Responsável</label>
+                            <select class="form-control" id="SinistroComunicarDTO_ResponsavelSelecionado">
+                                <option value="">Selecione...</option>
+                                @if (ViewBag.SeguradosList != null)
+                                {
+                                    @foreach (var segurado in (List<MCR.API.Propostas.Domain.DTO.PropostasSeguradosDTO>)ViewBag.SeguradosList)
+                                    {
+                                        <option value="@segurado.CPF" data-nome="@segurado.Nome" data-cpf="@segurado.CPF">@segurado.Nome - @segurado.CPF (@(segurado.RelacaoParental ?? "Titular"))</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3" id="divOutro" style="display:none;">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.NomeRespVistoria">Nome do Responsável pela Vistoria</label>
+                            <input type="text" class="form-control" asp-for="SinistroComunicarDTO.NomeRespVistoria" id="SinistroComunicarDTO_NomeRespVistoria" />
+                            <span asp-validation-for="SinistroComunicarDTO.NomeRespVistoria" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.CPFRespVistoria">CPF do Responsável pela Vistoria</label>
+                            <input type="text" class="form-control" asp-for="SinistroComunicarDTO.CPFRespVistoria" id="SinistroComunicarDTO_CPFRespVistoria" />
+                            <span asp-validation-for="SinistroComunicarDTO.CPFRespVistoria" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroComunicarDTO.Observacao">Observações</label>
+                            <textarea class="form-control" asp-for="SinistroComunicarDTO.Observacao" style="height: 100px" placeholder="Observações"></textarea>
+                            <span asp-validation-for="SinistroComunicarDTO.Observacao" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoSinistroPendencia" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="SinistroPendenciaDTO.Acao" id="SinistroPendenciaDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroPendenciaDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="SinistroPendenciaDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="SinistroPendenciaDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplSinistroPendencia" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplSinistroPendencia" name="UplSinistroPendencia" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="SinistroPendenciaDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroPendenciaDTO.RetornoPendencia">Retorno da Pendência</label>
+                            <textarea class="form-control" asp-for="SinistroPendenciaDTO.RetornoPendencia" style="height: 100px" placeholder="Retorno da Pendência"></textarea>
+                            <span asp-validation-for="SinistroPendenciaDTO.RetornoPendencia" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroPendenciaDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="SinistroPendenciaDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="SinistroPendenciaDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoSinistroCancelado" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="SinistroCanceladoDTO.Acao" id="SinistroCanceladoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroCanceladoDTO.MotivoCancelamento">Motivo do Cancelamento</label>
+                            <textarea class="form-control" asp-for="SinistroCanceladoDTO.MotivoCancelamento" style="height: 100px" placeholder="Motivo do Cancelamento"></textarea>
+                            <span asp-validation-for="SinistroCanceladoDTO.MotivoCancelamento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoSinistroAbertoRegulacao" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="SinistroAbertoRegulacaoDTO.Acao" id="SinistroAbertoRegulacaoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroAbertoRegulacaoDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="SinistroAbertoRegulacaoDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="SinistroAbertoRegulacaoDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplSinistroAbertoRegulacao" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplSinistroAbertoRegulacao" name="UplSinistroAbertoRegulacao" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="SinistroAbertoRegulacaoDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroAbertoRegulacaoDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="SinistroAbertoRegulacaoDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="SinistroAbertoRegulacaoDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroAbertoRegulacaoDTO.ProtocoloAvisoSinistro">Protocolo de Aviso de Sinistro</label>
+                            <input type="text" class="form-control" asp-for="SinistroAbertoRegulacaoDTO.ProtocoloAvisoSinistro" />
+                            <span asp-validation-for="SinistroAbertoRegulacaoDTO.ProtocoloAvisoSinistro" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroAbertoRegulacaoDTO.DataAvisoSinistro">Data de Aviso do Sinistro</label>
+                            <input type="date" class="form-control" asp-for="SinistroAbertoRegulacaoDTO.DataAvisoSinistro" />
+                            <span asp-validation-for="SinistroAbertoRegulacaoDTO.DataAvisoSinistro" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroAbertoRegulacaoDTO.EmpresaPerito">Empresa/Perito</label>
+                            <input type="text" class="form-control" asp-for="SinistroAbertoRegulacaoDTO.EmpresaPerito" />
+                            <span asp-validation-for="SinistroAbertoRegulacaoDTO.EmpresaPerito" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroAbertoRegulacaoDTO.Telefone">Telefone</label>
+                            <input type="text" class="form-control" asp-for="SinistroAbertoRegulacaoDTO.Telefone" />
+                            <span asp-validation-for="SinistroAbertoRegulacaoDTO.Telefone" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroAbertoRegulacaoDTO.Observacoes">Observações</label>
+                            <textarea class="form-control" asp-for="SinistroAbertoRegulacaoDTO.Observacoes" style="height: 100px" placeholder="Observações"></textarea>
+                            <span asp-validation-for="SinistroAbertoRegulacaoDTO.Observacoes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoSinistroAguardPagamento" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="SinistroAguardPagamentoDTO.Acao" id="SinistroAguardPagamentoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroAguardPagamentoDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="SinistroAguardPagamentoDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="SinistroAguardPagamentoDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplSinistroAguardPagamento" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplSinistroAguardPagamento" name="UplSinistroAguardPagamento" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="SinistroAguardPagamentoDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroAguardPagamentoDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="SinistroAguardPagamentoDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="SinistroAguardPagamentoDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroAguardPagamentoDTO.DataDeferimento">Data de Deferimento</label>
+                            <input type="date" class="form-control" asp-for="SinistroAguardPagamentoDTO.DataDeferimento" />
+                            <span asp-validation-for="SinistroAguardPagamentoDTO.DataDeferimento" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroAguardPagamentoDTO.ValorIndenizacao">Valor da Indenização</label>
+                            <input type="text" class="form-control" asp-for="SinistroAguardPagamentoDTO.ValorIndenizacao" placeholder="0,00" style="-moz-appearance: textfield; -webkit-appearance: none;" />
+                            <span asp-validation-for="SinistroAguardPagamentoDTO.ValorIndenizacao" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroAguardPagamentoDTO.Observacoes">Observações</label>
+                            <textarea class="form-control" asp-for="SinistroAguardPagamentoDTO.Observacoes" style="height: 100px" placeholder="Observações"></textarea>
+                            <span asp-validation-for="SinistroAguardPagamentoDTO.Observacoes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoSinistroDeferidoPago" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="SinistroDeferidoPagoDTO.Acao" id="SinistroDeferidoPagoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroDeferidoPagoDTO.DataPagamento">Data do Pagamento</label>
+                            <input type="date" class="form-control" asp-for="SinistroDeferidoPagoDTO.DataPagamento" />
+                            <span asp-validation-for="SinistroDeferidoPagoDTO.DataPagamento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroDeferidoPagoDTO.Observacoes">Observações</label>
+                            <textarea class="form-control" asp-for="SinistroDeferidoPagoDTO.Observacoes" style="height: 100px" placeholder="Observações"></textarea>
+                            <span asp-validation-for="SinistroDeferidoPagoDTO.Observacoes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="secaoSinistroIndeferido" class="status-section" style="display:none;">
+                <input type="hidden" asp-for="SinistroIndeferidoDTO.Acao" id="SinistroIndeferidoDTO_Acao" />
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroIndeferidoDTO.UploadArquivoNome">Upload Arquivo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" asp-for="SinistroIndeferidoDTO.UploadArquivoNome" />
+                                <input type="hidden" asp-for="SinistroIndeferidoDTO.UploadArquivo" />
+                                <div class="input-group-append">
+                                    <label for="UplSinistroIndeferido" class="btn btn-outline-secondary">Procurar</label>
+                                    <input type="text" class="d-none" id="UplSinistroIndeferido" name="UplSinistroIndeferido" />
+                                </div>
+                            </div>
+                            <span asp-validation-for="SinistroIndeferidoDTO.UploadArquivo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroIndeferidoDTO.TipoDocumento">Tipo de Documento</label>
+                            <select class="form-control" asp-for="SinistroIndeferidoDTO.TipoDocumento">
+                                <option value="">Selecione...</option>
+                                <option value="Cotação MCR">Cotação MCR</option>
+                                <option value="Proposta MCR">Proposta MCR</option>
+                                <option value="Proposta Seguradora">Proposta Seguradora</option>
+                                <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                                <option value="Boleto">Boleto</option>
+                                <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                                <option value="Apólice">Apólice</option>
+                                <option value="Endosso">Endosso</option>
+                                <option value="Análise de Solo">Análise de Solo</option>
+                                <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                                <option value="Croqui kml">Croqui kml</option>
+                                <option value="Croqui PDF">Croqui PDF</option>
+                                <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                                <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                                <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                                <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                                <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                                <option value="Outros">Outros (descrever no campo observações)</option>
+                            </select>
+                            <span asp-validation-for="SinistroIndeferidoDTO.TipoDocumento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form">
+                            <label asp-for="SinistroIndeferidoDTO.DataIndeferimento">Data do Indeferimento</label>
+                            <input type="date" class="form-control" asp-for="SinistroIndeferidoDTO.DataIndeferimento" />
+                            <span asp-validation-for="SinistroIndeferidoDTO.DataIndeferimento" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form">
+                            <label asp-for="SinistroIndeferidoDTO.Observacoes">Observações</label>
+                            <textarea class="form-control" asp-for="SinistroIndeferidoDTO.Observacoes" style="height: 100px" placeholder="Observações"></textarea>
+                            <span asp-validation-for="SinistroIndeferidoDTO.Observacoes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; border-top: 1px solid #ddd; padding-top: 15px; margin-top: 15px;">
+            <button type="submit" class="btn btn-primary">Atualizar</button>&nbsp;
+            <button type="button" class="btn btn-secondary btnFecharStatusModal">Fechar</button>
+        </div>
+    </div>
+</form>

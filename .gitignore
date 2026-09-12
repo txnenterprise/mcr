@@ -1,0 +1,25 @@
+# Build output
+bin/
+obj/
+*.user
+*.suo
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Environment files (secrets)
+.env
+deploy/**/*.env
+!deploy/**/*.env.example
+
+# Data
+data/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log

@@ -1,0 +1,209 @@
+﻿@using System.Globalization;
+
+@model MCR.API.Entities.CotacaoEntity
+@{
+    ViewData["Title"] = "Cotações - Visualizar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Cotações - Visualizar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-action="Index" asp-controller="Cotacao" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    @if (Model.Cotacao.CotacaoRetornoSeguradora != null && Model.Cotacao.Sucesso)
+    {
+        <h4>@Model.Cotacao.CotacaoRetornoSeguradora.Seguradora</h4>
+        var premioDecimal = Convert.ToDecimal(Model.Cotacao.CotacaoRetornoSeguradora.Premio.Trim().Replace("R$", ""));
+        <h4>@premioDecimal.ToString("C", new CultureInfo("pt-BR"))</h4>
+    }
+
+    <p>Corretor: @Model.Cotacao.Corretor</p>
+    <p>Data/Hora Cotação: @Model.Cotacao.DataHoraCotacao.ToString("dd/MM/yyyy hh:mm:ss")</p>
+    @if (Model.Cotacao.CotacaoRetornoSeguradora.Efetivada)
+    {
+        <p>Efetivada? Sim</p>
+        <p>Corretor Efetivou: @Model.Cotacao.CotacaoRetornoSeguradora.CorretorEfetivou</p>
+        <p>Data Efetivação: @Model.Cotacao.CotacaoRetornoSeguradora.DataHoraEfetivacao.ToString("dd/MM/yyyy")</p>
+    }
+    else
+    {
+        <p>Efetivada? Não</p>
+        if (Model.Cotacao.CotacaoRetornoSeguradora.DataHoraEfetivacao == DateTime.MinValue)
+        {
+            <p>Corretor Efetivou: -</p>
+            <p>Data Efetivação: - </p>
+        }
+        else
+        {
+            <p>Corretor Desfez Efetivação: @Model.Cotacao.CotacaoRetornoSeguradora.CorretorEfetivou.Replace("Desfez - ", "")</p>
+            <p>Data Efetivação Desfeita: @Model.Cotacao.CotacaoRetornoSeguradora.DataHoraEfetivacao.ToString("dd/MM/yyyy")</p>
+        }
+    }
+    <p>Código Interno: @Model.Cotacao.Id</p>
+    <br /><br />
+    <h6>Informações do Seguro</h6>
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <div class="form-floating">
+                        <ul class="list-group">
+                            <li class="list-group-item">Tempo de Vigência: @Model.Cotacao.InformacaoSeguro.TempoVigenciaSeguro</li>
+                            <li class="list-group-item">Tipo de Seguro: @Model.Cotacao.InformacaoSeguro.TipoSeguro</li>
+                            <li class="list-group-item">Apólice/Renovação: @Model.Cotacao.InformacaoSeguro.ApoliceRenovacao</li>
+                            <li class="list-group-item">Seguradora Anterior: @Model.Cotacao.InformacaoSeguro.SeguradoraAnterior</li>
+                            <li class="list-group-item">Bem é Financiado? @(Model.Cotacao.InformacaoSeguro.BemFinanciado ? "Sim" : "Não")</li>
+                            <li class="list-group-item">Banco do Beneficiário: @Model.Cotacao.InformacaoSeguro.BancoBeneficiarioInformacaoSeguro</li>
+                            <li class="list-group-item">Qtde. Parcelas: @Model.Cotacao.InformacaoSeguro.QuantidadeParcelas</li>
+                            <li class="list-group-item">Forma de Pagto.: @Model.Cotacao.InformacaoSeguro.FormaPagamentoSeguro</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <h6>Informações do Segurado</h6>
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <ul class="list-group">
+                        <li class="list-group-item">Nome: @Model.Cotacao.InformacaoSegurado.Nome</li>
+                        <li class="list-group-item">Física ou Jurídica? @Model.Cotacao.InformacaoSegurado.TipoPessoa</li>
+                        <li class="list-group-item">CPF/CNPJ: @Model.Cotacao.InformacaoSegurado.CPFCNPJ</li>
+                        <li class="list-group-item">CEP: @Model.Cotacao.InformacaoSegurado.CEP</li>
+                        <li class="list-group-item">Endereço: @Model.Cotacao.InformacaoSegurado.Endereco</li>
+                        <li class="list-group-item">Cidade: @Model.Cotacao.InformacaoSegurado.Cidade</li>
+                        <li class="list-group-item">Número: @Model.Cotacao.InformacaoSegurado.Numero</li>
+                        <li class="list-group-item">Bairro: @Model.Cotacao.InformacaoSegurado.Bairro</li>
+                        <li class="list-group-item">Estado: @Model.Cotacao.InformacaoSegurado.Estado</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <hr />
+    <h5>Informações Sobre o Bem</h5>
+    <br />
+    <h6>Equipamento</h6>
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                @if (Model.BensAgrupados != null && Model.BensAgrupados.Count > 0)
+                {
+                    foreach (var item in Model.BensAgrupados)
+                    {
+                        foreach (var bem in item.ListaBens ?? Array.Empty<CotacaoInformacaoBemEntity>())
+                        {
+                            <h6>@item.TipoEquipamento <span class="badge" style="background-color: #000; color: #fff">@item.Quantidade</span></h6>
+                            <br />
+                            <ul>
+                                <li class="list-group-item">Ano de Fabricação: @bem.AnoFabricacao</li>
+                                <li class="list-group-item">Valor: @bem.ValorEquipamento.ToString("C")</li>
+                                <li class="list-group-item">Marca: @bem.MarcaEquipamento</li>
+                                <li class="list-group-item">Modelo: @bem.ModeloEquipamento</li>
+                                <li class="list-group-item">Núm. Série: @bem.NumeroSerieEquipamento</li>
+                                <li class="list-group-item">Chassi: @bem.NumeroChassiEquipamento</li>
+                                @if (bem.DataNotaFiscal != DateTime.MinValue)
+                                {
+                                    <li class="list-group-item">Núm. Nota Fiscal: @bem.NumeroNotaFiscal</li>
+                                    <li class="list-group-item">Data Nota Fiscal: @bem.DataNotaFiscal.ToString("dd/MM/yyyy hh:mm:ss")</li>
+                                }
+                            </ul>
+                            <br />
+                            <br />
+                            <h6>Formulário de Risco</h6>
+                            <ul class="list-group">
+                                @foreach (var risco in Model.Cotacao.ListaCotacaoFormularioRisco)
+                                {
+                                    <li class="list-group-item">Poderá ser alugado durante a vigência do seguro? @(risco.EquipamentoAlugadoDuranteVigencia ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Poderá ser cedido à terceiros durante a vigência do seguro? @(risco.EquipamentoCedidoTerceirosDuranteVigencia ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Destinado à zonas rurais (agrícola e/ou pecuária)? @(risco.EquipamentoAtividadesRurais ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Utilizado em atividades florestais? @(risco.EquipamentoAtividadeFlorestal ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Equipamento opera próximo à água? @(risco.EquipamentoOperaProximoAgua ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Operado pelo Segurado/Colaborador? @(risco.SeguradoColaboradorOperador ? "Sim" : "Não")</li>
+                                }
+                            </ul>
+                            <br />
+                            <br />
+                            <h6>Cobertura</h6>
+                            <ul class="list-group">
+                                @foreach (var cobertura in Model.Cotacao.ListaCotacaoCobertura)
+                                {
+                                    <li class="list-group-item">Contratar cobertura relativa à responsabilidade civil para máquinária agrícola? @(cobertura.ContratarResponsabilidadeCivilMaquinariaAgricola ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Valor cobertura relativa à responsabilidade civil para máquinária agrícola: @cobertura.ValorResponsabilidadeCivilMaquinariaAgricola.ToString("C")</li>
+                                    <li class="list-group-item">Contratar cobertura relativa à responsabilidade civil para empregador? @(cobertura.ContratarResponsabilidadeCivilEmpregador ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Valor cobertura relativa à responsabilidade civil para empregador: @cobertura.ValorResponsabilidadeCivilEmpregador.ToString("C")</li>
+                                    <li class="list-group-item">Contratar cobertura relativa à perda ou pagamento de aluguel? @(cobertura.ContratarCoberturaRelativaPerdaPagamentoAluguel ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Valor cobertura relativa à perda ou pagamento de aluguel: @cobertura.ValorCoberturaRelativaPerdaPagamentoAluguel.ToString("C")</li>
+                                    <li class="list-group-item">Contratar furto simples? @(cobertura.ContratarFurtoSimples ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Valor furto simples: @cobertura.ValorFurtoSimples.ToString("C")</li>
+                                    <li class="list-group-item">Contratar danos elétricos? @(cobertura.ContratarDanosEletricos ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Valor danos elétricos: @cobertura.ValorDanosEletricos.ToString("C")</li>
+                                    <li class="list-group-item">Contratar quebra de vidros? @(cobertura.ContratarQuebraVidros ? "Sim" : "Não")</li>
+                                    <li class="list-group-item">Valor quebra de vidros: @cobertura.ValorQuebraVidros.ToString("C")</li>
+                                }
+                            </ul>
+                            <br />
+                            <br />
+                        }
+                        <br />
+                        <br />
+                        <br />
+                    }
+                }
+
+            </div>
+        </div>
+    </div>
+    <br />
+    <h6>Informações do Beneficiário</h6>
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <ul class="list-group">
+                        <li class="list-group-item">Nome: @Model.Cotacao.CotacaoInformacoesBeneficiario.NomeBeneficiario</li>
+                        <li class="list-group-item">Física ou Jurídica? @Model.Cotacao.CotacaoInformacoesBeneficiario.TipoPessoa</li>
+                        <li class="list-group-item">CPF/CNPJ: @Model.Cotacao.CotacaoInformacoesBeneficiario.CPFCNPJBeneficiario</li>
+                        <li class="list-group-item">Banco: @Model.Cotacao.CotacaoInformacoesBeneficiario.BancoBeneficiario</li>
+                        <li class="list-group-item">Agência: @Model.Cotacao.CotacaoInformacoesBeneficiario.AgenciaBeneficiario</li>
+                        <li class="list-group-item">Conta: @Model.Cotacao.CotacaoInformacoesBeneficiario.ContaBeneficiario</li>
+                        <li class="list-group-item">Dígito: @Model.Cotacao.CotacaoInformacoesBeneficiario.DigitoContaBeneficiario</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    @* <h6>Retorno das Seguradoras</h6>
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+    <div class="card-body" style="color: var(--color-primary)">
+    <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+    <ul class="list-group">
+    @if(Model.Cotacao.ListaCotacaoRetornoSeguradora != null)
+    {
+    foreach(var retorno in Model.Cotacao.ListaCotacaoRetornoSeguradora)
+    {
+    var premioDecimal = Convert.ToDecimal(retorno.Premio);
+
+    <li class="list-group-item">Nome: @retorno.Seguradora</li>
+    <li class="list-group-item">Núm. Cotação: @retorno.NumeroCotacao</li>
+    <li class="list-group-item">Data/Hora Cotação: @retorno.DataHoraRetorno.ToString("dd/MM/yyyy hh:mm:ss")</li>
+    <li class="list-group-item">Prêmio: @premioDecimal.ToString("C", new CultureInfo("pt-BR"))</li>
+    }
+    }
+    </ul>
+    </div>
+    </div>
+    </div>
+    </div> *@
+</div>

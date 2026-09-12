@@ -1,0 +1,268 @@
+﻿@inject MCR.API.Services.Interfaces.ICanalService CanalService
+@model MCR.API.Models.ViewModels.PontoAtendimentoModel
+@{
+    ViewData["Title"] = "Pontos de Atendimento - Cadastrar";
+
+    System.Collections.Generic.IEnumerable<MCR.API.Entities.CanalEntity> canaisDoBanco = null;
+    try
+    {
+        canaisDoBanco = await CanalService.ObterTodosPaginadoAsync(null, null, 1, 999);
+    }
+    catch (Exception ex)
+    {
+        <script>console.error('Erro ao carregar canais:', '@ex.Message');</script>
+    }
+    var canaisFromInject = canaisDoBanco?.ToList() ?? new List<MCR.API.Entities.CanalEntity>();
+}
+<script>
+console.log('DEBUG PontoAtendimento Cadastrar - canais via inject:', @canaisFromInject.Count);
+@foreach (var c in canaisFromInject)
+{
+    <text>console.log('  canal:', '@c.Id', '@c.RazaoSocial');</text>
+}
+</script>
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Pontos de Atendimento - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="PontoAtendimento" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="PontoAtendimento" asp-action="Cadastrar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.CNPJ" id="CNPJ" placeholder="CNPJ">
+                            <label for="CNPJ">CNPJ</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-5 col-lg-5">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.RazaoSocial" id="RazaoSocial" placeholder="Razão Social">
+                            <label for="RazaoSocial">Razão Social</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.NomeFantasia" id="NomeFantasia" placeholder="Nome Fantasia">
+                            <label for="Unidade">NomeFantasia</label>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <select class="form-select form-dropdownlist" aria-label="CanalId" asp-for="PontoAtendimento.CanalId" id="CanalId">
+                                <option value="">Canais</option>
+                                @foreach (var c in canaisFromInject)
+                                {
+                                    <option value="@c.Id">@c.RazaoSocial</option>
+                                }
+                            </select>
+                            <label>Canais</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Telefone" id="Telefone" placeholder="Telefone">
+                            <label for="Telefone">Telefone</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Celular" id="Celular" placeholder="Celular">
+                            <label for="Celular">Celular</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Email" id="Email" placeholder="E-Mail">
+                            <label for="Email">E-Mail</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.CEP" id="CEP" placeholder="CEP">
+                            <label for="CEP">CEP</label>
+                        </div>
+                        <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Endereco" id="Endereco" placeholder="Endereço">
+                            <label for="Endereco">Endereço</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Bairro" id="Bairro" placeholder="Bairro">
+                            <label for="Bairro">Bairro</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="number" min="0" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Numero" id="Numero" placeholder="Número">
+                            <label for="Numero">Número</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7 col-lg-7">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Cidade" id="Cidade" placeholder="Cidade">
+                            <label for="Cidade">Cidade</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.Estado" id="Estado" placeholder="Estado">
+                            <label for="Estado">Estado</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                @*<div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <label>Logo</label>
+                        <div class="mb-3">
+                            <label for="imageUpload" class="form-label">Selecione uma imagem:</label>
+                            <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                        </div>
+                        <input type="text" asp-for="ObjectImagem" id="ObjectImagem" name="ObjectImagem" hidden>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <img src="" id="imagePreview" class="img-fluid rounded" alt="Pré-visualização da Imagem" width="200">
+                    </div>
+                </div>*@
+                @* <br />
+        <div class="row">
+        <div class="col-sm-12 col-md-4 col-lg-4">
+        <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" asp-for="PontoAtendimento.Ativo" id="Ativo" checked>
+        <label class="form-check-label" for="Ativo">Ativo?</label>
+        </div>
+        </div>
+        </div> *@
+            </div>
+        </div>
+        <br />
+
+        <!-- Card para E-mails Específicos -->
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <h6 class="mb-3">E-mails Específicos</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.EmailSeguro" id="EmailSeguro" placeholder="E-mail para Seguros">
+                            <label for="EmailSeguro">E-mail para Seguros</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.EmailCopiaSeguro" id="EmailCopiaSeguro" placeholder="E-mail Cópia para Seguros">
+                            <label for="EmailCopiaSeguro">E-mail Cópia para Seguros</label>
+                        </div>
+                        <span class="text-danger" style="font-size: small">Pode digitar mais de um e-mail separado por ;</span>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.EmailSinistro" id="EmailSinistro" placeholder="E-mail para Sinistros">
+                            <label for="EmailSinistro">E-mail para Sinistros</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="PontoAtendimento.EmailCopiaSinistro" id="EmailCopiaSinistro" placeholder="E-mail Cópia para Sinistros">
+                            <label for="EmailCopiaSinistro">E-mail Cópia para Sinistros</label>
+                        </div>
+                        <span class="text-danger" style="font-size: small">Pode digitar mais de um e-mail separado por ;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.PontoAtendimento.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.PontoAtendimento.Mensagem</h6>
+        </div>
+    }
+</div>
+<script>
+    document.getElementById('CNPJ').addEventListener('blur', function () {
+        const cnpj = this.value;
+        if (!validarCNPJ(cnpj)) {
+            alert("CNPJ inválido.")
+        }
+    });
+</script>
+
+<script>
+    // Captura os elementos
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const hiddenField = document.getElementById('ObjectImagem');
+
+    // Adiciona evento ao campo de upload
+    imageUpload.addEventListener('change', function () {
+        const file = this.files[0]; // Captura o arquivo selecionado
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const base64String = event.target.result;
+
+                // Valida se o Base64 contém o cabeçalho correto
+                if (base64String.startsWith('data:image/')) {
+                    hiddenField.value = base64String; // Atualiza o campo oculto
+                    imagePreview.src = base64String; // Atualiza a pré-visualização
+                } else {
+                    alert('Erro: O arquivo selecionado não é uma imagem válida.');
+                }
+            };
+
+            // Lê o arquivo como Base64
+            reader.readAsDataURL(file);
+        } else {
+            alert('Nenhum arquivo foi selecionado.');
+        }
+    });
+
+    // Recupera e processa a imagem Base64 do Model
+    const imagemBase64 = "@Html.Raw(Model?.PontoAtendimento?.ImagemLogo ?? "")";
+    if (imagemBase64 && imagemBase64.trim() !== '') {
+        hiddenField.value = imagemBase64; // Preenche o campo oculto
+        imagePreview.src = imagemBase64; // Atualiza a pré-visualização
+    }
+</script>

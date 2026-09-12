@@ -1,0 +1,942 @@
+@model MCR.API.Models.PropriedadeModel
+@{
+    ViewData["Title"] = "Propriedade - Gerenciar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Propriedade - Gerenciar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Propriedade" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="Propriedade" asp-action="Gerenciar" method="post">
+        <input asp-for="Propriedade.Id" hidden />
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Nome" id="Nome" placeholder="Nome">
+                            <label for="Nome">Nome</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder bg-light" asp-for="Propriedade.SomaAreaTotalTalhao" id="SomaAreaTotalTalhao" placeholder="Soma da Área Total do Talhão" readonly>
+                            <label for="SomaAreaTotalTalhao">Soma da Área Total do Talhão</label>
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-calculator"></i> Calculado automaticamente
+                        </small>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.MatriculaLote" placeholder="Matrícula do Lote">
+                            <label for="MatriculaLote">Matrícula do Lote</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.CadastroAmbientalRural" placeholder="CAR (Cadastro Ambiental Rural)">
+                            <label for="CadastroAmbientalRural">CAR (Cadastro Ambiental Rural)</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.CEP" id="CEP" placeholder="CEP">
+                            <label for="CEP">CEP</label>
+                        </div>
+                        <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Endereco" id="Endereco" placeholder="Endereço">
+                            <label for="Endereco">Endereço</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Bairro" id="Bairro" placeholder="Bairro">
+                            <label for="Bairro">Bairro</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="number" min="0" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Numero" id="Numero" placeholder="Número">
+                            <label for="Numero">Número</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Cidade" id="Cidade" placeholder="Cidade">
+                            <label for="Cidade">Cidade</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Propriedade.Estado" id="Estado" placeholder="Estado">
+                            <label for="Estado">Estado</label>
+                        </div>
+                    </div>
+                </div>
+                @* <br />
+                <div class="row">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" asp-for="Propriedade.Ativo" id="Ativo" checked>
+                <label class="form-check-label" for="Ativo">Ativo?</label>
+                </div>
+                </div>
+                </div> *@
+            </div>
+        </div>
+                @if (Model.Propriedade.QuantidadeTalhoesAssociados > 0)
+                {
+                    <!-- Adicionar campos hidden para preservar os valores -->
+                    <input type="hidden" asp-for="Propriedade.Ativo" value="@Model.Propriedade.Ativo" />
+                    <input type="hidden" asp-for="Propriedade.Excluido" value="@Model.Propriedade.Excluido" />
+                }
+                else
+                {
+                    <div class="form-check form-switch">
+                        @if (Model.Propriedade.Excluido)
+                        {
+                            <input class="form-check-input" type="checkbox" asp-for="Propriedade.Excluido" id="Excluido" checked>
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" asp-for="Propriedade.Excluido" id="Excluido">
+                        }
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Marque essa opção para <span class="badge bg-danger">excluir</span> a propriedade.</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        @if (Model.Propriedade.Ativo)
+                        {
+                            <input class="form-check-input" type="checkbox" asp-for="Propriedade.Ativo" id="Ativo" checked>
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" asp-for="Propriedade.Ativo" id="Ativo">
+                        }
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Desmarque essa opção para <span class="badge bg-warning">inativar</span> a propriedade.</label>
+                    </div>
+                }
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    
+    <!-- Lista de Talhões Vinculados -->
+    <br />
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-header" style="color: var(--color-primary)">
+            <h6><i class="bi bi-geo-alt"></i> Talhões Vinculados à Propriedade</h6>
+        </div>
+        <div class="card-body">
+            @if (Model?.Propriedade?.Talhoes != null && Model.Propriedade.Talhoes.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Área (ha)</th>
+                                <th>Tipo de Solo</th>
+                                <th>Classificação</th>
+                                <th>Análise Física</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var talhao in Model.Propriedade.Talhoes.Where(t => !t.Excluido))
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@talhao.Nome</strong>
+                                        @if (!string.IsNullOrEmpty(talhao.RoteiroAcesso))
+                                        {
+                                            <br />
+                                            <small class="text-muted">
+                                                <i class="bi bi-geo-alt"></i> @talhao.RoteiroAcesso
+                                            </small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@talhao.Area.ToString("0.00")</span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(talhao.TipoSolo))
+                                        {
+                                            <span class="badge bg-secondary">@talhao.TipoSolo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(talhao.ClassificacaoSolo))
+                                        {
+                                            <span class="badge bg-warning text-dark">@talhao.ClassificacaoSolo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (talhao.PossuiAnaliseFisicaSolo)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Sim
+                                            </span>
+                                            <br />
+                                            <small class="text-muted">
+                                                Areia: @talhao.PercentualAreia% | 
+                                                Silte: @talhao.PercentualSilte% | 
+                                                Argila: @talhao.PercentualArgila%
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle"></i> Não
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (talhao.Ativo)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Ativo
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle"></i> Inativo
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="@Url.Action("Gerenciar", "Talhao", new { id = talhao.Id })" 
+                                               class="btn btn-sm btn-outline-primary" 
+                                               title="Gerenciar Talhão">
+                                                <i class="bi bi-gear"></i>
+                                            </a>
+                                            @if (!string.IsNullOrEmpty(talhao.ImagemTalhao))
+                                            {
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-info" 
+                                                        onclick="visualizarImagemTalhao('@talhao.ImagemTalhao', '@talhao.Nome')"
+                                                        title="Visualizar Imagem">
+                                                    <i class="bi bi-image"></i>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Total de Talhões:</strong> @Model.Propriedade.Talhoes.Count(t => !t.Excluido)
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                            <a asp-action="Cadastrar" asp-controller="Talhao" asp-route-propriedadeId="@Model.Propriedade.Id" class="btn btn-sm btn-success" title="Cadastrar talhão (tela cheia, mapa já centralizado na propriedade)">
+                                <i class="bi bi-plus"></i> Adicionar Novo Talhão
+                            </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-geo-alt" style="font-size: 3rem; color: var(--color-primary);"></i>
+                    <h5 class="mt-3" style="color: var(--color-primary);">Nenhum Talhão Vinculado</h5>
+                    <p class="text-muted">Esta propriedade ainda não possui talhões cadastrados.</p>
+                    <a asp-action="Cadastrar" asp-controller="Talhao" asp-route-propriedadeId="@Model.Propriedade.Id" class="btn btn-primary" title="Cadastrar talhão (mapa já centralizado na propriedade)">
+                        <i class="bi bi-plus"></i> Cadastrar Primeiro Talhão
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <!-- Monitoramento da Lavoura (Beta) -->
+    <div id="monitoramentoContainer">
+        <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2 text-muted">Carregando monitoramento...</p>
+        </div>
+    </div>
+
+    @if (Model != null && !Model.Propriedade.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Propriedade.Mensagem</h6>
+        </div>
+    }
+</div>
+
+<!-- Modal para visualizar imagem do talhão -->
+<div class="modal fade" id="modalImagemTalhao" tabindex="-1" aria-labelledby="modalImagemTalhaoLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 90vw; width: 90vw; max-height: 90vh;">
+        <div class="modal-content" style="height: 90vh;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImagemTalhaoLabel">Imagem do Talhão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center d-flex align-items-center justify-content-center" style="height: calc(90vh - 120px);">
+                <img id="imagemTalhaoModal" src="" class="img-fluid" alt="Imagem do Talhão" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para visualizar KML do talhão -->
+<div class="modal fade" id="modalKmlTalhao" tabindex="-1" aria-labelledby="modalKmlTalhaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalKmlTalhaoLabel">KML do Talhão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="mapaKml" style="height: 500px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Incluir o modal de talhão no final da página -->
+@await Html.PartialAsync("_ModalTalhao")
+
+<!-- Adicionar scripts necessários -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjUtP8FEbSpKjbU4JY6p9LU-vURNN7e48&libraries=places,drawing,geometry&v=3.64"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+    // Função para visualizar imagem do talhão
+    function visualizarImagemTalhao(imagemBase64, nomeTalhao) {
+        if (imagemBase64 && imagemBase64.length > 0) {
+            let imagemSrc = imagemBase64;
+            if (!imagemBase64.startsWith('data:image/')) {
+                imagemSrc = 'data:image/jpeg;base64,' + imagemBase64;
+            }
+            
+            document.getElementById('imagemTalhaoModal').src = imagemSrc;
+            document.getElementById('modalImagemTalhaoLabel').textContent = 'Imagem do Talhão: ' + nomeTalhao;
+            
+            var modal = new bootstrap.Modal(document.getElementById('modalImagemTalhao'));
+            modal.show();
+        } else {
+            alert('Este talhão não possui imagem cadastrada.');
+        }
+    }
+
+// Variáveis globais para o modal de talhão (como no cliente)
+let modalMap = null;
+let modalDrawingManager = null;
+let modalSelectedShape = null;
+
+// Função para abrir modal de cadastrar talhão
+function abrirModalCadastrarTalhao(propriedadeId) {
+    // Limpar formulário
+    document.getElementById('formCadastrarTalhao').reset();
+    
+    // Definir a propriedade selecionada
+    document.getElementById('modalPropriedadeId').value = propriedadeId;
+
+    // Propagar endereço da propriedade para zoom no mapa
+    var addressParts = [
+        document.getElementById('Endereco')?.value || '',
+        document.getElementById('Cidade')?.value || '',
+        document.getElementById('Estado')?.value || ''
+    ].filter(Boolean);
+    var addr = document.getElementById('modalPropertyAddress');
+    if (addr) addr.value = addressParts.join(', ');
+    
+    // Abrir modal
+    var modal = new bootstrap.Modal(document.getElementById('modalCadastrarTalhao'));
+    modal.show();
+    
+    // Aguardar o modal estar completamente aberto antes de inicializar o mapa
+    document.getElementById('modalCadastrarTalhao').addEventListener('shown.bs.modal', function() {
+        initializeModalMap();
+        centralizarMapaModalNoEndereco();
+    }, { once: true }); // Executar apenas uma vez
+}
+
+// Função para inicializar o mapa no modal (replicando o cliente)
+function initializeModalMap() {
+    console.log("Inicializando mapa do modal...");
+    
+    const mapElement = document.getElementById("modalMap");
+    if (!mapElement) {
+        console.error("Elemento modalMap não encontrado");
+        return;
+    }
+
+    console.log("Criando mapa...");
+    const mapOptions = {
+        zoom: 5,
+        center: new google.maps.LatLng(-14.235004, -51.92528),
+    };
+    
+    modalMap = new google.maps.Map(mapElement, mapOptions);
+
+    modalDrawingManager = new google.maps.drawing.DrawingManager({
+        drawingMode: google.maps.drawing.OverlayType.POLYGON,
+        drawingControl: true,
+        drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: ["polygon"],
+        },
+        polygonOptions: {
+            editable: true,
+            draggable: false,
+        },
+    });
+    modalDrawingManager.setMap(modalMap);
+
+    google.maps.event.addListener(modalDrawingManager, "overlaycomplete", function (event) {
+        if (modalSelectedShape) {
+            modalSelectedShape.setMap(null);
+        }
+
+        modalSelectedShape = event.overlay;
+        modalDrawingManager.setDrawingMode(null);
+        processModalPolygon(modalSelectedShape);
+        
+        google.maps.event.addListener(modalSelectedShape.getPath(), "set_at", () => processModalPolygon(modalSelectedShape));
+        google.maps.event.addListener(modalSelectedShape.getPath(), "insert_at", () => processModalPolygon(modalSelectedShape));
+    });
+}
+
+// Função para centralizar o mapa no endereço da propriedade
+function centralizarMapaModalNoEndereco() {
+    var addr = document.getElementById('modalPropertyAddress')?.value;
+    if (!addr) return;
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ address: addr }, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK && results[0]) {
+            modalMap.setCenter(results[0].geometry.location);
+            modalMap.setZoom(15);
+        } else {
+            console.warn("Geocode não encontrado para:", addr, status);
+        }
+    });
+}
+
+// Função para processar o polígono (replicando o cliente)
+function processModalPolygon(polygon) {
+    const path = polygon.getPath();
+    const bounds = new google.maps.LatLngBounds();
+    let totalLat = 0;
+    let totalLng = 0;
+
+    path.forEach(latLng => {
+        bounds.extend(latLng);
+        totalLat += latLng.lat();
+        totalLng += latLng.lng();
+    });
+
+    // Calcula a área em hectares
+    const area = google.maps.geometry.spherical.computeArea(path) / 10000;
+    document.getElementById('modalArea').value = area.toFixed(2);
+
+    // Calcula a latitude e longitude médias
+    const centerLat = totalLat / path.getLength();
+    const centerLng = totalLng / path.getLength();
+    document.getElementById('modalLatitude').value = centerLat.toFixed(6);
+    document.getElementById('modalLongitude').value = centerLng.toFixed(6);
+
+    // Ajusta o mapa para o polígono
+    modalMap.fitBounds(bounds);
+
+    // Gera o roteiro de acesso
+    generateModalRoute(centerLat, centerLng);
+}
+
+// Função para gerar roteiro de acesso (replicando o cliente)
+function generateModalRoute(lat, lng) {
+    const directionsService = new google.maps.DirectionsService();
+    
+    directionsService.route(
+        {
+            origin: "Brasil", // Ponto de origem padrão
+            destination: { lat, lng },
+            travelMode: google.maps.TravelMode.DRIVING,
+        },
+        function (response, status) {
+            if (status === google.maps.DirectionsStatus.OK) {
+                const steps = response.routes[0].legs[0].steps.map(step => {
+                    const instruction = stripHtml(step.instructions);
+                    return instruction.endsWith('.') || instruction.endsWith(',')
+                        ? instruction
+                        : instruction + '.';
+                });
+                document.getElementById("modalRoteiroAcesso").value = steps.join("\n");
+            } else {
+                document.getElementById("modalRoteiroAcesso").value = "Não foi possível gerar o roteiro de acesso.";
+            }
+        }
+    );
+
+    setTimeout(() => {
+        capturarModalImagemMapa();
+        gerarModalKmlMapa();
+    }, 1000);
+}
+
+// Função para remover HTML (replicando o cliente)
+function stripHtml(html) {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+}
+
+// Função para capturar imagem do mapa (replicando o cliente)
+function capturarModalImagemMapa() {
+    if (!modalMap || !modalSelectedShape) {
+        return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    const path = modalSelectedShape.getPath();
+
+    path.forEach(latLng => {
+        bounds.extend(latLng);
+    });
+
+    const paddingDegrees = 0.002;
+    const northEast = bounds.getNorthEast();
+    const southWest = bounds.getSouthWest();
+
+    const paddedBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(southWest.lat() - paddingDegrees, southWest.lng() - paddingDegrees),
+        new google.maps.LatLng(northEast.lat() + paddingDegrees, northEast.lng() + paddingDegrees)
+    );
+
+    modalMap.fitBounds(paddedBounds);
+
+    html2canvas(document.getElementById("modalMap"), {
+        useCORS: true,
+        scale: 2,
+    }).then(function (canvas) {
+        const image = canvas.toDataURL("image/png");
+        const screenshot = document.getElementById("modalMapScreenshot");
+        screenshot.src = image;
+        screenshot.style.display = "block";
+    }).catch(function (error) {
+        console.error("Erro ao capturar a imagem:", error);
+    });
+}
+
+// Função para gerar KML (replicando o cliente)
+function gerarModalKmlMapa() {
+    console.log("Gerando KML do modal...");
+    if (!modalSelectedShape) {
+        console.log("Nenhum polígono selecionado");
+        return;
+    }
+
+    const path = modalSelectedShape.getPath();
+    let kml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    kml += `<kml xmlns="http://www.opengis.net/kml/2.2">\n`;
+    kml += `  <Document>\n`;
+    kml += `    <Placemark>\n`;
+    kml += `      <Polygon>\n`;
+    kml += `        <outerBoundaryIs>\n`;
+    kml += `          <LinearRing>\n`;
+    kml += `            <coordinates>\n`;
+
+    path.forEach(function (latLng) {
+        kml += `              ${latLng.lng()},${latLng.lat()},0\n`;
+    });
+
+    kml += `            </coordinates>\n`;
+    kml += `          </LinearRing>\n`;
+    kml += `        </outerBoundaryIs>\n`;
+    kml += `      </Polygon>\n`;
+    kml += `    </Placemark>\n`;
+    kml += `  </Document>\n`;
+    kml += `</kml>`;
+
+    const kmlOutput = document.getElementById("modalKmlOutput");
+    kmlOutput.style.display = "block";
+    kmlOutput.value = kml;
+}
+
+// Função para salvar talhão (usando o mesmo padrão do cliente)
+function salvarTalhaoModal() {
+    const btnSalvarTalhao = document.getElementById("btnSalvarTalhao");
+    
+    // Verificar se os campos obrigatórios estão preenchidos
+    const nome = document.getElementById("modalTalhaoNome").value;
+    const area = document.getElementById("modalArea").value;
+    
+    if (!nome || !area) {
+        alert('Por favor, preencha o nome do talhão e desenhe o polígono no mapa.');
+        return;
+    }
+    
+    const formData = new FormData();
+    
+    // Dados do talhão (usando os mesmos nomes de campos do cliente)
+    formData.append("Nome", nome);
+    formData.append("PropriedadeId", document.getElementById("modalPropriedadeId").value);
+    formData.append("PossuiAnaliseFisicaSolo", document.getElementById("modalPossuiAnaliseFisicaSolo").checked);
+    formData.append("PercentualAreia", document.getElementById("modalPercentualAreia").value);
+    formData.append("PercentualSilte", document.getElementById("modalPercentualSilte").value);
+    formData.append("PercentualArgila", document.getElementById("modalPercentualArgila").value);
+    formData.append("TipoSolo", document.getElementById("modalTipoSolo").value);
+    formData.append("ClassificacaoSolo", document.getElementById("modalClassificacaoSoloAD").value);
+    formData.append("Latitude", document.getElementById("modalLatitude").value);
+    formData.append("Longitude", document.getElementById("modalLongitude").value);
+    formData.append("Area", area);
+    formData.append("RoteiroAcesso", document.getElementById("modalRoteiroAcesso").value);
+    formData.append("ImagemTalhao", document.getElementById("modalMapScreenshot").src);
+    formData.append("KmlTalhao", document.getElementById("modalKmlOutput").value);
+
+    // Desabilitar botão durante o envio
+    btnSalvarTalhao.disabled = true;
+    btnSalvarTalhao.textContent = "Salvando...";
+
+    fetch("/Cliente/CadastrarTalhao", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mensagem de sucesso elegante
+            Swal.fire({
+                title: 'Sucesso!',
+                text: data.message || 'Talhão cadastrado com sucesso!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#28a745'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Fechar modal
+                    bootstrap.Modal.getInstance(document.getElementById('modalCadastrarTalhao')).hide();
+                    // Recarregar a página para mostrar o novo talhão e recalcular a soma
+                    location.reload();
+                }
+            });
+        } else {
+            // Mensagem de erro elegante
+            Swal.fire({
+                title: 'Erro!',
+                text: data.message || 'Ocorreu um erro ao cadastrar o talhão.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        // Mensagem de erro para problemas de rede
+        Swal.fire({
+            title: 'Erro de Conexão!',
+            text: 'Erro ao cadastrar talhão. Verifique sua conexão e tente novamente.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#dc3545'
+        });
+    })
+    .finally(() => {
+        // Reabilitar botão
+        btnSalvarTalhao.disabled = false;
+        btnSalvarTalhao.textContent = "Salvar Talhão";
+    });
+}
+
+// Configurar análise do solo (replicando o cliente)
+function configurarAnaliseSolo() {
+    const modalCheckbox = document.getElementById("modalPossuiAnaliseFisicaSolo");
+    const modalCamposPercentual = [
+        document.getElementById("modalPercentualAreia"),
+        document.getElementById("modalPercentualSilte"),
+        document.getElementById("modalPercentualArgila")
+    ];
+
+    if (modalCheckbox) {
+        const alternarModalCampos = () => {
+            const habilitar = modalCheckbox.checked;
+            modalCamposPercentual.forEach(campo => {
+                if (campo) campo.disabled = !habilitar;
+            });
+        };
+
+        modalCheckbox.addEventListener("change", alternarModalCampos);
+        alternarModalCampos();
+    }
+}
+
+// Função para recalcular a soma das áreas dos talhões
+function recalcularSomaAreas() {
+    const talhoesAtivos = document.querySelectorAll('tbody tr');
+    let somaTotal = 0;
+    
+    talhoesAtivos.forEach(tr => {
+        const areaElement = tr.querySelector('.badge.bg-info');
+        if (areaElement) {
+            const areaText = areaElement.textContent;
+            const area = parseFloat(areaText.replace(' ha', ''));
+            if (!isNaN(area)) {
+                somaTotal += area;
+            }
+        }
+    });
+    
+    // Atualizar o campo de soma
+    const somaInput = document.getElementById('SomaAreaTotalTalhao');
+    if (somaInput) {
+        somaInput.value = somaTotal.toFixed(2);
+    }
+}
+
+// Event listeners para o modal
+document.addEventListener('DOMContentLoaded', function() {
+    // Botão salvar talhão
+    const btnSalvarTalhao = document.getElementById('btnSalvarTalhao');
+    if (btnSalvarTalhao) {
+        btnSalvarTalhao.addEventListener('click', salvarTalhaoModal);
+    }
+    
+    // Configurar análise do solo
+    configurarAnaliseSolo();
+    
+    // Recalcular soma inicial
+    recalcularSomaAreas();
+
+// Carregar monitoramento via AJAX
+    carregarMonitoramento();
+});
+
+// ===== Monitoramento da Lavoura - funções globais =====
+function ativarMonitoramento(propertyId) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+    fetch('/Monitoramento/AtivarMonitoramento?propertyId=' + propertyId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': token
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({ title: 'Sucesso!', text: data.message, icon: 'success', confirmButtonColor: '#28a745' })
+                .then(() => location.reload());
+        } else {
+            Swal.fire({ title: 'Erro!', text: data.message, icon: 'error', confirmButtonColor: '#dc3545' });
+        }
+    })
+    .catch(() => {
+        Swal.fire({ title: 'Erro!', text: 'Erro de conexão.', icon: 'error', confirmButtonColor: '#dc3545' });
+    });
+}
+
+function desativarMonitoramento(propertyId) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+    Swal.fire({
+        title: 'Desativar Monitoramento?',
+        text: 'O monitoramento desta propriedade será desativado.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sim, desativar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/Monitoramento/DesativarMonitoramento?propertyId=' + propertyId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': token
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({ title: 'Desativado!', text: data.message, icon: 'success', confirmButtonColor: '#28a745' })
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire({ title: 'Erro!', text: data.message, icon: 'error', confirmButtonColor: '#dc3545' });
+                }
+            })
+            .catch(() => {
+                Swal.fire({ title: 'Erro!', text: 'Erro de conexão.', icon: 'error', confirmButtonColor: '#dc3545' });
+            });
+        }
+    });
+}
+
+function executarAnalise(propertyId) {
+    var btn = document.getElementById('btnExecutarAnalise');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processando...';
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+    fetch('/Monitoramento/ExecutarAnalise?propertyId=' + propertyId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({ title: 'Análise Concluída!', text: data.message, icon: 'success', confirmButtonColor: '#28a745' })
+                .then(() => location.reload());
+        } else {
+            Swal.fire({ title: 'Erro!', text: data.message, icon: 'error', confirmButtonColor: '#dc3545' });
+        }
+    })
+    .catch(() => { Swal.fire({ title: 'Erro!', text: 'Erro de conexão.', icon: 'error', confirmButtonColor: '#dc3545' }); })
+    .finally(() => { btn.disabled = false; btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Atualizar Agora'; });
+}
+
+function marcarAlertaVisualizado(alertId, btnElement) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+    fetch('/Monitoramento/MarcarAlertaVisualizado?alertId=' + alertId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token }
+    })
+    .then(r => r.json())
+    .then(data => { if (data.success && btnElement) { btnElement.closest('.alert').remove(); } });
+}
+
+function buscarCenasSatelite(propertyId) {
+    var selTalhao = document.getElementById('selTalhao');
+    var dataInicio = document.getElementById('txtDataInicio').value;
+    var dataFim = document.getElementById('txtDataFim').value;
+    var nuvemMax = document.getElementById('txtNuvemMax').value;
+    if (!selTalhao.value) { Swal.fire({ title: 'Atenção!', text: 'Selecione um talhão.', icon: 'warning', confirmButtonColor: '#ffc107' }); return; }
+    var selectedOption = selTalhao.options[selTalhao.selectedIndex];
+    if (selectedOption.getAttribute('data-kml') === 'nao') { Swal.fire({ title: 'Polígono não cadastrado', text: 'Este talhão não possui polígono (KML). Cadastre o polígono antes de buscar imagens satélite.', icon: 'warning', confirmButtonColor: '#ffc107' }); return; }
+    if (!dataInicio || !dataFim) { Swal.fire({ title: 'Atenção!', text: 'Informe o período de busca.', icon: 'warning', confirmButtonColor: '#ffc107' }); return; }
+    var btn = document.getElementById('btnBuscarCenas');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Buscando...';
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+    var params = new URLSearchParams({ propertyId: propertyId, talhaoId: selTalhao.value, dataInicio: dataInicio + 'T00:00:00', dataFim: dataFim + 'T23:59:59', nuvemMaxima: nuvemMax || '20' });
+    fetch('/Monitoramento/BuscarCenasSatelite?' + params.toString(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) { Swal.fire({ title: 'Busca Concluída!', text: data.message, icon: 'success', confirmButtonColor: '#28a745' }).then(() => location.reload()); }
+        else { Swal.fire({ title: 'Erro!', text: data.message, icon: 'error', confirmButtonColor: '#dc3545' }); }
+    })
+    .catch(() => { Swal.fire({ title: 'Erro!', text: 'Erro de conexão com o servidor.', icon: 'error', confirmButtonColor: '#dc3545' }); })
+    .finally(() => { btn.disabled = false; btn.innerHTML = '<i class="bi bi-satellite"></i> Buscar Cenas'; });
+}
+
+function processarCena(sceneId, talhaoId) {
+    Swal.fire({
+        title: 'Processar NDVI?',
+        html: 'O sistema irá baixar as bandas B7 e B8, calcular o NDVI e gerar o mapa de saúde da lavoura.<br><br><small>Isso pode levar alguns minutos.</small>',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sim, processar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({ title: 'Processando...', html: 'Baixando bandas e calculando NDVI...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+            fetch('/Monitoramento/ProcessarCena', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token },
+                body: 'sceneId=' + sceneId + '&talhaoId=' + talhaoId
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    var d = data.data;
+                    Swal.fire({
+                        title: 'Análise Concluída!',
+                        html: '<strong>Classificação:</strong> ' + d.classification +
+                              '<br><strong>NDVI Médio:</strong> ' + d.averageNdvi +
+                              '<br><strong>Área Saudável:</strong> ' + d.healthyAreaPercent + '%' +
+                              '<br><strong>Área Crítica:</strong> ' + d.criticalAreaPercent + '%',
+                        icon: 'success',
+                        confirmButtonColor: '#28a745'
+                    }).then(() => location.reload());
+                } else {
+                    Swal.fire({ title: 'Erro!', text: data.message, icon: 'error', confirmButtonColor: '#dc3545' });
+                }
+            })
+            .catch(() => { Swal.fire({ title: 'Erro!', text: 'Erro de conexão.', icon: 'error', confirmButtonColor: '#dc3545' }); });
+        }
+    });
+}
+
+function visualizarMapa(analysisId) {
+    var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+    fetch('/Monitoramento/ObterAnalise?analysisId=' + analysisId)
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.data.previewImageBase64) {
+            document.getElementById('modalMapaContent').innerHTML =
+                '<img src="data:image/png;base64,' + data.data.previewImageBase64 + '" class="img-fluid rounded" style="max-height: 500px;" />' +
+                '<div class="mt-2"><small class="text-muted"><span style="color: #dc3545;">■</span> Crítico <span style="color: #eab308;">■</span> Atenção <span style="color: #84cc16;">■</span> Bom <span style="color: #22c55e;">■</span> Excelente</small></div>';
+            new bootstrap.Modal(document.getElementById('modalMapaNdvi')).show();
+        }
+    });
+}
+
+// Função para carregar a aba de monitoramento
+function carregarMonitoramento() {
+    var propertyId = document.querySelector('input[name="Propriedade.Id"]')?.value;
+    if (!propertyId) return;
+
+    var container = document.getElementById('monitoramentoContainer');
+    if (!container) return;
+
+    fetch('/Monitoramento/ObterMonitoramento?propertyId=' + propertyId)
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao carregar monitoramento');
+            return response.text();
+        })
+        .then(html => {
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Erro ao carregar monitoramento:', error);
+            container.innerHTML = '<div class="alert alert-warning text-center" style="border-radius: 15px;">' +
+                '<i class="bi bi-exclamation-triangle"></i> Não foi possível carregar o monitoramento.' +
+                '</div>';
+        });
+}
+</script>

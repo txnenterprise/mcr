@@ -1,0 +1,137 @@
+name: Deploy MCR
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target VPS (all, vps, cocamar)'
+        required: false
+        default: 'all'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/mcr-api
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./MCR.API
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-vps:
+    needs: build
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'push' ||
+      github.event.inputs.target == 'all' ||
+      github.event.inputs.target == 'vps'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to VPS (mcr.cocari)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_MCR_HOST }}
+          username: root
+          key: ${{ secrets.VPS_MCR_SSH_KEY }}
+          script: |
+            set -e
+            cd /opt/mcr
+
+            echo "=== Pulling latest code ==="
+            git pull origin main
+
+            echo "=== Copying .env from deploy/mcr-vps/ ==="
+            cp deploy/mcr-vps/.env .env
+
+            echo "=== Copying nginx config ==="
+            mkdir -p nginx
+            cp deploy/mcr-vps/nginx/custom.conf nginx/custom.conf
+
+            echo "=== Pulling and restarting with GHCR image ==="
+            export MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            docker compose -f docker-compose.yml pull mcr-api 2>/dev/null || true
+            docker compose down
+            MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker compose up -d
+
+            echo "=== Waiting for API ==="
+            sleep 15
+
+            echo "=== Checking status ==="
+            docker ps
+            echo "Deploy VPS concluido!"
+
+  deploy-cocamar:
+    needs: build
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'push' ||
+      github.event.inputs.target == 'all' ||
+      github.event.inputs.target == 'cocamar'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to VPS Cocamar
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_COCAMAR_HOST }}
+          username: root
+          key: ${{ secrets.VPS_COCAMAR_SSH_KEY }}
+          script: |
+            set -e
+            cd /opt/mcr-cocamar
+
+            echo "=== Pulling latest code ==="
+            git pull origin main
+
+            echo "=== Copying .env from deploy/mcr-cocamar/ ==="
+            cp deploy/mcr-cocamar/.env .env
+
+            echo "=== Copying nginx config ==="
+            mkdir -p nginx
+            cp deploy/mcr-cocamar/nginx/custom.conf nginx/custom.conf
+
+            echo "=== Pulling and restarting with GHCR image ==="
+            export MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            docker compose -f docker-compose.yml pull mcr-api 2>/dev/null || true
+            docker compose down
+            MCR_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest docker compose up -d
+
+            echo "=== Waiting for API ==="
+            sleep 15
+
+            echo "=== Checking status ==="
+            docker ps
+            echo "Deploy Cocamar concluido!"

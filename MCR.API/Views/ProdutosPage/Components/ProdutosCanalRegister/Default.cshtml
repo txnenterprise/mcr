@@ -1,0 +1,69 @@
+@model MCR.API.Produto.Domain.DTO.ProdutosCanalRegisterDTO
+
+@if (Model != null)
+{
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Canais e Pontos de Atendimento</h5>
+        </div>
+        <div class="card-body">
+            <div class="channel-block border p-2 mb-2">
+                <form id="formProdutosCanal"
+                      asp-antiforgery="true"
+                      asp-action="Adicionar"
+                      asp-controller="ProdutosCanal"
+                      data-ajax="true" data-ajax-method="POST"
+                      data-ajax-complete="gl.CompleteAjax"
+                      data-ajax-begin="gl.BeginAjax"
+                      data-ajax-success="gl.onSuccess"
+                      data-ajax-failure="gl.onFailed"
+                      data-ajax-callback="produtosJS.canalOnSuccessCallback">
+                    <div class="row mb-2">
+                        <input type="hidden" asp-for="ProdutoId" />
+                        <input type="hidden" asp-for="ProdutoCanalId" />
+                        <div class="col-md-4">
+                            <br />
+                            <div class="form-floating">
+                                <select asp-for="CanalId" class="form-select  ">
+                                    <option value="">Selecione um Canal</option>
+                                    @if (Model?.Canais != null)
+                                    {
+                                        foreach (var item in Model.Canais.Where(c => c != null && c.Id != null && c.Text != null))
+                                        {
+                                            bool isSelected = Model.CanalId?.ToString() == item.Id.ToString();
+                                            <option value="@item.Id" selected="@isSelected">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <label>Canal</label>
+                                <span asp-validation-for="CanalId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="toggleSelectAllPA" class="btn btn-sm btn-outline-primary mb-1">Marcar Todos os P.As</button>
+                            <div class="form-floating">
+                                <select asp-for="PontoAtendimentoSelected" class="form-select selected2" multiple="multiple">
+                                    <option value="">Selecione</option>
+                                    @if (Model?.PontoAtendimento != null)
+                                    {
+                                        foreach (var item in Model.PontoAtendimento.Where(c => c != null && c.Id != null && c.Text != null))
+                                        {
+                                            <option value="@item.Id">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <label>Pontos de Atendimento</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center">
+                            <button type="submit" class="btn btn-success ">Adicionar Canal</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row" id="canalPAList">
+                    @await Component.InvokeAsync("ProdutosCanalList", new { produtoId = Model.ProdutoId })
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,660 @@
+@model List<MCR.API.Propostas.Domain.DTO.PropostasTimelineDTO>
+@{
+    Layout = null;
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h5>Linha do Tempo - Status e Notificações</h5>
+    </div>
+    <div class="col text-end">
+        <button type="button"
+                proposal-status-permission="@ViewBag.PropostaStatus"
+                proposal-status-button="true"
+                data-proposta="@ViewBag.PropostaId"
+                class="btn btn-primary btn-sm btStatus me-2">
+            Alterar Status
+        </button>
+        <button type="button"
+                class="btn btn-primary btn-sm btRegistrarOcorrencia"
+                data-proposta="@ViewBag.PropostaId">
+            Registrar Notificação
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info">
+                Nenhum registro encontrado para esta proposta.
+            </div>
+        }
+        else
+        {
+            <div class="timeline">
+                @foreach (var item in Model)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-marker @(item.Tipo == "Status" ? "status-marker" : "ocorrencia-marker")">
+                            <i class="fas @(item.Tipo == "Status" ? "fa-flag" : "fa-exclamation-triangle")"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                @if (item.Tipo == "Status")
+                                {
+                                    <h6 class="timeline-title">Alteração de Status</h6>
+                                }
+                                else
+                                {
+                                    <h6 class="timeline-title">@item.Titulo</h6>
+                                }
+                                <span class="timeline-date">@item.Data.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                            </div>
+                            <div class="timeline-body">
+                                @if (item.Tipo == "Status")
+                                {
+                                    <div class="status-info">
+                                        <div class="mb-3">
+                                            <div class="status-label mb-1">
+                                                <small class="text-muted" style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    Status Atual
+                                                </small>
+                                            </div>
+                                            <span class="badge badge-lg @GetStatusBadgeClass(item.Status)" style="font-size: 1rem; padding: 0.6rem 1rem; font-weight: 600;">
+                                                <i class="fas fa-flag me-1"></i>@item.Status
+                                            </span>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(item.StatusAnterior))
+                                        {
+                                            <div class="mb-3">
+                                                <div class="status-label mb-1">
+                                                    <small class="text-muted" style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                        Status Anterior
+                                                    </small>
+                                                </div>
+                                                <span class="badge" style="background-color: #6c757d; color: white; font-size: 0.9rem; padding: 0.5rem 0.85rem; font-weight: 500;">
+                                                    <i class="fas fa-arrow-left me-1"></i>@item.StatusAnterior
+                                                </span>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(item.NomeUsuario))
+                                        {
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="fas fa-user me-1"></i>Criado por: @item.NomeUsuario - Perfil: @item.UsuarioPerfil
+                                            </small>
+                                        }
+
+                                        @if (item.JustificativaDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Justificativa:</strong> @item.JustificativaDTO.Justificativa
+                                            </div>
+                                        }
+
+                                        @if (item.PendenciaDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Tipo de Documento:</strong> @item.PendenciaDTO.TipoDocumento
+                                                <br />
+                                                <strong>Retorno:</strong> @item.PendenciaDTO.RetornoPendencia
+                                                @if (!string.IsNullOrEmpty(item.PendenciaDTO.UploadArquivo))
+                                                {
+                                                    <div class="mt-1">
+                                                        <a href="@item.PendenciaDTO.UploadArquivo" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-file me-1"></i> Ver Documento
+                                                        </a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.AceitaDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Número da Proposta:</strong> @item.AceitaDTO.NumeroProposta
+                                                <br />
+                                                <strong>LMI Total:</strong> @item.AceitaDTO.LmiTotal
+                                                <br />
+                                                <strong>Prêmio Total:</strong> @item.AceitaDTO.PremioTotal
+                                                <br />
+                                                <strong>Parcela do Segurado:</strong> @item.AceitaDTO.ParcelaSegurado.ToString("N2")
+                                                <br />
+                                                <strong>Data de Vencimento:</strong> @(item.AceitaDTO.DataVencimento?.ToString("dd/MM/yyyy") ?? "Boleto não emitido")
+                                            </div>
+                                        }
+
+                                        @if (item.ApoliceEmitidaDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Número da Apólice:</strong> @item.ApoliceEmitidaDTO.NumeroApolice
+                                                <br />
+                                                <strong>Início de Vigência:</strong> @item.ApoliceEmitidaDTO.InicioVigencia.ToString("dd/MM/yyyy")
+                                                <br />
+                                                <strong>Fim de Vigência:</strong> @item.ApoliceEmitidaDTO.FinalVigencia.ToString("dd/MM/yyyy")
+                                                <br />
+                                                <strong>Data de Vencimento:</strong> @(item.ApoliceEmitidaDTO.DataVencimento?.ToString("dd/MM/yyyy") ?? "Boleto não emitido")
+                                            </div>
+                                        }
+
+                                        @if (item.EndossoSolicitacaoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.EndossoSolicitacaoDTO.Acao
+                                                <br />
+                                                @if (!string.IsNullOrEmpty(item.EndossoSolicitacaoDTO.DescricaoAlteracao))
+                                                {
+                                                    <strong>Descrição da Alteração:</strong> @item.EndossoSolicitacaoDTO.DescricaoAlteracao
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoSolicitacaoDTO.UploadArquivoNome))
+                                                {
+                                                    <strong>Arquivo:</strong> @item.EndossoSolicitacaoDTO.UploadArquivoNome
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoSolicitacaoDTO.RetornoPendencia))
+                                                {
+                                                    <br />
+                                                    <strong>Retorno da Pendência:</strong> @item.EndossoSolicitacaoDTO.RetornoPendencia
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.EndossoPendenciaDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.EndossoPendenciaDTO.Acao
+                                                <br />
+                                                <strong>Descrição da Pendência:</strong> @item.EndossoPendenciaDTO.DescricaoPendencia
+                                                <br />
+                                                <strong>Tipo de Documento:</strong> @item.EndossoPendenciaDTO.TipoDocumento
+                                                @if (!string.IsNullOrEmpty(item.EndossoPendenciaDTO.UploadArquivoNome))
+                                                {
+                                                    <br />
+                                                    <strong>Arquivo:</strong> @item.EndossoPendenciaDTO.UploadArquivoNome
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.EndossoTransmitidoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.EndossoTransmitidoDTO.Acao
+                                                <br />
+                                                @if (!string.IsNullOrEmpty(item.EndossoTransmitidoDTO.NumeroEndosso))
+                                                {
+                                                    <strong>Número do Endosso:</strong> @item.EndossoTransmitidoDTO.NumeroEndosso
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoTransmitidoDTO.TipoDocumento))
+                                                {
+                                                    <strong>Tipo de Documento:</strong> @item.EndossoTransmitidoDTO.TipoDocumento
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoTransmitidoDTO.UploadArquivoNome))
+                                                {
+                                                    <strong>Arquivo:</strong> @item.EndossoTransmitidoDTO.UploadArquivoNome
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoTransmitidoDTO.Observacoes))
+                                                {
+                                                    <br />
+                                                    <strong>Observações:</strong> @item.EndossoTransmitidoDTO.Observacoes
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.EndossoEmitidoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.EndossoEmitidoDTO.Acao
+                                                <br />
+                                                <strong>Número do Endosso:</strong> @item.EndossoEmitidoDTO.NumeroEndosso
+                                                <br />
+                                                @if (!string.IsNullOrEmpty(item.EndossoEmitidoDTO.TipoDocumento))
+                                                {
+                                                    <strong>Tipo de Documento:</strong> @item.EndossoEmitidoDTO.TipoDocumento
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoEmitidoDTO.LMITotal))
+                                                {
+                                                    <strong>LMI Total:</strong> @item.EndossoEmitidoDTO.LMITotal
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoEmitidoDTO.PremioTotal))
+                                                {
+                                                    <strong>Prêmio Total:</strong> @item.EndossoEmitidoDTO.PremioTotal
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoEmitidoDTO.SubFederal))
+                                                {
+                                                    <strong>Sub Federal:</strong> @item.EndossoEmitidoDTO.SubFederal
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoEmitidoDTO.SubEstadual))
+                                                {
+                                                    <strong>Sub Estadual:</strong> @item.EndossoEmitidoDTO.SubEstadual
+                                                    <br />
+                                                }
+                                                @if (item.EndossoEmitidoDTO.ParcSegurado.HasValue)
+                                                {
+                                                    <strong>Parcela do Segurado:</strong> @item.EndossoEmitidoDTO.ParcSegurado.Value.ToString("N2")
+                                                    <br />
+                                                }
+                                                @if (item.EndossoEmitidoDTO.AreaTotal.HasValue)
+                                                {
+                                                    <strong>Área Total:</strong> @item.EndossoEmitidoDTO.AreaTotal.Value
+                                                    <br />
+                                                }
+                                                @if (item.EndossoEmitidoDTO.InicioVigencia.HasValue)
+                                                {
+                                                    <strong>Início de Vigência:</strong> @item.EndossoEmitidoDTO.InicioVigencia.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (item.EndossoEmitidoDTO.FimVigencia.HasValue)
+                                                {
+                                                    <strong>Fim de Vigência:</strong> @item.EndossoEmitidoDTO.FimVigencia.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoEmitidoDTO.UploadArquivoNome))
+                                                {
+                                                    <strong>Arquivo:</strong> @item.EndossoEmitidoDTO.UploadArquivoNome
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.EndossoEmitidoDTO.Observacoes))
+                                                {
+                                                    <br />
+                                                    <strong>Observações:</strong> @item.EndossoEmitidoDTO.Observacoes
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.SinistroComunicarDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.SinistroComunicarDTO.Acao
+                                                <br />
+                                                <strong>Cobertura:</strong> @item.SinistroComunicarDTO.Cobertura
+                                                <br />
+                                                <strong>Evento:</strong> @item.SinistroComunicarDTO.Evento
+                                                <br />
+                                                @if (!string.IsNullOrEmpty(item.SinistroComunicarDTO.SeveridadeDano))
+                                                {
+                                                    <strong>Severidade do Dano:</strong> @item.SinistroComunicarDTO.SeveridadeDano
+                                                    <br />
+                                                }
+                                                @if (item.SinistroComunicarDTO.DanoEstimado.HasValue)
+                                                {
+                                                    <strong>Dano % Estimado:</strong> @($"{item.SinistroComunicarDTO.DanoEstimado.Value:N2}%")
+                                                    <br />
+                                                }
+                                                @if (item.SinistroComunicarDTO.AreaTotalAfetada.HasValue)
+                                                {
+                                                    <strong>Área Total Afetada:</strong> @item.SinistroComunicarDTO.AreaTotalAfetada.Value
+                                                    <br />
+                                                }
+                                                @if (item.SinistroComunicarDTO.DataInicio.HasValue)
+                                                {
+                                                    <strong>Data Início:</strong> @item.SinistroComunicarDTO.DataInicio.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (item.SinistroComunicarDTO.DataFinal.HasValue)
+                                                {
+                                                    <strong>Data Final:</strong> @item.SinistroComunicarDTO.DataFinal.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroComunicarDTO.TipoRespVistoria))
+                                                {
+                                                    <strong>Tipo do Responsável pela Vistoria:</strong> @item.SinistroComunicarDTO.TipoRespVistoria
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroComunicarDTO.NomeRespVistoria))
+                                                {
+                                                    <strong>Nome do Responsável pela Vistoria:</strong> @item.SinistroComunicarDTO.NomeRespVistoria
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroComunicarDTO.CPFRespVistoria))
+                                                {
+                                                    <strong>CPF do Responsável pela Vistoria:</strong> @item.SinistroComunicarDTO.CPFRespVistoria
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroComunicarDTO.Observacao))
+                                                {
+                                                    <strong>Observações:</strong> @item.SinistroComunicarDTO.Observacao
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.SinistroPendenciaDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.SinistroPendenciaDTO.Acao
+                                                <br />
+                                                <strong>Retorno da Pendência:</strong> @item.SinistroPendenciaDTO.RetornoPendencia
+                                                <br />
+                                                <strong>Tipo de Documento:</strong> @item.SinistroPendenciaDTO.TipoDocumento
+                                                @if (!string.IsNullOrEmpty(item.SinistroPendenciaDTO.UploadArquivoNome))
+                                                {
+                                                    <br />
+                                                    <strong>Arquivo:</strong> @item.SinistroPendenciaDTO.UploadArquivoNome
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.SinistroCanceladoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.SinistroCanceladoDTO.Acao
+                                                <br />
+                                                <strong>Motivo do Cancelamento:</strong> @item.SinistroCanceladoDTO.MotivoCancelamento
+                                            </div>
+                                        }
+
+                                        @if (item.SinistroAbertoRegulacaoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.SinistroAbertoRegulacaoDTO.Acao
+                                                <br />
+                                                @if (!string.IsNullOrEmpty(item.SinistroAbertoRegulacaoDTO.ProtocoloAvisoSinistro))
+                                                {
+                                                    <strong>Protocolo de Aviso de Sinistro:</strong> @item.SinistroAbertoRegulacaoDTO.ProtocoloAvisoSinistro
+                                                    <br />
+                                                }
+                                                @if (item.SinistroAbertoRegulacaoDTO.DataAvisoSinistro.HasValue)
+                                                {
+                                                    <strong>Data de Aviso do Sinistro:</strong> @item.SinistroAbertoRegulacaoDTO.DataAvisoSinistro.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAbertoRegulacaoDTO.EmpresaPerito))
+                                                {
+                                                    <strong>Empresa/Perito:</strong> @item.SinistroAbertoRegulacaoDTO.EmpresaPerito
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAbertoRegulacaoDTO.Telefone))
+                                                {
+                                                    <strong>Telefone:</strong> @item.SinistroAbertoRegulacaoDTO.Telefone
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAbertoRegulacaoDTO.TipoDocumento))
+                                                {
+                                                    <strong>Tipo de Documento:</strong> @item.SinistroAbertoRegulacaoDTO.TipoDocumento
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAbertoRegulacaoDTO.UploadArquivoNome))
+                                                {
+                                                    <strong>Arquivo:</strong> @item.SinistroAbertoRegulacaoDTO.UploadArquivoNome
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAbertoRegulacaoDTO.Observacoes))
+                                                {
+                                                    <br />
+                                                    <strong>Observações:</strong> @item.SinistroAbertoRegulacaoDTO.Observacoes
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.SinistroAguardPagamentoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.SinistroAguardPagamentoDTO.Acao
+                                                <br />
+                                                @if (item.SinistroAguardPagamentoDTO.DataDeferimento.HasValue)
+                                                {
+                                                    <strong>Data de Deferimento:</strong> @item.SinistroAguardPagamentoDTO.DataDeferimento.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (item.SinistroAguardPagamentoDTO.ValorIndenizacao.HasValue)
+                                                {
+                                                    <strong>Valor da Indenização:</strong> @item.SinistroAguardPagamentoDTO.ValorIndenizacao.Value.ToString("C")
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAguardPagamentoDTO.TipoDocumento))
+                                                {
+                                                    <strong>Tipo de Documento:</strong> @item.SinistroAguardPagamentoDTO.TipoDocumento
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAguardPagamentoDTO.UploadArquivoNome))
+                                                {
+                                                    <strong>Arquivo:</strong> @item.SinistroAguardPagamentoDTO.UploadArquivoNome
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroAguardPagamentoDTO.Observacoes))
+                                                {
+                                                    <br />
+                                                    <strong>Observações:</strong> @item.SinistroAguardPagamentoDTO.Observacoes
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.SinistroDeferidoPagoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.SinistroDeferidoPagoDTO.Acao
+                                                <br />
+                                                @if (item.SinistroDeferidoPagoDTO.DataPagamento.HasValue)
+                                                {
+                                                    <strong>Data do Pagamento:</strong> @item.SinistroDeferidoPagoDTO.DataPagamento.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroDeferidoPagoDTO.Observacoes))
+                                                {
+                                                    <strong>Observações:</strong> @item.SinistroDeferidoPagoDTO.Observacoes
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.SinistroIndeferidoDTO != null)
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <strong>Ação:</strong> @item.SinistroIndeferidoDTO.Acao
+                                                <br />
+                                                @if (item.SinistroIndeferidoDTO.DataIndeferimento.HasValue)
+                                                {
+                                                    <strong>Data do Indeferimento:</strong> @item.SinistroIndeferidoDTO.DataIndeferimento.Value.ToString("dd/MM/yyyy")
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroIndeferidoDTO.TipoDocumento))
+                                                {
+                                                    <strong>Tipo de Documento:</strong> @item.SinistroIndeferidoDTO.TipoDocumento
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroIndeferidoDTO.UploadArquivoNome))
+                                                {
+                                                    <strong>Arquivo:</strong> @item.SinistroIndeferidoDTO.UploadArquivoNome
+                                                    <br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.SinistroIndeferidoDTO.Observacoes))
+                                                {
+                                                    <br />
+                                                    <strong>Observações:</strong> @item.SinistroIndeferidoDTO.Observacoes
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (item.Documentos != null && item.Documentos.Any())
+                                        {
+                                            <div class="mt-3 fs-7">
+                                                <strong>Documentos Anexados:</strong>
+                                                <ul class="list-unstyled mt-2">
+                                                    @foreach (var documento in item.Documentos)
+                                                    {
+                                                        <li class="mb-2">
+                                                            <span class="badge bg-secondary me-2">
+                                                                <i class="fas fa-file me-1"></i> @documento.TipoDocumento
+                                                            </span>
+                                                            <span>@documento.NomeArquivo</span>
+                                                            @if (!string.IsNullOrEmpty(documento.UrlDocumento))
+                                                            {
+                                                                <a href="@documento.UrlDocumento" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                                                                    <i class="fas fa-download me-1"></i> Download
+                                                                </a>
+                                                            }
+                                                            <br />
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-calendar me-1"></i> @documento.DataUpload.ToString("dd/MM/yyyy HH:mm")
+                                                                @if (!string.IsNullOrEmpty(documento.NomeUsuario))
+                                                                {
+                                                                    <span class="ms-2">
+                                                                        <i class="fas fa-user me-1"></i> @documento.NomeUsuario
+                                                                    </span>
+                                                                }
+                                                            </small>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+
+                                        @if (item.Tipo == "Notificação" && item.Descricao.Contains("Boleto disponibilizado"))
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <div class="alert alert-success mb-2">
+                                                    <i class="fas fa-file-invoice-dollar me-2"></i>
+                                                    <strong>Boleto disponibilizado</strong>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="ocorrencia-info">
+                                        <p class="mb-2">@item.Descricao</p>
+                                        @if (!string.IsNullOrEmpty(item.NomeUsuario))
+                                        {
+                                            <small class="text-muted">
+                                                <i class="fas fa-user me-1"></i> @item.NomeUsuario
+                                            </small>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.NomeArquivo))
+                                        {
+                                            <div class="mt-2 fs-7">
+                                                <span class="badge bg-info me-2">
+                                                    <i class="fas fa-paperclip me-1"></i> @item.NomeArquivo
+                                                </span>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(string? status)
+    {
+        return status switch
+        {
+            "Pendente" => "bg-warning text-dark",
+            "Proposta aceita" => "bg-success",
+            "Proposta recusada" or "Proposta cancelada" or "Cotação encerrada sem sucesso" or "Apólice cancelada" => "bg-danger",
+            "Proposta com pendência" or "Endosso com pendência" => "bg-warning text-dark",
+            "Apólice emitida" => "bg-primary",
+            "Solicitar Endosso" or "Endosso Transmitido" => "bg-info",
+            "Endosso Emitido" => "bg-success",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #dee2e6;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -22px;
+        top: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+    }
+
+    .status-marker {
+        background-color: #007bff;
+    }
+
+    .ocorrencia-marker {
+        background-color: #dc3545;
+    }
+
+    .timeline-content {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-left: 15px;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .timeline-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .timeline-date {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .timeline-body {
+        color: #495057;
+    }
+
+    .status-info, .ocorrencia-info {
+        line-height: 1.5;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+    }
+
+    .badge-lg {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.75rem;
+        font-weight: 600;
+    }
+
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>

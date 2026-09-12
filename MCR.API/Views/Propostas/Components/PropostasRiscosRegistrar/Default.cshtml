@@ -1,0 +1,87 @@
+@using System.Text
+@model MCR.API.Propostas.Domain.DTO.PropostasRiscosCadastrarDTO
+@{
+    var municipioProposta = ViewBag.MunicipioProposta as string;
+    var riscosFiltrados = Model.Riscos?.ToList() ?? new List<MCR.API.Propostas.Domain.DTO.PropostaRiscoCadastrarItemDTO>();
+}
+
+<div class="modal-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); width: 75%; max-width: 90%;">
+
+    <!-- Cabeçalho Modal -->
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+        <h4 style="margin: 0;">Vincular Riscos</h4>
+        <button type="button" class="btn-fechar-modal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+    </div>
+    <form id="PropostasRiscosRegistrar"
+          asp-antiforgery="true"
+          asp-action="VincularPropostaRiscos"
+          asp-controller="PropostasRiscos"
+          data-ajax="true" data-ajax-method="POST"
+          data-ajax-complete="gl.CompleteAjax"
+          data-ajax-begin="gl.BeginAjax"
+          data-ajax-success="gl.onSuccess"
+          data-ajax-failure="gl.onFailed"
+          data-ajax-callback="propostaJS.onSuccessCallbackRiscos">
+        <input type="hidden" asp-for="@Model.PropostaId" />
+        <input type="hidden" asp-for="@Model.ClienteId" />
+        <!-- Corpo Modal -->
+        <div class="modal-body">
+            <div class="search-block border p-3 mb-3">
+                <h6 class="mb-3">Selecionar Propriedades para Vincular à Proposta</h6>
+
+                @if (riscosFiltrados == null || !riscosFiltrados.Any())
+                {
+                    <div class="text-center py-5">
+                        <p class="text-muted mb-3">Nenhuma propriedade vinculada à este segurado ou ao município de @municipioProposta</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome da Propriedade</th>
+                                    <th>Município / UF</th>
+
+                                    <th>Área Total (ha)</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < riscosFiltrados.Count; i++)
+                                {
+                                    var risco = riscosFiltrados[i];
+                                    <tr>
+                                        <td>@risco.NomePropriedade</td>
+                                        <td>@risco.Municipio / @risco.UF</td>
+                                        <td>@((risco.AreaTotal ?? 0m).ToString("N2"))</td>
+                                        <td class="text-center">
+                                            <div class="form-check d-flex justify-content-center">
+                                                <input type="checkbox" class="form-check-input select-risco"
+                                                       id="check_@i" asp-for="Riscos[i].Selecionado"
+                                                       style="width: 1.5em; height: 1.5em;">
+
+                                                <div id="risco_fields_@i" style="display: none;">
+                                                    <input type="hidden" name="Riscos[@i].PropriedadeId" value="@risco.PropriedadeId" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <!-- Rodapé Modal -->
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; border-top: 1px solid #ddd; padding-top: 15px; margin-top: 15px;">
+            <button type="submit" class="btn btn-primary">Próximo</button> &nbsp;
+            <button type="button" class="btn-cancelar-modal" style="padding: 8px 15px;  background-color: #ddd; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">Fechar</button>
+        </div>
+    </form>
+</div>
+

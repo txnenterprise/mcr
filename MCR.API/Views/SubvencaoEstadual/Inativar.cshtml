@@ -1,0 +1,78 @@
+@model MCR.API.Models.ViewModels.SubvencaoEstadualModel
+@{
+    Layout = "_LayoutClean";
+    if (Model.SubvencaoEstadual.Ativo)
+        ViewData["Title"] = "Subvenções Estaduais - Inativar";
+    else
+        ViewData["Title"] = "Subvenções Estaduais - Ativar";
+}
+<div class="form-box">
+    @if (Model.SubvencaoEstadual.Ativo)
+    {
+        <h4 class="form-title form-box-title justify-content-center align-items-center">Subvenções Estaduais - Inativar</h4>
+    }
+    else
+    {
+        <h4 class="form-title form-box-title justify-content-center align-items-center">Subvenções Estaduais - Ativar</h4>
+    }
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="SubvencaoEstadual" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <form asp-controller="SubvencaoEstadual" method="post" id="inativarSubvencaoEstadual">
+                <ul class="list-group">
+                    <li class="list-group-item">Cultura: @Model.SubvencaoEstadual.Cultura</li>
+                    <li class="list-group-item">Estado: @Model.SubvencaoEstadual.Estado</li>
+                    <li class="list-group-item">Porcentagem: @Model.SubvencaoEstadual.Porentagem.ToString("N2")%</li>
+                    <li class="list-group-item">Limite R$: @Model.SubvencaoEstadual.LimiteReal.ToString("N2")</li>
+                    <li class="list-group-item">CPF: @Model.SubvencaoEstadual.CPF</li>
+                    <li class="list-group-item">Ano Civil: @Model.SubvencaoEstadual.AnoCivil</li>
+                    <li class="list-group-item">Ativo? @(Model.SubvencaoEstadual.Ativo ? "Sim" : "Não")</li>
+                </ul>
+                <input asp-for="SubvencaoEstadual.Id" value="@Model.SubvencaoEstadual.Id" hidden>
+                <br />
+                <br />
+                @if (Model.SubvencaoEstadual.Ativo)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <h6>Deseja, realmente, inativar este cadastro?</h6>
+                    </div>
+                    <br />
+                    <div class="social-login">
+                        <button type="submit" action="Inativar" class="login-btn btn d-flex justify-content-center align-items-center" onclick="setAction('Inativar')">
+                            Inativar
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="social-login">
+                        <button type="submit" class="login-btn btn d-flex justify-content-center align-items-center" onclick="setAction('Ativar')">
+                            Ativar
+                        </button>
+                    </div>
+                }
+            </form>
+            @if (Model != null && !Model.SubvencaoEstadual.Sucesso)
+            {
+                <br />
+                <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+                    <h6>Atenção!</h6>
+                    <h6>@Model.SubvencaoEstadual.Mensagem</h6>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    function setAction(action) {
+        document.getElementById("inativarSubvencaoEstadual").action = '/SubvencaoEstadual/' + action;
+    }
+</script>

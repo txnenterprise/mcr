@@ -1,0 +1,72 @@
+<!-- Modal para Selecionar Cliente -->
+<div class="modal fade" id="modalSelecionarCliente" tabindex="-1" aria-labelledby="modalSelecionarClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSelecionarClienteLabel">Vincular cliente a esta cotação <small class="text-muted" id="modalNumeroCotacao"></small></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Filtros de Pesquisa -->
+                <div class="card mb-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Filtros de Pesquisa</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-group">
+                                    <label for="pesquisaNomeCliente">Nome</label>
+                                    <input type="text" class="form-control" id="pesquisaNomeCliente" placeholder="Digite o nome do cliente">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-group">
+                                    <label for="pesquisaCPFCliente">CPF</label>
+                                    <input type="text" class="form-control" id="pesquisaCPFCliente" placeholder="Digite o CPF">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <button type="button" class="btn btn-primary form-control" id="btnPesquisarClientes">
+                                        <i class="bi bi-search"></i> Pesquisar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Tabela de Clientes -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="tblClientesModal">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">Selecionar</th>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th>E-mail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Conteúdo preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Botão de Confirmação -->
+                <div class="row mt-3">
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-success btn-lg" id="btnConfirmarCliente" disabled>
+                            <i class="bi bi-check-circle"></i> Confirmar Seleção
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div> 

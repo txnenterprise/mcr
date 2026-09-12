@@ -1,0 +1,80 @@
+﻿@model MCR.API.Models.ProdutosViewModel
+@{
+    ViewData["Title"] = "Gerenciar Produto";
+}
+
+@section Styles{
+    <link href="~/lib/dropzone/min/dropzone.min.css" rel="stylesheet">
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">ProdutosTaxas - Gerenciar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" class="btn btn-secondary rounded-pill">Voltar</a>
+        </div>
+    </div>
+    <br /><br />
+    <form id="formProdutosTaxas"
+          asp-antiforgery="true"
+          asp-action="Gerenciar"
+          asp-controller="ProdutosPage"
+          data-ajax="true" data-ajax-method="POST"
+          data-ajax-complete="gl.CompleteAjax"
+          data-ajax-begin="gl.BeginAjax"
+          data-ajax-success="gl.onSuccess"
+          data-ajax-failure="gl.onFailed"
+          data-ajax-callback="produtosJS.onSuccessCallback">
+        @Html.AntiForgeryToken()
+        @Html.Partial("_ProdutosTaxasForm", Model)
+    </form>
+
+    @if (Model.Produto.Id != Guid.Empty)
+    {
+        @await Component.InvokeAsync("ProdutosCanalRegister", new { produtoId = Model.Produto.Id })
+        @await Component.InvokeAsync("ProdutosTaxasRegister", new { produtoId = Model.Produto.Id })
+    }
+</div>
+
+@await Html.PartialAsync("_TemplateTaxaRow", Model)
+
+@section Scripts{
+    <environment include="Development">
+        <script src="~/lib/dropzone/dropzone.js"></script>
+        <script src="~/app/produtos/produtos.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/dropzone/min/dropzone.min.js?v=@DateTime.UtcNow.Ticks"></script>
+        <script src="~/app/produtos/produtos.min.js?v=@DateTime.UtcNow.Ticks"></script>
+    </environment>
+
+    <script>
+        $(document).ready(function() {
+            @if (!Model.Produto.Ativo == true)
+            {
+                <text>
+                // Desabilita todos os campos do formulário
+                $('#formProdutosTaxas input, #formProdutosTaxas select, #formProdutosTaxas textarea').prop('disabled', true);
+                // Desabilita o botão de submit
+                $('#formProdutosTaxas button[type="submit"]').prop('disabled', true);
+                </text>
+            }
+        });
+    </script>
+}
+@Html.AntiForgeryToken()

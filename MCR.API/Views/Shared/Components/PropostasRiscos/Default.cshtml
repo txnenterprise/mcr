@@ -1,0 +1,101 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasRiscosDTO
+
+<div class="card pt-3">
+    <div class="card-header text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Dados do Risco</h5>
+            @if (Model.Riscos.Any())
+            {
+                <button type="button" class="btn btn-primary btn-sm" onclick="propostaJS.openRiscos()"  proposal-status-permission="@ViewBag.PropostaStatus">
+                    <i class="fas fa-plus me-1"></i> Selecionar Risco
+                </button>
+            }
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model == null || !Model.Riscos.Any())
+        {
+            <div class="text-center py-5">
+                <p class="text-muted mb-3">Nenhuma propriedade vinculada à este segurado</p>
+                <button type="button" class="btn btn-primary" onclick="propostaJS.openRiscos()"  proposal-status-permission="@ViewBag.PropostaStatus">
+                    <i class="fas fa-plus me-2"></i> Selecionar Risco
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome da Propriedade</th>
+                            <th>Município / UF</th>
+                            <th>Área Total (ha)</th>
+                            <th class="text-center"  proposal-status-permission="@ViewBag.PropostaStatus">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var risco in Model.Riscos)
+                        {
+                            <tr>
+                                <td>@risco.NomePropriedade</td>
+                                <td>@risco.Municipio / @risco.UF</td>
+                                <td>@((risco.AreaTotal ?? 0m).ToString("N2"))</td>
+                                <td class="text-center"  proposal-status-permission="@ViewBag.PropostaStatus">
+                                    <button type="button" class="btn btn-sm btn-danger riscoRemover" data-risco="@risco.PropostaRiscoId" data-propriedade="@risco.NomePropriedade">
+                                        Remover
+                                    </button>
+                                    <button type="button" class="btn  btn-success btn-sm talhaoAdd" data-risco="@risco.PropostaRiscoId" data-propriedade="@risco.PropriedadeId">
+                                        Talhão
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome do Talhão</th>
+                                                    <th>Área (ha)</th>
+                                                    <th>Tipo de Solo</th>
+                                                    <th>Classificação do Solo</th>
+                                                    <th>Data Plantio</th>
+                                                    <th>Grupo da Variedade</th>
+                                                    <th>Variedade</th>
+                                                    <th class="text-center"  proposal-status-permission="@ViewBag.PropostaStatus">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var talhao in risco.Talhoes)
+                                                {
+                                                    <tr>
+                                                        <td>@talhao.NomeTalhao</td>
+                                                        <td>@((talhao.AreaTalhao ?? 0m).FormatAreaHectaresVisualizacao())</td>
+                                                        <td>@talhao.TipoSolo</td>
+                                                        <td>@talhao.ClassificacaoSolo</td>
+                                                        <td>@(talhao.DataPlantio?.ToString("dd/MM/yyyy"))</td>
+                                                        <td>@talhao.GrupoVariedadeNome</td>
+                                                        <td>@talhao.VariedadeNome</td>
+                                                        <td class="text-center"  proposal-status-permission="@ViewBag.PropostaStatus">
+                                                            <button type="button" class="btn btn-sm btn-danger talhaoRemover" data-talhao="@talhao.PropostaTalhaoId" data-nome="@talhao.NomeTalhao">
+                                                                Remover
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-info ms-1" onclick="baixarKmlTalhao('@talhao.TalhaoId', '@talhao.NomeTalhao')" title="Baixar arquivo KML">
+                                                                <i class="bi bi-download"></i> Baixar .KML
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

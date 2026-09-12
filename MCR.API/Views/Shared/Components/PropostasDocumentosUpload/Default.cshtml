@@ -1,0 +1,56 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasDocumentosUploadDTO
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="formUploadDocumento" asp-antiforgery="true" asp-action="SalvarDocumento"
+              asp-controller="PropostasDocumentos" data-ajax="true" data-ajax-method="POST" data-ajax-complete="gl.CompleteAjax"
+              data-ajax-begin="gl.BeginAjax" data-ajax-success="gl.onSuccess" data-ajax-failure="gl.onFailed"
+              data-ajax-callback="propostasDocumentosJS.onSuccessCallbackDocumento">
+            <input type="hidden" asp-for="PropostaId" />
+            <input type="hidden" asp-for="ArquivoBase64" />
+            <input type="hidden" asp-for="ArquivoNome" />
+
+            <div class="row">
+                <div class="col-sm-12 col-md-5 col-lg-5 mb-3">
+                    <label for="TipoDocumento">Tipo de Documento</label>
+                    <select class="form-control" asp-for="TipoDocumento" required>
+                        <option value="">Selecione...</option>
+                        <option value="Cotação MCR">Cotação MCR</option>
+                        <option value="Proposta MCR">Proposta MCR</option>
+                        <option value="Proposta Seguradora">Proposta Seguradora</option>
+                        <option value="Carta Recusa - Proposta">Carta Recusa - Proposta</option>
+                        <option value="Boleto">Boleto</option>
+                        <option value="Comprovante de Pagamento">Comprovante de Pagamento</option>
+                        <option value="Apólice">Apólice</option>
+                        <option value="Endosso">Endosso</option>
+                        <option value="Análise de Solo">Análise de Solo</option>
+                        <option value="Nota Fiscal de Insumos">Nota Fiscal de Insumos</option>
+                        <option value="Croqui kml">Croqui kml</option>
+                        <option value="Croqui PDF">Croqui PDF</option>
+                        <option value="Declaração de Inexistência de Sinistro">Declaração de Inexistência de Sinistro</option>
+                        <option value="Aviso de Início de Colheita">Aviso de Início de Colheita</option>
+                        <option value="Aviso de Final de Colheita">Aviso de Final de Colheita</option>
+                        <option value="Resumo de Liquidação">Resumo de Liquidação</option>
+                        <option value="Carta Resultado Sinistro">Carta Resultado Sinistro</option>
+                        <option value="Outros">Outros (descrever no campo observações)</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-12 col-md-5 col-lg-5 mb-3">
+                    <label for="UploadArquivo">Upload de Arquivo</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" asp-for="ArquivoPath" readonly />
+                        <div class="input-group-append">
+                            <label for="UploadArquivo" class="btn btn-outline-secondary">Procurar</label>
+                            <input type="text" class="d-none" id="UploadArquivo" name="UploadArquivo" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-2 col-lg-2 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">Enviar Arquivo</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

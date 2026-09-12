@@ -1,0 +1,77 @@
+@model MCR.API.CotacoesAgricola.Domain.DTO.CotacoesAgricolaCadastrarDTO
+@{
+    var disabled = Model.DataInsucesso.HasValue ? "disabled" : null;
+    var isNotAdmin = ViewBag.UserRole != null && ViewBag.UserRole.ToString() != "Administrador";
+    var corretoraDisabled = isNotAdmin && (int?)ViewBag.CorretoraCount == 1 ? "disabled" : disabled;
+    var canalDisabled = isNotAdmin && (int?)ViewBag.CanalCount == 1 ? "disabled" : disabled;
+    var paDisabled = isNotAdmin && (int?)ViewBag.PACount == 1 ? "disabled" : disabled;
+}
+
+<div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+    <div class="card-body pt-3"  style="color: var(--color-primary)">
+        <h6>Dados do Atendimento</h6>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-floating">
+                    <input type="text" class="form-select " asp-for="UsuarioNome" readonly="readonly" disabled="disabled" />
+                    <label for="UsuarioNome">Usuário</label>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-floating">
+                    <input type="text" class="form-select " asp-for="UsuarioTelefone" readonly="readonly" disabled="disabled" />
+                    <label for="UsuarioTelefone">Telefone</label>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-floating">
+                    <input type="text" class="form-select " asp-for="UsuarioEmail" readonly="readonly" disabled="disabled" />
+                    <label for="UsuarioEmail">Email</label>
+                </div>
+            </div>
+        </div>
+            <div class="row mt-2">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-floating">
+                    <select class="form-select selected2" asp-for="CorretoraId" asp-items="@ViewBag.Corretora" disabled="@corretoraDisabled">
+                        <option value="">Selecione...</option>
+                    </select>
+                    @if (corretoraDisabled != null)
+                    {
+                        <input type="hidden" asp-for="CorretoraId" />
+                    }
+                    <label for="CorretoraId">Corretora</label>
+                    <span asp-validation-for="CorretoraId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-floating">
+                    <select class="form-select selected2" asp-for="CanalId" asp-items="@ViewBag.Canal" disabled="@canalDisabled">
+                        <option value="">Selecione...</option>
+                    </select>
+                    @if (canalDisabled != null)
+                    {
+                        <input type="hidden" asp-for="CanalId" />
+                    }
+                    <label for="CanalId">Canal</label>
+                    <span asp-validation-for="CanalId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-floating">
+                    <select class="form-select selected2" asp-for="PontoAtendimentoId" asp-items="@ViewBag.PontoAtendimento" disabled="@paDisabled">
+                        <option value="">Selecione...</option>
+                    </select>
+                    @if (paDisabled != null)
+                    {
+                        <input type="hidden" asp-for="PontoAtendimentoId" />
+                    }
+                    <label for="PontoAtendimentoId">Ponto de Atendimento</label>
+                    <span asp-validation-for="PontoAtendimentoId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

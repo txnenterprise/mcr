@@ -1,0 +1,23 @@
+.btn-group .dropdown-toggle-split {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #dc3545;
+    color: white !important;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+.btn-group {
+    white-space: nowrap;
+} 

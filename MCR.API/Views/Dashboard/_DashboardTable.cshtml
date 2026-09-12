@@ -1,0 +1,43 @@
+@model MCR.API.Models.Dashboard.DashboardDataResponse
+
+@if (Model?.StatusData != null && Model.StatusData.Any())
+{
+    @foreach (var status in Model.StatusData)
+    {
+        var statusLower = status.Key.ToLower();
+        string statusUrl;
+        
+        if (statusLower.Contains("sinistro"))
+        {
+            statusUrl = "/Sinistro";
+        }
+        else if (statusLower.Contains("apólice") || statusLower.Contains("apolice"))
+        {
+            statusUrl = "/Apolices";
+        }
+        else if (statusLower.Contains("endosso"))
+        {
+            statusUrl = "/Endosso";
+        }
+        else
+        {
+            statusUrl = "/Propostas";
+        }
+        
+        <tr>
+            <td class="status-clickable" data-status-url="@statusUrl" style="cursor: pointer;">@status.Key</td>
+            <td>@status.Value.Area.ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))</td>
+            <td>@status.Value.Qtd.ToString("N0")</td>
+            <td>@status.Value.LMI.ToString("C")</td>
+            <td>@status.Value.Premio.ToString("C")</td>
+            <td>@status.Value.Produtividade.ToString("N2")</td>
+            <td>@status.Value.Taxa.ToString("N2")%</td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="7" class="text-center">Nenhum dado encontrado</td>
+    </tr>
+}

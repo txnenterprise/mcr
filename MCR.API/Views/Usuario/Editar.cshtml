@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Usuários - Editar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Usuários - Editar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Usuario" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+
+    @await Component.InvokeAsync("UsuarioAlterar", new { userId = @ViewBag.UserId })
+
+
+    @if (Model != null && !Model.Success && !string.IsNullOrEmpty(Model.Message))
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Message</h6>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/app/usuarios/usuario-alterar.js?v=@DateTime.UtcNow.Ticks"></script>
+}

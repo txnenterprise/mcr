@@ -1,0 +1,61 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasTalhoesDTO
+
+<div class="card pt-3">
+    <div class="card-header text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Dados dos Talhões</h5>
+            @if (Model.Talhoes.Any())
+            {
+                <button type="button" class="btn btn-primary btn-sm" onclick="propostaJS.openTalhoes()">
+                    <i class="fas fa-plus me-1"></i> Selecionar Talhão
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="card-body">
+        @if (Model == null || !Model.Talhoes.Any())
+        {
+            <div class="text-center py-5">
+                <p class="text-muted mb-3">Nenhum talhão vinculado à essa propriedade</p>
+                <button type="button" class="btn btn-primary" onclick="propostaJS.openTalhoes()">
+                    <i class="fas fa-plus me-2"></i> Selecionar Talhão
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome do Talhão</th>
+                            <th>Área (ha)</th>
+                            <th>Tipo de Solo</th>
+                            <th>Classificação do Solo</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var talhao in Model.Talhoes)
+                        {
+                            <tr>
+                                <td>@talhao.NomeTalhao</td>
+                                <td>@talhao.AreaTalhao.FormatAreaHectaresVisualizacao()</td>
+                                <td>@talhao.TipoSolo</td>
+                                <td>@talhao.ClassificacaoSolo</td>
+                                <td class="text-center">
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger talhaoRemover"
+                                            data-nome="">
+                                        Remover
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

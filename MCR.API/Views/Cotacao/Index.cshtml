@@ -1,0 +1,362 @@
+﻿@using System.Globalization;
+
+@model MCR.API.Entities.CotacaoEntity
+@{
+    ViewData["Title"] = "Cotações";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Cotações</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="NovaCotacao" asp-controller="Cotacao" class="default-btn btn d-flex justify-content-center align-items-center">
+                Nova Cotação
+            </a>
+        </div>
+    </div>
+    <br />
+    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6); color: white; padding: 20px; border-radius: 8px; font-size: 16px;">
+        Gerando relatório, aguarde...
+    </div>
+    <br /><br />
+    @if (TempData["RetornoEfetivacao"] != null)
+    {
+        if (string.IsNullOrEmpty(TempData["RetornoEfetivacao"].ToString()))
+        {
+            <div class="alert alert-success" alert-dismissible fade show" role="alert">
+                Ação realizada com sucesso!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger" alert-dismissible fade show" role="alert">
+                @TempData["RetornoEfetivacao"].ToString()
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <br />
+        <br />
+    }
+
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <h6>Filtros</h6>
+            <br />
+            <form asp-action="Index" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="dataHoraCotacaoInicio">Data Início:</label>
+                            <input type="date" class="form-control"
+                                   asp-for="DataHoraCotacaoInicio"
+                                   value="@Model.DataHoraCotacaoInicio?.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="dataHoraCotacaoFim">Data Fim:</label>
+                            <input type="date" class="form-control"
+                                   asp-for="DataHoraCotacaoFim"
+                                   value="@Model.DataHoraCotacaoFim?.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="corretoraId">Filial:</label>
+                            @if (ViewBag.ListaCorretoras != null)
+                            {
+                                <select class="form-select form-dropdownlist"
+                                        aria-label="corretoraId"
+                                        asp-for="CorretoraId"
+                                        asp-items="ViewBag.ListaCorretoras">
+                                    <option value="">Selecione uma Filial</option>
+                                </select>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="cotacaoId">Cód. Interno:</label>
+                            <input type="text" asp-for="CotacaoId" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="numeroCotacao">Núm. Cotação:</label>
+                            <input type="text" asp-for="NumeroCotacao" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="seguradora">Seguradora:</label>
+                            <input type="text" asp-for="Seguradora" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="corretor">Corretor:</label>
+                            <input type="text" asp-for="Corretor" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <br />
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                    <br />
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-primary" id="btnExportExcel">Exportar para Excel</button>
+    <span style="font-size: small" class="text-muted">Serão exportados apenas os itens da página corrente.</span>
+    <br />
+    <br />
+    <div style="overflow-x:auto;">
+        <table id="tblCotacoes" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Cód. Interno</th>
+                    <th>Filial</th>
+                    <th>Corretor</th>
+                    <th>Seguradora</th>
+                    <th>Núm. Cotação</th>
+                    <th>Tipo de Seguro</th>
+                    <th>Segurado</th>
+                    <th>Data Cotação</th>
+                    <th>Prêmio</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.ListaCotacoes != null && Model.ListaCotacoes.Count > 0)
+                {
+                    var ultimoCotacaoId = Guid.Empty;
+                    var cotacaoSeguradoraExibida = new HashSet<string>();
+
+                    foreach (var cotacao in Model.ListaCotacoes)
+                    {
+                        if (cotacao.ListaCotacaoRetornoSeguradora != null && cotacao.ListaCotacaoRetornoSeguradora.Count > 0)
+                        {
+                            foreach (var item in cotacao.ListaCotacaoRetornoSeguradora.OrderBy(c => c.DataHoraRetorno.ToShortDateString()))
+                            {
+                                var chaveUnica = $"{item.CotacaoId}_{item.Seguradora}";
+
+                                if (cotacaoSeguradoraExibida.Contains(chaveUnica))
+                                    continue;
+                                else
+                                    cotacaoSeguradoraExibida.Add(chaveUnica);
+
+                                if (item.CotacaoId != ultimoCotacaoId)
+                                {
+                                    if (ultimoCotacaoId != Guid.Empty)
+                                    {
+                                        <tr>
+                                            <td colspan="10" style="background-color:#f0f0f0; text-align:center; font-weight:bold;">Fim do Grupo - Cód. Interno @ultimoCotacaoId</td>
+                                        </tr>
+                                    }
+
+                                    ultimoCotacaoId = item.CotacaoId;
+                                }
+
+                                if (!string.IsNullOrEmpty(Model.NumeroCotacao) && !string.IsNullOrEmpty(Model.Seguradora))
+                                {
+                                    if (item.NumeroCotacao == Model.NumeroCotacao && item.Seguradora == Model.Seguradora)
+                                    {
+                                        var premioDecimal = Convert.ToDecimal(item.Premio.Trim().Replace("R$", ""));
+                                        var razaoSocial = string.IsNullOrEmpty(cotacao.Corretora.RazaoSocial) ? "Sem Razão Social" : cotacao.Corretora.RazaoSocial;
+                                        var nomeFantasia = string.IsNullOrEmpty(cotacao.Corretora.NomeFantasia) ? "Sem Nome Fantasia" : cotacao.Corretora.NomeFantasia;
+                                        var corretora = $"{razaoSocial} - {nomeFantasia}";
+                                        <tr>
+                                            <td>@item.CotacaoId.ToString()</td>
+                                            <td>@corretora</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.Corretor).FirstOrDefault()</td>
+                                            <td>@item.Seguradora</td>
+                                            <td>@item.NumeroCotacao</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSeguro.TipoSeguro).FirstOrDefault()</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSegurado.Nome).FirstOrDefault()</td>
+                                            <td>@item.DataHoraRetorno.ToString("dd/MM/yyyy")</td>
+                                            <td>@premioDecimal.ToString("C", new CultureInfo("pt-BR"))</td>
+                                            <td>
+                                                <a href="#" onclick="baixarRelatorio('@item.CotacaoId')" class="btn btn-primary btn-sm">
+                                                    Download
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else if (!string.IsNullOrEmpty(Model.NumeroCotacao))
+                                {
+                                    if (item.NumeroCotacao == Model.NumeroCotacao)
+                                    {
+                                        var premioDecimal = Convert.ToDecimal(item.Premio.Trim().Replace("R$", ""));
+                                        var razaoSocial = string.IsNullOrEmpty(cotacao.Corretora.RazaoSocial) ? "Sem Razão Social" : cotacao.Corretora.RazaoSocial;
+                                        var nomeFantasia = string.IsNullOrEmpty(cotacao.Corretora.NomeFantasia) ? "Sem Nome Fantasia" : cotacao.Corretora.NomeFantasia;
+                                        var corretora = $"{razaoSocial} - {nomeFantasia}";
+                                        <tr>
+                                            <td>@item.CotacaoId.ToString()</td>
+                                            <td>@corretora</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.Corretor).FirstOrDefault()</td>
+                                            <td>@item.Seguradora</td>
+                                            <td>@item.NumeroCotacao</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSeguro.TipoSeguro).FirstOrDefault()</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSegurado.Nome).FirstOrDefault()</td>
+                                            <td>@item.DataHoraRetorno.ToString("dd/MM/yyyy")</td>
+                                            <td>@premioDecimal.ToString("C", new CultureInfo("pt-BR"))</td>
+                                            <td>
+                                                <a href="#" onclick="baixarRelatorio('@item.CotacaoId')" class="btn btn-primary btn-sm">
+                                                    Download
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else if (!string.IsNullOrEmpty(Model.Seguradora))
+                                {
+                                    if (item.Seguradora == Model.Seguradora)
+                                    {
+                                        var premioDecimal = Convert.ToDecimal(item.Premio.Trim().Replace("R$", ""));
+                                        var razaoSocial = string.IsNullOrEmpty(cotacao.Corretora.RazaoSocial) ? "Sem Razão Social" : cotacao.Corretora.RazaoSocial;
+                                        var nomeFantasia = string.IsNullOrEmpty(cotacao.Corretora.NomeFantasia) ? "Sem Nome Fantasia" : cotacao.Corretora.NomeFantasia;
+                                        var corretora = $"{razaoSocial} - {nomeFantasia}";
+                                        <tr>
+                                            <td>@item.CotacaoId.ToString()</td>
+                                            <td>@corretora</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.Corretor).FirstOrDefault()</td>
+                                            <td>@item.Seguradora</td>
+                                            <td>@item.NumeroCotacao</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSeguro.TipoSeguro).FirstOrDefault()</td>
+                                            <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSegurado.Nome).FirstOrDefault()</td>
+                                            <td>@item.DataHoraRetorno.ToString("dd/MM/yyyy")</td>
+                                            <td>@premioDecimal.ToString("C", new CultureInfo("pt-BR"))</td>
+                                            <td>
+                                                <a href="#" onclick="baixarRelatorio('@item.CotacaoId')" class="btn btn-primary btn-sm">
+                                                    Download
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    var premioDecimal = Convert.ToDecimal(item.Premio.Trim().Replace("R$", ""));
+                                    var razaoSocial = string.IsNullOrEmpty(cotacao.Corretora.RazaoSocial) ? "Sem Razão Social" : cotacao.Corretora.RazaoSocial;
+                                    var nomeFantasia = string.IsNullOrEmpty(cotacao.Corretora.NomeFantasia) ? "Sem Nome Fantasia" : cotacao.Corretora.NomeFantasia;
+                                    var corretora = $"{razaoSocial} - {nomeFantasia}";
+                                    <tr>
+                                        <td>@item.CotacaoId.ToString()</td>
+                                        <td>@corretora</td>
+                                        <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.Corretor).FirstOrDefault()</td>
+                                        <td>@item.Seguradora</td>
+                                        <td>@item.NumeroCotacao</td>
+                                        <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSeguro.TipoSeguro).FirstOrDefault()</td>
+                                        <td>@Model.ListaCotacoes.Where(c => c.Id == item.CotacaoId).Select(c => c.InformacaoSegurado.Nome).FirstOrDefault()</td>
+                                        <td>@item.DataHoraRetorno.ToString("dd/MM/yyyy")</td>
+                                        <td>@premioDecimal.ToString("C", new CultureInfo("pt-BR"))</td>
+                                        <td>
+                                            <a href="#" onclick="baixarRelatorio('@item.CotacaoId')" class="btn btn-primary btn-sm">
+                                                Download
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    }
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @if (Model.PaginaAtual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-pagina="@(Model.PaginaAtual - 1)"
+                           asp-route-dataHoraCotacaoInicio="@Model.DataHoraCotacaoInicio?.ToString("yyyy-MM-dd")"
+                           asp-route-dataHoraCotacaoFim="@Model.DataHoraCotacaoFim?.ToString("yyyy-MM-dd")"
+                           asp-route-cotacaoId="@Model.CotacaoId">Anterior</a>
+                    </li>
+                }
+
+                @for (var i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaAtual ? "active" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-pagina="@i"
+                           asp-route-dataHoraCotacaoInicio="@Model.DataHoraCotacaoInicio?.ToString("yyyy-MM-dd")"
+                           asp-route-dataHoraCotacaoFim="@Model.DataHoraCotacaoFim?.ToString("yyyy-MM-dd")"
+                           asp-route-cotacaoId="@Model.CotacaoId">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaAtual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-pagina="@(Model.PaginaAtual + 1)"
+                           asp-route-dataHoraCotacaoInicio="@Model.DataHoraCotacaoInicio?.ToString("yyyy-MM-dd")"
+                           asp-route-dataHoraCotacaoFim="@Model.DataHoraCotacaoFim?.ToString("yyyy-MM-dd")"
+                           asp-route-cotacaoId="@Model.CotacaoId">Próximo</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+    <script>
+        document.getElementById("btnExportExcel").addEventListener("click", () => {
+            let table2excel = new Table2Excel();
+            table2excel.export(document.querySelector("#tblCotacoes"));
+        });
+
+    </script>
+
+    <script>
+        function baixarRelatorio(id) {
+            const url = `/Cotacao/GerarPdfRelatorioCotacao/${id}`;
+            console.log("Baixando relatório de:", url);
+
+            document.getElementById("loading").style.display = "block";
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erro ao baixar PDF. Código: ${response.status}`);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `Cotacao_${id}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                })
+                .catch(error => {
+                    console.error("Erro ao baixar PDF:", error.message);
+                    alert(error.message);
+                })
+                .finally(() => {
+                    document.getElementById("loading").style.display = "none";
+                });
+        }
+    </script>

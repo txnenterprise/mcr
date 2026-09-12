@@ -1,0 +1,439 @@
+@model MCR.API.Entities.ParametrizacaoSeguradoraEntity
+@{
+    ViewData["Title"] = "Seguradoras - Parametrizações - Editar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Seguradoras - Parametrizações - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Parametrizacao" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="ParametrizacaoSeguradora" asp-action="Editar" method="post">
+        <h6>Contratações</h6>
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-8">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Seguradora.ContratarCoberturaResponsabilidadeCivilParaMaquinaAgricola" id="ContratarCoberturaResponsabilidadeCivilParaMaquinaAgricola">
+                            <label class="form-check-label" for="ContratarCoberturaResponsabilidadeCivilParaMaquinaAgricola">Contratar cobertura relativa a responsabilidade civil para maquinaria agrícola?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ValorCoberturaResponsabilidadeCivilParaMaquinaAgricola" id="ValorCoberturaResponsabilidadeCivilParaMaquinaAgricola" placeholder="Valor">
+                            <label for="ValorCoberturaResponsabilidadeCivilParaMaquinaAgricola">Valor</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-8">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Seguradora.ContratarCoberturaResponsabilidadeCivilParaEmpregador" id="ContratarCoberturaResponsabilidadeCivilParaEmpregador">
+                            <label class="form-check-label" for="ContratarCoberturaResponsabilidadeCivilParaEmpregador">Contratar cobertura relativa a responsabilidade civil para empregador?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ValorCoberturaResponsabilidadeCivilParaEmpregador" id="ValorCoberturaResponsabilidadeCivilParaEmpregador" placeholder="Valor">
+                            <label for="ValorCoberturaResponsabilidadeCivilParaEmpregador">Valor</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-8">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Seguradora.ContratarCoberturaPerdaPagamentoAluguel" id="ContratarCoberturaPerdaPagamentoAluguel">
+                            <label class="form-check-label" for="ContratarCoberturaPerdaPagamentoAluguel">Contratar cobertura relativa a perda ou pagamento de aluguel?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ValorCoberturaPerdaPagamentoAluguel" id="ValorCoberturaPerdaPagamentoAluguel" placeholder="Valor">
+                            <label for="ValorCoberturaPerdaPagamentoAluguel">Valor</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-8">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Seguradora.ContratarCoberturaFurtoSimples" id="ContratarCoberturaFurtoSimples">
+                            <label class="form-check-label" for="ContratarCoberturaFurtoSimples">Contratar cobertura para furto simples?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ValorCoberturaFurtoSimples" id="ValorCoberturaFurtoSimples" placeholder="Valor">
+                            <label for="ValorCoberturaFurtoSimples">Valor</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-8">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Seguradora.ContratarCoberturaDanosEletricos" id="ContratarCoberturaDanosEletricos">
+                            <label class="form-check-label" for="ContratarCoberturaDanosEletricos">Contratar cobertura para danos elétricos?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ValorCoberturaDanosEletricos" id="ValorCoberturaDanosEletricos" placeholder="Valor">
+                            <label for="ValorCoberturaDanosEletricos">Valor</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-8">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="Seguradora.ContratarCoberturaQuebraVidros" id="ContratarCoberturaQuebraVidros">
+                            <label class="form-check-label" for="ContratarCoberturaQuebraVidros">Contratar cobertura para quebra de vidros?</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ValorCoberturaQuebraVidros" id="ValorCoberturaQuebraVidros" placeholder="Valor">
+                            <label for="ValorCoberturaQuebraVidros">Valor</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <h6>Condição Comercial</h6>
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarMapfre)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-mapfre.png" class="img-responsive" width="100" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraMapfre" id="ComissaoSeguradoraMapfre" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraMapfre">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraMapfre" id="DescontoAgravoSeguradoraMapfre" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraMapfre">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraMapfre" id="MultiplicadorFranquiaSeguradoraMapfre" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraMapfre">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                }
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarSwissRe)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-swissre.png" class="img-responsive" width="130" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraSwissRe" id="ComissaoSeguradoraSwissRe" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraSwissRe">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraSwissRe" id="DescontoAgravoSeguradoraSwissRe" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraSwissRe">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraSwissRe" id="MultiplicadorFranquiaSeguradoraSwissRe" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraSwissRe">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                }
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarAllianz)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-allianz.png" class="img-responsive" width="110" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraAllianz" id="ComissaoSeguradoraAllianz" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraAllianz">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraAllianz" id="DescontoAgravoSeguradoraAllianz" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraAllianz">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraAllianz" id="MultiplicadorFranquiaSeguradoraAllianz" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraSwissRe">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                }
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarTokio)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-tokio.png" class="img-responsive" width="70" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraTokio" id="ComissaoSeguradoraTokio" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraTokio">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraTokio" id="DescontoAgravoSeguradoraTokio" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraTokio">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraTokio" id="MultiplicadorFranquiaSeguradoraTokio" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraTokio">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                }
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarSompo)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-sompo.png" class="img-responsive" width="110" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraSOMPO" id="ComissaoSeguradoraSOMPO" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraSOMPO">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraSOMPO" id="DescontoAgravoSeguradoraSOMPO" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraSOMPO">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraSOMPO" id="MultiplicadorFranquiaSeguradoraSOMPO" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraSOMPO">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                }
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarPottencial)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-pottencial.png" class="img-responsive" width="110" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraPottencial" id="ComissaoSeguradoraPottencial" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraPottencial">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraPottencial" id="DescontoAgravoSeguradoraPottencial" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraPottencial">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraPottencial" id="MultiplicadorFranquiaSeguradoraPottencial" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraPottencial">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                }
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarSombrero)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-sombrero.png" class="img-responsive" width="110" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraSombrero" id="ComissaoSeguradoraSombrero" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraSombrero">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraSombrero" id="DescontoAgravoSeguradoraSombrero" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraSombrero">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraSombrero" id="MultiplicadorFranquiaSeguradoraSombrero" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraSombrero">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                }
+                @if (Model.ParametrizacaoMultiCalculoParceiro.HabilitarFairFax)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <img src="~/img/logo-ff.png" class="img-responsive" width="110" />
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.ComissaoSeguradoraFF" id="ComissaoSeguradoraFF" placeholder="Comissão">
+                                <label for="ComissaoSeguradoraFF">Comissão</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.DescontoAgravoSeguradoraFF" id="DescontoAgravoSeguradoraFF" placeholder="Desconto">
+                                <label for="DescontoAgravoSeguradoraFF">Desconto</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control form-input form-control-placeholder" asp-for="Seguradora.MultiplicadorFranquiaSeguradoraFF" id="MultiplicadorFranquiaSeguradoraFF" placeholder="Mult. Franquia">
+                                <label for="MultiplicadorFranquiaSeguradoraFF">Mult. Franquia</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                }
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="social-login">
+            <button type="submit" class="login-btn btn d-flex justify-content-center align-items-center">
+                Salvar
+            </button>
+        </div>
+        <input asp-for="Seguradora.Id" hidden />
+    </form>
+    @if (Model != null && Model.Seguradora != null && !Model.Seguradora.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Seguradora.Mensagem</h6>
+        </div>
+    }
+</div>
+
+<script>
+    const checkboxes = document.querySelectorAll(".form-check-input");
+    checkboxes.forEach(function (checkbox) {
+        const inputSibling = checkbox.parentElement.parentElement.nextElementSibling.querySelector(".form-floating input");
+        if (inputSibling.value === '' || inputSibling.value === '0') {
+            if (checkbox.checked) {
+                inputSibling.removeAttribute("readonly");
+                inputSibling.value = '';
+            } else {
+                inputSibling.setAttribute("readonly", true);
+                inputSibling.value = '0';
+            }
+        } else {
+            checkbox.checked = true;
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll(".form-check-input");
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                const inputSibling = this.parentElement.parentElement.nextElementSibling.querySelector(".form-floating input");
+                if (this.checked) {
+                    inputSibling.removeAttribute("readonly");
+                    inputSibling.value = '';
+                } else {
+                    inputSibling.setAttribute("readonly", true);
+                    inputSibling.value = '0';
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    function permitirApenasNumeros(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener('keypress', function (event) {
+                const charCode = event.which ? event.which : event.keyCode;
+                if (charCode < 48 || charCode > 57) {
+                    event.preventDefault();
+                }
+            });
+        }
+    }
+
+    const idsElementos = [
+        'ValorCoberturaResponsabilidadeCivilParaMaquinaAgricola',
+        'ValorCoberturaResponsabilidadeCivilParaEmpregador',
+        'ValorCoberturaPerdaPagamentoAluguel',
+        'ValorCoberturaFurtoSimples',
+        'ValorCoberturaDanosEletricos',
+        'ValorCoberturaQuebraVidros',
+        'ComissaoSeguradoraMapfre',
+        'DescontoAgravoSeguradoraMapfre',
+        'MultiplicadorFranquiaSeguradoraMapfre',
+        'ComissaoSeguradoraSwissRe',
+        'DescontoAgravoSeguradoraSwissRe',
+        'MultiplicadorFranquiaSeguradoraSwissRe',
+        'ComissaoSeguradoraAllianz',
+        'DescontoAgravoSeguradoraAllianz',
+        'MultiplicadorFranquiaSeguradoraAllianz',
+        'ComissaoSeguradoraTokio',
+        'DescontoAgravoSeguradoraTokio',
+        'MultiplicadorFranquiaSeguradoraTokio',
+        'ComissaoSeguradoraSOMPO',
+        'DescontoAgravoSeguradoraSOMPO',
+        'MultiplicadorFranquiaSeguradoraSOMPO',
+        'ComissaoSeguradoraPottencial',
+        'DescontoAgravoSeguradoraPottencial',
+        'MultiplicadorFranquiaSeguradoraPottencial',
+        'ComissaoSeguradoraSombrero',
+        'DescontoAgravoSeguradoraSombrero',
+        'MultiplicadorFranquiaSeguradoraSombrero',
+        'ComissaoSeguradoraFF',
+        'DescontoAgravoSeguradoraFF',
+        'MultiplicadorFranquiaSeguradoraFF'
+    ];
+
+    idsElementos.forEach(id => {
+        permitirApenasNumeros(id);
+    });
+</script>

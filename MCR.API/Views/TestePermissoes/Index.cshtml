@@ -1,0 +1,443 @@
+@{
+    ViewData["Title"] = "Teste de Permissões";
+    var logs = ViewBag.Logs as List<string> ?? new List<string>();
+    var dados = ViewBag.Dados as Dictionary<string, object> ?? new Dictionary<string, object>();
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Teste de Permissões - Debug</h2>
+            <p class="text-muted">Esta página mostra informações detalhadas sobre as permissões do usuário atual para visualização de propostas.</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Logs de Verificação</h5>
+                </div>
+                <div class="card-body">
+                    <div style="max-height: 600px; overflow-y: auto; background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px; white-space: pre-wrap;">
+                        @foreach (var log in logs)
+                        {
+                            <div>@log</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Informações do Usuário</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>UserId:</th>
+                            <td>@(dados.ContainsKey("UserId") ? dados["UserId"] : "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>UserName:</th>
+                            <td>@(dados.ContainsKey("UserName") ? dados["UserName"] : "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>IsAdministrador:</th>
+                            <td>
+                                @if (dados.ContainsKey("IsAdministrador") && (bool)dados["IsAdministrador"])
+                                {
+                                    <span class="badge bg-success">SIM</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">NÃO</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>IsConsultor:</th>
+                            <td>
+                                @if (dados.ContainsKey("IsConsultor") && (bool)dados["IsConsultor"])
+                                {
+                                    <span class="badge bg-success">SIM</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">NÃO</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Roles:</th>
+                            <td>
+                                @if (dados.ContainsKey("Roles"))
+                                {
+                                    var roles = dados["Roles"] as List<string>;
+                                    @foreach (var role in roles ?? new List<string>())
+                                    {
+                                        <span class="badge bg-primary me-1">@role</span>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Permissões Obtidas</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>CorretoraIds:</th>
+                            <td>
+                                @if (dados.ContainsKey("CorretoraIdsCount") && (int)dados["CorretoraIdsCount"] > 0)
+                                {
+                                    <span class="badge bg-success">@dados["CorretoraIdsCount"] itens</span>
+                                    <div class="mt-1"><small>@dados["CorretoraIdsList"]</small></div>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">NULL ou VAZIO</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>CanalIds:</th>
+                            <td>
+                                @if (dados.ContainsKey("CanalIdsCount") && (int)dados["CanalIdsCount"] > 0)
+                                {
+                                    <span class="badge bg-success">@dados["CanalIdsCount"] itens</span>
+                                    <div class="mt-1"><small>@dados["CanalIdsList"]</small></div>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">NULL ou VAZIO</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>PontoAtendimentoIds:</th>
+                            <td>
+                                @if (dados.ContainsKey("PontoAtendimentoIdsCount") && (int)dados["PontoAtendimentoIdsCount"] > 0)
+                                {
+                                    <span class="badge bg-success">@dados["PontoAtendimentoIdsCount"] itens</span>
+                                    <div class="mt-1"><small>@dados["PontoAtendimentoIdsList"]</small></div>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">NULL ou VAZIO</span>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Contagem de Propostas</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Total de Propostas:</th>
+                            <td><strong>@(dados.ContainsKey("TotalPropostas") ? dados["TotalPropostas"] : "N/A")</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Propostas que Apareceriam:</th>
+                            <td>
+                                <strong class="@(dados.ContainsKey("PropostasFinais") && (int)dados["PropostasFinais"] > 0 ? "text-success" : "text-danger")">
+                                    @(dados.ContainsKey("PropostasFinais") ? dados["PropostasFinais"] : "N/A")
+                                </strong>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Distribuição de Propostas</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Com CorretoraId:</th>
+                            <td>@(dados.ContainsKey("DistribuicaoComCorretora") ? dados["DistribuicaoComCorretora"] : "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Com CanalId:</th>
+                            <td>@(dados.ContainsKey("DistribuicaoComCanal") ? dados["DistribuicaoComCanal"] : "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Com PontoAtendimentoId:</th>
+                            <td>@(dados.ContainsKey("DistribuicaoComPA") ? dados["DistribuicaoComPA"] : "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Sem Estrutura:</th>
+                            <td>@(dados.ContainsKey("DistribuicaoSemEstrutura") ? dados["DistribuicaoSemEstrutura"] : "N/A")</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (dados.ContainsKey("UsuarioEstruturaNegocio") && dados["UsuarioEstruturaNegocio"] is List<string> userEnList && userEnList.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Registros em UsuarioEstruturaNegocio</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Total: <strong>@(dados.ContainsKey("UsuarioEstruturaNegocioCount") ? dados["UsuarioEstruturaNegocioCount"] : "0")</strong></p>
+                        <div style="max-height: 300px; overflow-y: auto; background-color: #f8f9fa; padding: 10px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px;">
+                            @foreach (var item in userEnList)
+                            {
+                                <div>@item</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (dados.ContainsKey("UsuarioPontoAtendimento") && dados["UsuarioPontoAtendimento"] is List<string> userPaList && userPaList.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Registros em UsuarioPontoAtendimento</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Total: <strong>@(dados.ContainsKey("UsuarioPontoAtendimentoCount") ? dados["UsuarioPontoAtendimentoCount"] : "0")</strong></p>
+                        <div style="max-height: 300px; overflow-y: auto; background-color: #f8f9fa; padding: 10px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px;">
+                            @foreach (var item in userPaList)
+                            {
+                                <div>@item</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (dados.ContainsKey("ExemplosPropostas") && dados["ExemplosPropostas"] is List<string> exemplosList && exemplosList.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Exemplos de Propostas que Apareceriam</h5>
+                    </div>
+                    <div class="card-body">
+                        <div style="max-height: 300px; overflow-y: auto; background-color: #f8f9fa; padding: 10px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px;">
+                            @foreach (var proposta in exemplosList)
+                            {
+                                <div>@proposta</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (dados.ContainsKey("PropostasSimuladas") && dados["PropostasSimuladas"] is List<string> propostasSimuladasList)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card @(dados.ContainsKey("ResultadoSimuladoPropostasCount") && (int)dados["ResultadoSimuladoPropostasCount"] == 0 ? "border-danger" : "border-success")">
+                    <div class="card-header @(dados.ContainsKey("ResultadoSimuladoPropostasCount") && (int)dados["ResultadoSimuladoPropostasCount"] == 0 ? "bg-danger" : "bg-success") text-white">
+                        <h5 class="mb-0">
+                            Simulação: O que o PropostasController recebe
+                            @if (dados.ContainsKey("ResultadoSimuladoPropostasCount"))
+                            {
+                                <span class="badge bg-light text-dark ms-2">@dados["ResultadoSimuladoPropostasCount"] propostas</span>
+                            }
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <strong>Sucesso:</strong> 
+                                @if (dados.ContainsKey("ResultadoSimuladoSucesso") && (bool)dados["ResultadoSimuladoSucesso"])
+                                {
+                                    <span class="badge bg-success">SIM</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">NÃO</span>
+                                }
+                            </div>
+                            <div class="col-md-3">
+                                <strong>TotalItems:</strong> @(dados.ContainsKey("ResultadoSimuladoTotalItems") ? dados["ResultadoSimuladoTotalItems"] : "N/A")
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Propostas.Count:</strong> 
+                                <span class="@(dados.ContainsKey("ResultadoSimuladoPropostasCount") && (int)dados["ResultadoSimuladoPropostasCount"] > 0 ? "text-success" : "text-danger")">
+                                    @(dados.ContainsKey("ResultadoSimuladoPropostasCount") ? dados["ResultadoSimuladoPropostasCount"] : "N/A")
+                                </span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Mensagem:</strong> @(dados.ContainsKey("ResultadoSimuladoMensagem") ? dados["ResultadoSimuladoMensagem"] : "N/A")
+                            </div>
+                        </div>
+
+                        @if (dados.ContainsKey("ResultadoSimuladoPropostasCount") && (int)dados["ResultadoSimuladoPropostasCount"] == 0)
+                        {
+                            <div class="alert alert-danger">
+                                <strong>⚠️ PROBLEMA IDENTIFICADO:</strong> O service está retornando Propostas = NULL ou vazio!
+                                <br />Isso explica por que nenhuma proposta aparece na grid.
+                            </div>
+                        }
+
+                        <div style="max-height: 300px; overflow-y: auto; background-color: #f8f9fa; padding: 10px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px;">
+                            @foreach (var proposta in propostasSimuladasList)
+                            {
+                                <div class="@(proposta.Contains("⚠️") ? "text-danger" : "")">@proposta</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (dados.ContainsKey("AnalisePropostas") && dados["AnalisePropostas"] is List<string> analiseList && analiseList.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            Análise Detalhada: Por que Propostas Não Aparecem na Grid
+                            @if (dados.ContainsKey("TotalAnalisadas"))
+                            {
+                                <span class="badge bg-light text-dark ms-2">@dados["TotalAnalisadas"] analisadas</span>
+                            }
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h4>@(dados.ContainsKey("PropostasQueAparecem") ? dados["PropostasQueAparecem"] : "0")</h4>
+                                        <p class="mb-0">Aparecem na Grid</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body text-center">
+                                        <h4>@(dados.ContainsKey("PropostasQueNaoAparecem") ? dados["PropostasQueNaoAparecem"] : "0")</h4>
+                                        <p class="mb-0">NÃO Aparecem na Grid</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <h4>@(dados.ContainsKey("TotalAnalisadas") ? dados["TotalAnalisadas"] : "0")</h4>
+                                        <p class="mb-0">Total Analisadas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>Legenda:</strong>
+                            <ul class="mb-0">
+                                <li><strong>✓</strong> = Tem permissão / Aparece na grid</li>
+                                <li><strong>✗</strong> = SEM permissão / NÃO aparece na grid</li>
+                                <li><strong>⚠</strong> = Campo NULL ou sem estrutura</li>
+                            </ul>
+                        </div>
+
+                        <div style="max-height: 500px; overflow-y: auto; background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 11px;">
+                            @foreach (var analise in analiseList)
+                            {
+                                <div class="mb-2 @(analise.StartsWith("✓") ? "text-success" : "text-danger")">
+                                    @analise
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mt-3">
+                            <h6>Resumo dos Problemas Encontrados:</h6>
+                            <ul>
+                                @{
+                                    var problemasCorretora = analiseList.Count(a => a.Contains("SEM permissão em CorretoraId"));
+                                    var problemasCanal = analiseList.Count(a => a.Contains("SEM permissão em CanalId"));
+                                    var problemasPA = analiseList.Count(a => a.Contains("SEM permissão em PontoAtendimentoId"));
+                                    var problemasSemEstrutura = analiseList.Count(a => a.Contains("PROPOSTA SEM ESTRUTURA"));
+                                }
+                                @if (problemasCorretora > 0)
+                                {
+                                    <li><strong>@problemasCorretora</strong> propostas sem permissão em <strong>CorretoraId</strong></li>
+                                }
+                                @if (problemasCanal > 0)
+                                {
+                                    <li><strong>@problemasCanal</strong> propostas sem permissão em <strong>CanalId</strong></li>
+                                }
+                                @if (problemasPA > 0)
+                                {
+                                    <li><strong>@problemasPA</strong> propostas sem permissão em <strong>PontoAtendimentoId</strong></li>
+                                }
+                                @if (problemasSemEstrutura > 0)
+                                {
+                                    <li><strong>@problemasSemEstrutura</strong> propostas <strong>sem estrutura</strong> (sem CorretoraId, CanalId nem PontoAtendimentoId)</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (dados.ContainsKey("Erro"))
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <h5>Erro Encontrado:</h5>
+                    <p><strong>@dados["Erro"]</strong></p>
+                    @if (dados.ContainsKey("StackTrace"))
+                    {
+                        <pre style="font-size: 11px;">@dados["StackTrace"]</pre>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row mt-4 mb-4">
+        <div class="col-12">
+            <a href="@Url.Action("Index", "TestePermissoes")" class="btn btn-primary">Atualizar</a>
+            <a href="@Url.Action("Index", "Propostas")" class="btn btn-secondary">Voltar para Propostas</a>
+        </div>
+    </div>
+</div>

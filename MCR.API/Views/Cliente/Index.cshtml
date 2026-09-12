@@ -1,0 +1,169 @@
+﻿@using System.Globalization;
+@model MCR.API.Models.ViewModels.ClienteModel
+@{
+    ViewData["Title"] = "Clientes";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Clientes</h4>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Cadastrar" asp-controller="Cliente" class="btn btn-secondary rounded-pill">
+                Cadastrar
+            </a>
+        </div>
+    </div>
+    <br />
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <h6>Filtros</h6>
+            <br />
+            <form asp-action="Index" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="dataHoraCotacaoInicio">Nome</label>
+                            <input type="text" class="form-control"
+                                   asp-for="PesquisaNome"
+                                   value="@Model.PesquisaNome" />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-group">
+                            <label for="dataHoraCotacaoInicio">CPF</label>
+                            <input type="text" class="form-control"
+                                   asp-for="PesquisaCPF"
+                                   value="@Model.PesquisaCPF" />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-group">
+                            <label for="corretoraId">Ativo?</label>
+                            <select class="form-select form-dropdownlist"
+                                    asp-for="PesquisaAtivoInativo">
+                                <option value="Todos">Todos</option>
+                                <option value="Sim">Sim</option>
+                                <option value="Não">Não</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <br />
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                        <button type="button" class="btn btn-secondary" id="btnLimparFiltros">Limpar Filtros</button>
+                    </div>
+                    <br />
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <div style="overflow-x:auto;">
+        <table id="tblCadastro" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>E-Mail</th>
+                    <th>Telefone/Celular</th>
+                    <th>Cidade/Estado</th>
+                    <th>Ativo?</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.ListaClientes != null && Model.ListaClientes.Count > 0 && Model.ListaClientes[0].Sucesso)
+                {
+                    foreach (var item in Model.ListaClientes)
+                    {
+                        <tr>
+                            <td>@item.Nome</td>
+                            <td>@item.CPF.FormatCpfCnpj()</td>
+                            <td>@item.Email</td>
+                            <td>@($"{item.Telefone.FormatCelular()} / {item.Celular.FormatCelular()}")</td>
+                            <td>@($"{item.Cidade}/{item.Estado}")</td>
+                            @if (item.Ativo)
+                            {
+                                <td><span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Ativo</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge bg-danger"><i class="bi bi-exclamation-octagon me-1"></i> Inativo</span></td>
+                            }
+                            <td>
+                                <a asp-action="Gerenciar" asp-route-id="@item.Id" class="btn btn-info btn-sm">Gerenciar</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @if (Model.PaginaAtual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PaginaAtual - 1)"
+                           asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo"
+                           asp-route-pesquisaCPF="@Model.PesquisaCPF"
+                           asp-route-pesquisaNome="@Model.PesquisaNome">Anterior</a>
+                    </li>
+                }
+
+                @for (var i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaAtual ? "active" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo"
+                           asp-route-pesquisaCPF="@Model.PesquisaCPF"
+                           asp-route-pesquisaNome="@Model.PesquisaNome">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaAtual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@(Model.PaginaAtual + 1)"
+                           asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo"
+                           asp-route-pesquisaCPF="@Model.PesquisaCPF"
+                           asp-route-pesquisaNome="@Model.PesquisaNome">Próximo</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clear filters button handler
+        const clearFiltersBtn = document.getElementById("btnLimparFiltros");
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener("click", function() {
+                // Clear name filter
+                const nomeInput = document.querySelector('input[name="PesquisaNome"]');
+                if (nomeInput) nomeInput.value = '';
+
+                // Clear CPF filter
+                const cpfInput = document.querySelector('input[name="PesquisaCPF"]');
+                if (cpfInput) cpfInput.value = '';
+
+                // Reset active/inactive filter
+                const ativoSelect = document.querySelector('select[name="PesquisaAtivoInativo"]');
+                if (ativoSelect) ativoSelect.value = 'Todos';
+
+                // Submit the form
+                const form = document.querySelector('form');
+                if (form) form.submit();
+            });
+        }
+    });
+</script>

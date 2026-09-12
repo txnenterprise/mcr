@@ -1,0 +1,201 @@
+@model MCR.API.Propostas.Domain.DTO.ObterPropostasPaginadoResponseDTO
+@{
+    ViewData["Title"] = "Apólices";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Apólices</h4>
+    <br />
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <h6>Filtros</h6>
+            <br />
+            <form asp-action="Index" asp-controller="Apolices" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="PontoAtendimentoId">Ponto de Atendimento</label>
+                            <select class="form-control" id="PontoAtendimentoId" name="PontoAtendimentoId"
+                                    asp-items="@ViewBag.PontosAtendimento">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="NomeProdutor">Nome do Produtor</label>
+                            <input type="text" class="form-control"
+                                   id="NomeProdutor" name="NomeProdutor"
+                                   value="@ViewBag.NomeProdutor" />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="CPF">CPF</label>
+                            <input type="text" class="form-control"
+                                   id="CPF" name="CPF"
+                                   value="@ViewBag.CPF" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <br />
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                        <button type="button" class="btn btn-secondary" id="btnLimparFiltros">Limpar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div style="">
+        <table id="tblApolices" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>PA</th>
+                    <th>Seguradora</th>
+                    <th>Nome do Proponente</th>
+                    <th>Nome do Risco</th>
+                    <th>Área Total (ha)</th>
+                    <th>Município/UF</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model?.Propostas != null && Model.Propostas.Any())
+                {
+                    foreach (var item in Model.Propostas)
+                    {
+                        <tr>
+                            <td>@item.CodigoCotacao</td>
+                            <td>@item.PontoAtendimento</td>
+                            <td>@item.Seguradora</td>
+                            <td>@item.NomeProponente</td>
+                            <td>@item.NomeRisco</td>
+                            <td>@item.AreaTotalRisco.FormatAreaHectaresVisualizacao()</td>
+                            <td>@item.MunicipioUF</td>
+                            <td class="status-clickable-grid" data-proposta-id="@item.Id" style="cursor: pointer;">@item.Status</td>
+                            <td style="width: 150px;">
+                                <a asp-action="Cadastrar" asp-controller="Propostas" asp-route-id="@item.Id" class="btn btn-info btn-sm" title="Gerenciar">
+                                    <i class="bi bi-search"></i>
+                                </a>
+                                <div class="dropdown d-inline-block">
+                                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Ações
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <button type="button"
+                                                class="dropdown-item btStatus"
+                                                data-proposta="@item.Id"
+                                                proposal-status-permission="@item.Status"
+                                                proposal-status-button="true">
+                                            <i class="bi bi-arrow-left-right mr-2"></i> Alterar Status
+                                        </button>
+                                        <a asp-action="Cadastrar" asp-controller="Apolices" asp-route-id="@item.Id" class="dropdown-item">
+                                            <i class="bi bi-file-text mr-2"></i> Documentos
+                                        </a>
+                                        <button type="button"
+                                                class="dropdown-item btRegistrarOcorrencia"
+                                                data-proposta="@item.Id">
+                                            <i class="bi bi-exclamation-triangle mr-2"></i> Registrar Notificação
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center">Nenhuma apólice encontrada.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @if (Model.PaginaAtual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0);" onclick="apoliceIndexJs.navegarPara(@(Model.PaginaAtual - 1))">Anterior</a>
+                    </li>
+                }
+
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaAtual ? "active" : "")">
+                        <a class="page-link" href="javascript:void(0);" onclick="apoliceIndexJs.navegarPara(@i)">@i</a>
+                    </li>
+                }
+
+                @if (Model.PaginaAtual < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0);" onclick="apoliceIndexJs.navegarPara(@(Model.PaginaAtual + 1))">Próximo</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="modalConfirmacao" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacaoLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmacaoLabel">Confirmar Cancelamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Deseja realmente cancelar esta apólice?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarCancelamento">Sim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal - Registrar Ocorrência -->
+<div class="modal-overlay" id="modalOcorrencia" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
+</div>
+
+<form id="formNavigator" asp-action="Index" asp-controller="Apolices" method="get">
+    <input type="hidden" id="Pagina" name="Pagina" value="@Model.PaginaAtual" />
+    <input type="hidden" id="TamanhoPagina" name="TamanhoPagina" value="@Model.TamanhoPagina" />
+    <input type="hidden" id="hiddenPontoAtendimentoId" name="PontoAtendimentoId" value="@ViewBag.PontoAtendimentoId" />
+    <input type="hidden" id="hiddenNomeProdutor" name="NomeProdutor" value="@ViewBag.NomeProdutor" />
+    <input type="hidden" id="hiddenCPF" name="CPF" value="@ViewBag.CPF" />
+</form>
+
+<!-- Modal para Alterar Status -->
+<div class="modal-overlay" id="modalStatus" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
+</div>
+
+
+@section Styles {
+    <link href="~/lib/dropzone/min/dropzone.min.css" rel="stylesheet">
+}
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script src="~/lib/dropzone/min/dropzone.min.js?v=@DateTime.UtcNow.Ticks"></script>
+    <script src="~/lib/custom/upload/mod-upload.min.js?v=@DateTime.UtcNow.Ticks"></script>
+    <script src="~/app/propostas/propostas.min.js?v=@DateTime.UtcNow.Ticks"></script>
+    <script src="~/app/propostas/propostas-status.js?v=@DateTime.UtcNow.Ticks"></script>
+    <script src="~/app/propostas/propostas-documentos.min.js?v=@DateTime.UtcNow.Ticks"></script>
+    <script src="~/app/apolices/apolices-index.js?v=@DateTime.UtcNow.Ticks"></script>
+}
+

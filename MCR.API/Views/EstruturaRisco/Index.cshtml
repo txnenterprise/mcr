@@ -1,0 +1,165 @@
+﻿@using System.Globalization;
+@model MCR.API.Models.ViewModels.EstruturaRiscoModel
+@{
+    ViewData["Title"] = "Estrutura de Riscos";
+}
+
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Estrutura de Riscos</h4>
+    <br />
+
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <h6>Filtros</h6>
+            <br />
+            <form asp-action="Index" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="dataHoraCotacaoInicio">Nome</label>
+                            <input type="text" class="form-control"
+                                   asp-for="PesquisaNome"
+                                   value="@Model.PesquisaNome" />
+                        </div>
+                        <div class="form-group">
+                            <label for="dataHoraCotacaoInicio">CPF</label>
+                            <input type="text" class="form-control"
+                                   asp-for="PesquisaCPF"
+                                   value="@Model.PesquisaCPF" />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="corretoraId">Ativo?</label>
+                            <select class="form-select form-dropdownlist"
+                                    asp-for="PesquisaAtivoInativo">
+                                <option value="Todos">Todos</option>
+                                <option value="Sim">Sim</option>
+                                <option value="Não">Não</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="container">
+        @if (Model?.ListaEstruturaRisco != null && Model.ListaEstruturaRisco.Any())
+        {
+            @foreach (var estrutura in Model.ListaEstruturaRisco)
+            {
+                if (estrutura.Cliente != null)
+                {
+                    <div class="card my-3">
+                        <div class="card-header bg-primary text-white">
+                            <h5>Cliente: @estrutura.Cliente.Nome</h5>
+                            <p>CPF: @estrutura.Cliente.CPF</p>
+                            <p>Telefone: @estrutura.Cliente.Telefone</p>
+                            <p>@($"{estrutura.Cliente.Cidade}/{estrutura.Cliente.Estado}")</p>
+                        </div>
+                        <div class="card-body">
+                            @if (estrutura.Propriedades != null && estrutura.Propriedades.Any())
+                            {
+                                @foreach (var propriedade in estrutura.Propriedades)
+                                {
+                                    <div class="card my-2">
+                                        <div class="card-header bg-secondary text-white">
+                                            <h6>Propriedade: @propriedade.Nome</h6>
+                                            <p>Localização: @propriedade.Cidade/@propriedade.Estado</p>
+                                        </div>
+                                        <div class="card-body">
+                                            @if (estrutura.Talhoes != null && estrutura.Talhoes.Any())
+                                            {
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome</th>
+                                                            <th>Área</th>
+                                                            <th>Tipo de Solo</th>
+                                                            <th>Classificação do Solo</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var talhao in estrutura.Talhoes.Where(c => c.PropriedadeId == propriedade.Id))
+                                                        {
+                                                            <tr>
+                                                                <td>@talhao.Nome</td>
+                                                                <td>@talhao.Area</td>
+                                                                <td>@talhao.TipoSolo</td>
+                                                                <td>@talhao.ClassificacaoSolo</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                <p>Nenhum talhão encontrado.</p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>Nenhuma propriedade encontrada.</p>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <p>Nenhum cliente encontrado.</p>
+        }
+    </div>
+
+    <br />
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (Model.PaginaAtual > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-pagina="@(Model.PaginaAtual - 1)"
+                       asp-route-pesquisaNome="@Model.PesquisaNome"
+                       asp-route-pesquisaCPF="@Model.PesquisaCPF"
+                       asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo">Anterior</a>
+                </li>
+            }
+
+            @for (var i = 1; i <= Model.TotalPaginas; i++)
+            {
+                <li class="page-item @(i == Model.PaginaAtual ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-pagina="@i"
+                       asp-route-pesquisaNome="@Model.PesquisaNome"
+                       asp-route-pesquisaCPF="@Model.PesquisaCPF"
+                       asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo">@i</a>
+                </li>
+            }
+
+            @if (Model.PaginaAtual < Model.TotalPaginas)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-pagina="@(Model.PaginaAtual + 1)"
+                       asp-route-pesquisaNome="@Model.PesquisaNome"
+                       asp-route-pesquisaCPF="@Model.PesquisaCPF"
+                       asp-route-pesquisaAtivoInativo="@Model.PesquisaAtivoInativo">Próximo</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>

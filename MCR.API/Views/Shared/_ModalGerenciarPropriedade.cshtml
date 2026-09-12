@@ -1,0 +1,161 @@
+<!-- Modal para Gerenciar Propriedade -->
+<div class="modal fade" id="modalGerenciarPropriedade" tabindex="-1" aria-labelledby="modalGerenciarPropriedadeLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" style="max-width: 95%; width: 95%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalGerenciarPropriedadeLabel">Gerenciar Propriedade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+                <form id="formGerenciarPropriedade">
+                    <input type="hidden" id="modalPropriedadeId" />
+                    <input type="hidden" id="modalPropriedadeAtivo" />
+                    <input type="hidden" id="modalPropriedadeExcluido" />
+                    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                        <div class="card-body" style="color: var(--color-primary)">
+                            <h6>Dados da Propriedade</h6>
+                            <div class="row">
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeNome" placeholder="Nome">
+                                        <label for="modalPropriedadeNome">Nome</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeSomaAreaTotalTalhao" placeholder="Soma da Área Total do Talhão">
+                                        <label for="modalPropriedadeSomaAreaTotalTalhao">Soma da Área Total do Talhão</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeMatriculaLote" placeholder="Matrícula do Lote">
+                                        <label for="modalPropriedadeMatriculaLote">Matrícula do Lote</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeCadastroAmbientalRural" placeholder="CAR (Cadastro Ambiental Rural)">
+                                        <label for="modalPropriedadeCadastroAmbientalRural">CAR (Cadastro Ambiental Rural)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeCEP" placeholder="CEP">
+                                        <label for="modalPropriedadeCEP">CEP</label>
+                                    </div>
+                                    <span class="text-muted" style="font-size: small">(informe o CEP para preenchimento automaticamente dos demais campos)</span>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeEndereco" placeholder="Endereço">
+                                        <label for="modalPropriedadeEndereco">Endereço</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeBairro" placeholder="Bairro">
+                                        <label for="modalPropriedadeBairro">Bairro</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-sm-12 col-md-3 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="number" min="0" class="form-control form-input form-control-placeholder" id="modalPropriedadeNumero" placeholder="Número">
+                                        <label for="modalPropriedadeNumero">Número</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeCidade" placeholder="Cidade">
+                                        <label for="modalPropriedadeCidade">Cidade</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-2 col-lg-2">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-input form-control-placeholder" id="modalPropriedadeEstado" placeholder="Estado">
+                                        <label for="modalPropriedadeEstado">Estado</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <div class="mb-3">
+                                        <label for="modalPropriedadeImageUpload" class="form-label">
+                                            <span id="modalPropriedadeImageLabel">Selecione uma imagem:</span>
+                                        </label>
+                                        <input type="file" class="form-control" id="modalPropriedadeImageUpload" accept="image/*,.pdf">
+                                        <div id="modalPropriedadeImageInfo" class="mt-2" style="display: none;">
+                                            <small class="text-muted">
+                                                <i class="bi bi-check-circle text-success"></i> 
+                                                Imagem já carregada. Selecione uma nova imagem para substituir.
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <input type="text" id="modalPropriedadeObjectImagem" name="modalPropriedadeObjectImagem" hidden>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <div id="modalPropriedadeImagePreviewContainer">
+                                        <img src="" id="modalPropriedadeImagePreview" class="img-fluid rounded" alt="Pré-visualização" width="200" style="display:none;">
+                                        <div id="modalPropriedadePdfPreview" class="alert alert-info py-2" style="display:none;"><i class="bi bi-file-pdf"></i> PDF anexado</div>
+                                    </div>
+                                    <div id="modalPropriedadeRemoveButton" class="mt-2" style="display: none;">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removerImagemPropriedade()">
+                                            <i class="bi bi-trash"></i> Remover Imagem
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controle de Status da Propriedade -->
+                    <br />
+                    <div id="modalPropriedadeStatusContainer">
+                        <!-- Os controles de status serão carregados dinamicamente aqui -->
+                    </div>
+                    
+                    <!-- Lista de Talhões Vinculados -->
+                    <br />
+                    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                        <div class="card-header" style="color: var(--color-primary)">
+                            <h6><i class="bi bi-geo-alt"></i> Talhões Vinculados à Propriedade</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="modalPropriedadeTalhoesContainer">
+                                <!-- Os talhões serão carregados dinamicamente aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success" id="btnSalvarPropriedadeModal">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para visualizar imagem do talhão (dentro do modal de propriedade) -->
+<div class="modal fade" id="modalImagemTalhaoPropriedade" tabindex="-1" aria-labelledby="modalImagemTalhaoPropriedadeLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 90vw; width: 90vw; max-height: 90vh;">
+        <div class="modal-content" style="height: 90vh;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImagemTalhaoPropriedadeLabel">Imagem do Talhão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center d-flex align-items-center justify-content-center" style="height: calc(90vh - 120px);">
+                <img id="imagemTalhaoPropriedadeModal" src="" class="img-fluid" alt="Imagem do Talhão" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div> 

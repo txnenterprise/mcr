@@ -1,0 +1,67 @@
+﻿@model MCR.API.Entities.ParametrizacaoBeneficiarioEntity
+@{
+    ViewData["Title"] = "Beneficiário - Parametrizações - Visualizar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Beneficiário - Parametrizações - Visualizar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Parametrizacao" class="default-btn btn d-flex justify-content-center align-items-center">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <h6>Dados Bancários</h6>
+    <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+        <div class="card-body" style="color: var(--color-primary)">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Banco" id="Banco" placeholder="Banco" required>
+                        <label for="Banco">Banco</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Agencia" id="Agencia" placeholder="Agência" required>
+                        <label for="Agencia">Agência</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Conta" id="Conta" placeholder="Conta" required>
+                        <label for="Conta">Conta</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.DigitoConta" id="DigitoConta" placeholder="Díg. Conta" required>
+                        <label for="DigitoConta">Díg. Conta</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <input asp-for="Beneficiario.Id" hidden />
+    @if (Model != null && !Model.Beneficiario.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Beneficiario.Mensagem</h6>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var inputElements = document.querySelectorAll('input');
+        inputElements.forEach(function (element) {
+            element.readOnly = true;
+        });
+    });
+</script>

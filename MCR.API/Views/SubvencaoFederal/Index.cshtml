@@ -1,0 +1,65 @@
+@model MCR.API.Models.ViewModels.SubvencaoFederalModel
+@{
+    ViewData["Title"] = "Subvenções Federais";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Subvenções Federais</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Cadastrar" asp-controller="SubvencaoFederal" class="btn btn-secondary rounded-pill">
+                Cadastrar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <div style="overflow-x:auto;">
+        <table id="table-grid" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Cultura</th>
+                    <th>Porcentagem</th>
+                    <th>Limite R$</th>
+                    <th>CPF</th>
+                    <th>Ano Civil</th>
+                    <th>Ativo?</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ListaSubvencoesFederais != null && Model.ListaSubvencoesFederais.Count > 0)
+                {
+                    foreach (var item in Model.ListaSubvencoesFederais)
+                    {
+                        <tr>
+                            <td>@item.Cultura</td>
+                            <td>@item.Porentagem.ToString("N2")%</td>
+                            <td>@item.LimiteReal.ToString("N2")</td>
+                            <td>@item.CPF</td>
+                            <td>@item.AnoCivil</td>
+                            <td>@(item.Ativo ? "Sim" : "Não")</td>
+                            <td>
+                                @if (item.Ativo)
+                                {
+                                    <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Editar</a>
+                                    <form asp-action="Inativar" asp-route-id="@item.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-warning btn-sm">Inativar</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Ativar" asp-route-id="@item.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-dark btn-sm">Ativar</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+
+        </table>
+    </div>
+</div>

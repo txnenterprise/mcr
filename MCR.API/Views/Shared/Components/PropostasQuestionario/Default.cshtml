@@ -1,0 +1,370 @@
+@model MCR.API.Propostas.Domain.DTO.PropostasQuestionarioDTO
+
+    <form id="formQuestionario"
+          asp-antiforgery="true"
+          asp-action="SalvarQuestionario"
+          asp-controller="PropostasQuestionario"
+          data-ajax="true" data-ajax-method="POST"
+          data-ajax-complete="gl.CompleteAjax"
+          data-ajax-begin="gl.BeginAjax"
+          data-ajax-success="gl.onSuccess"
+          data-ajax-failure="gl.onFailed"
+          data-ajax-callback="propostaJS.onSuccessCallbackQuestionario">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="PropostaId" />
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header text-white">
+                        <h5 class="mb-0">Questionário da Proposta</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Sistema de Plantio -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label asp-for="SistemaPlantio" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="SistemaPlantio" id="sistemaPlantio_direto" value="Direto" required  proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="sistemaPlantio_direto">Direto</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="SistemaPlantio" id="sistemaPlantio_convencional" value="Convencional" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="sistemaPlantio_convencional">Convencional</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="SistemaPlantio" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Lavoura já plantada -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="LavouraPlantada" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="LavouraPlantada" id="lavouraPlantada_sim" value="true" onchange="propostaJS.toggleDanosPreExistentes()" required proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="lavouraPlantada_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="LavouraPlantada" id="lavouraPlantada_nao" value="false" onchange="propostaJS.toggleDanosPreExistentes()" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="lavouraPlantada_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="LavouraPlantada" class="text-danger"></span>
+                            </div>
+
+                            <!-- Danos pré-existentes (condicional) -->
+                            <div class="col-md-6" id="divDanosPreExistentes" style="display: none;">
+                                <label asp-for="PossuiDanosPreExistentes" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="PossuiDanosPreExistentes" id="danosPreExistentes_sim" value="true" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="danosPreExistentes_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="PossuiDanosPreExistentes" id="danosPreExistentes_nao" value="false" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="danosPreExistentes_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="PossuiDanosPreExistentes" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Conhece e adota ZARC -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ConheceZARC" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="ConheceZARC" id="conheceZARC_sim" value="true" required proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="conheceZARC_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="ConheceZARC" id="conheceZARC_nao" value="false" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="conheceZARC_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="ConheceZARC" class="text-danger"></span>
+                            </div>
+
+                            <!-- Áreas possuem outro seguro -->
+                            <div class="col-md-6">
+                                <label asp-for="PossuiOutroSeguro" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="PossuiOutroSeguro" id="possuiOutroSeguro_sim" value="true" required proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="possuiOutroSeguro_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="PossuiOutroSeguro" id="possuiOutroSeguro_nao" value="false" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="possuiOutroSeguro_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="PossuiOutroSeguro" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Lavoura implantada em área após pastagem/mata/etc -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="LavouraImplantadaAposOutraArea" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="LavouraImplantadaAposOutraArea" id="lavouraAposOutraArea_sim" value="true" required proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="lavouraAposOutraArea_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="LavouraImplantadaAposOutraArea" id="lavouraAposOutraArea_nao" value="false" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="lavouraAposOutraArea_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="LavouraImplantadaAposOutraArea" class="text-danger"></span>
+                            </div>
+
+                            <!-- Lavoura é irrigada -->
+                            <div class="col-md-6">
+                                <label asp-for="LavouraIrrigada" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="LavouraIrrigada" id="lavouraIrrigada_sim" value="true" required proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="lavouraIrrigada_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="LavouraIrrigada" id="lavouraIrrigada_nao" value="false" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="lavouraIrrigada_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="LavouraIrrigada" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Cultura anterior plantada -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label asp-for="CulturaAnterior" class="form-label fw-bold"></label>
+                                <select asp-for="CulturaAnterior" class="form-select" asp-items="@ViewBag.Culturas" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly">
+                                    <option value="">Selecione...</option>
+                                </select>
+                                <span asp-validation-for="CulturaAnterior" class="text-danger"></span>
+                                <div class="form-text">Selecione a cultura anterior plantada na área.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notas fiscais e Integrante Familiar -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header ">
+                        <h5 class="mb-0">Dados de Faturamento</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Notas fiscais em nome do próprio segurado -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label asp-for="NotasFiscaisProprioSegurado" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="NotasFiscaisProprioSegurado" id="notasFiscaisSegurado_sim" value="true" onchange="propostaJS.toggleIntegranteFamiliar()" required proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="notasFiscaisSegurado_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="NotasFiscaisProprioSegurado" id="notasFiscaisSegurado_nao" value="false" onchange="propostaJS.toggleIntegranteFamiliar()" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="notasFiscaisSegurado_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="NotasFiscaisProprioSegurado" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Dados do integrante familiar (condicional) -->
+                        <div id="divIntegranteFamiliar" style="display: none;">
+                            <!-- Lista de familiares -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">Selecione o Titular ou um Integrante do Grupo Familiar</h6>
+
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped mb-0" id="tabelaFamiliares">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome</th>
+                                                            <th>CPF</th>
+                                                            <th>Telefone</th>
+                                                            <th>E-mail</th>
+                                                            <th>Relação</th>
+                                                            <th>Ação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.Familiares != null && Model.Familiares.Any())
+                                                        {
+                                                            int index = 0;
+                                                            @foreach (var familiar in Model.Familiares)
+                                                            {
+                                                                <tr>
+                                                                    <td>@familiar.Nome</td>
+                                                                    <td>@familiar.CPF.FormatCpfCnpj()</td>
+                                                                    <td>@familiar.Telefone.FormatCelular()</td>
+                                                                    <td>@familiar.Email</td>
+                                                                    <td>@familiar.Relacao</td>
+                                                                    <td>
+                                                                        <div class="form-check">
+                                                                            <input type="radio" class="form-check-input familiaresSelecionado" name="familiaresSelecionado" data-index="@index" value="true" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly" is-checked="@familiar.Selecionado" style="width: 1.5em; height: 1.5em;"/>
+                                                                            <input type="hidden" name="Familiares[@index].Selecionado" value="false" />
+                                                                        </div>
+                                                                        <input type="hidden" name="Familiares[@index].Id" value="@familiar.Id" />
+                                                                        <input type="hidden" name="Familiares[@index].QuestionarioId" value="@familiar.QuestionarioId" />
+                                                                        <input type="hidden" name="Familiares[@index].Nome" value="@familiar.Nome" />
+                                                                        <input type="hidden" name="Familiares[@index].CPF" value="@familiar.CPF" />
+                                                                        <input type="hidden" name="Familiares[@index].Telefone" value="@familiar.Telefone" />
+                                                                        <input type="hidden" name="Familiares[@index].Email" value="@familiar.Email" />
+                                                                        <input type="hidden" name="Familiares[@index].Relacao" value="@familiar.Relacao" />
+                                                                        <input type="hidden" name="Familiares[@index].ClienteId" value="@familiar.ClienteId" />
+                                                                        <input type="hidden" name="Familiares[@index].VinculoFamiliarId" value="@familiar.VinculoFamiliarId" />
+                                                                        <input type="hidden" name="Familiares[@index].QuestionarioFamiliarId" value="@familiar.QuestionarioFamiliarId" />
+                                                                    </td>
+                                                                </tr>
+                                                                index++;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr id="nenhumFamiliar">
+                                                                <td colspan="6" class="text-center">Nenhum integrante cadastrado</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crédito Bancário -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Informações de Crédito</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Possui crédito bancário -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label asp-for="PossuiCreditoBancario" class="form-label fw-bold"></label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="PossuiCreditoBancario" id="possuiCreditoBancario_sim" value="true" onchange="propostaJS.toggleCreditoBancario()" required proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="possuiCreditoBancario_sim">SIM</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" asp-for="PossuiCreditoBancario" id="possuiCreditoBancario_nao" value="false" onchange="propostaJS.toggleCreditoBancario()" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly"/>
+                                        <label class="form-check-label" for="possuiCreditoBancario_nao">NÃO</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="PossuiCreditoBancario" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Dados do crédito bancário (condicional) -->
+                        <div id="divCreditoBancario" style="display: none;">
+                            <!-- Lista de instituições financeiras -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Selecione a instituição financeira</h6>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome</th>
+                                                            <th>CNPJ</th>
+                                                            <th>Banco</th>
+                                                            <th>Agência</th>
+                                                            <th>Conta</th>
+                                                            <th>Número do crédito/cédula</th>
+                                                            <th>Data de vencimento</th>
+                                                            <th>Selecionar</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tabelaBeneficiarios">
+                                                        @if (Model.Bancos != null && Model.Bancos.Any())
+                                                        {
+                                                            int index = 0;
+                                                            @foreach (var banco in Model.Bancos.OrderBy(o=> !o.IsCliente).ToList())
+                                                            {
+                                                                <tr>
+                                                                    <td>@banco.Beneficiario.Nome</td>
+                                                                    <td>@banco.Beneficiario.CNPJ.FormatCpfCnpj()</td>
+                                                                    <td>@banco.Beneficiario.Banco</td>
+                                                                    <td>@banco.Beneficiario.Agencia</td>
+                                                                    <td>@banco.Beneficiario.Conta</td>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" name="Bancos[@index].NumeroCreditoCedula" value="@banco.NumeroCreditoCedula" proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly" is-disabled="@(!banco.Selecionado)"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="date" class="form-control" name="Bancos[@index].DataVencimento" value="@(banco.DataVencimento?.ToString("yyyy-MM-dd"))"  proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly" is-disabled="@(!banco.Selecionado)"/>
+                                                                    </td>
+                                                                    <td>
+
+                                                                        <div class="form-check" >
+                                                                            <input proposal-status-permission="@ViewBag.PropostaStatus" permission-mode="readonly" is-checked="@banco.Selecionado" type="checkbox" class="form-check-input bancoSelecionado" name="Bancos[@index].Selecionado" data-index="@index" value="true"   onchange="propostaJS.toggleBancoInputs(this)" style="width: 1.5em; height: 1.5em;" />
+                                                                            <input type="hidden" name="Bancos[@index].Selecionado" value="false" />
+                                                                        </div>
+                                                                        <input type="hidden" name="Bancos[@index].PropostasQuestionarioBancosId" value="@banco.PropostasQuestionarioBancosId" />
+                                                                        <input type="hidden" name="Bancos[@index].QuestionarioId" value="@banco.QuestionarioId" />
+                                                                        <input type="hidden" name="Bancos[@index].BeneficiarioId" value="@banco.BeneficiarioId" />
+                                                                    </td>
+                                                                </tr>
+                                                                index++;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr id="nenhumBanco">
+                                                                <td colspan="8" class="text-center">Nenhuma instituição financeira cadastrada</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões de ação -->
+        <div class="row"  proposal-status-permission="@ViewBag.PropostaStatus">
+            <div class="col-12">
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn btn-primary">Salvar Questionário</button>
+                </div>
+            </div>
+        </div>
+    </form>
+

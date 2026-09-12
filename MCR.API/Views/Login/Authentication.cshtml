@@ -1,0 +1,117 @@
+
+@model MCR.API.Models.ViewModels.AuthenticationModel
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6"></div>
+        <div class="col-lg-6 d-flex align-items-center justify-content-center right-side">
+            <div class="form-2-wrapper">
+                <div class="logo text-center">
+                    <h2>Login</h2>
+                </div>
+                <form asp-controller="Login" asp-action="Authentication" method="post" id="loginForm">
+                    <div class="mb-3">
+                        <input type="email" class="form-control login-input form-control-placeholder" asp-for="Email" id="Email" placeholder="E-Mail" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control login-input form-control-placeholder" asp-for="Password" id="Password" placeholder="Senha" required>
+                    </div>
+                    @* <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Lembre-me</label>
+                            <a asp-action="ForgotPassword" class="text-decoration-none float-end">Esqueci minha senha</a>
+                        </div>
+                    </div> *@
+
+                    @* <button type="submit" class="btn btn-outline-secondary login-btn w-100 mb-3" onclick="setAuthAdapter('Identity')">Login</button> *@
+                    <button type="submit" class="btn btn-outline-secondary login-btn w-100 mb-3">Login</button>
+                    
+                    @*
+                    <span class="d-block text-center my-4 text-muted">— ou —</span>
+                    <div class="social-login">
+                    <a href="@ViewData["HrefToMicrosoftLogin"]" class="login-btn-others-adapters btn d-flex justify-content-center align-items-center">
+                    Microsoft
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0,0,256,256">
+                    <defs><linearGradient x1="15.809" y1="5.434" x2="28.697" y2="40.619" gradientUnits="userSpaceOnUse" id="color-1_opiqp7sRZvdM_gr1"><stop offset="0" stop-color="#28afea" stop-opacity="0"></stop><stop offset="1" stop-color="#047ed6" stop-opacity="0.4"></stop></linearGradient></defs>
+                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.33333,5.33333)"><path d="M23.215,4.368l-18.978,22.774c-0.366,0.44 -0.3,1.094 0.147,1.452l18.978,15.183c0.373,0.298 0.903,0.298 1.276,0l18.978,-15.183c0.447,-0.357 0.513,-1.012 0.147,-1.452l-18.978,-22.774c-0.409,-0.491 -1.161,-0.491 -1.57,0z" fill="url(#color-1_opiqp7sRZvdM_gr1)"></path><path d="M37.531,25.905c-0.325,-0.775 -0.907,-1.372 -1.64,-1.68c-0.733,-0.308 -1.566,-0.308 -2.345,0.001c-0.364,0.137 -0.698,0.229 -0.782,0.229c-0.057,-0.001 -0.335,-0.198 -0.661,-0.571c-1.695,-1.971 -4.692,-5.6 -4.86,-5.885c-0.106,-0.176 -0.149,-0.251 -0.148,-0.348c0.001,-0.104 0.051,-0.237 0.164,-0.526c0.4,-1 0.273,-2.139 -0.341,-3.046c-0.288,-0.426 -0.673,-0.781 -1.112,-1.026c-0.47,-0.262 -0.982,-0.395 -1.523,-0.395c-0.96,0 -1.458,0.162 -2.129,0.693c-1.231,0.972 -1.588,2.601 -0.887,4.054l0.319,0.668l-1.1,1.049c-1.69,1.605 -5.061,4.675 -5.464,4.978c-0.177,0.135 -0.26,0.195 -0.359,0.204c-0.107,0.01 -0.256,-0.04 -0.525,-0.129c-0.527,-0.175 -1.081,-0.198 -1.603,-0.067c-0.521,0.131 -1.012,0.416 -1.421,0.825c-0.617,0.617 -0.814,1.122 -0.814,2.082c0,0.996 0.216,1.485 0.965,2.179c1.038,0.962 2.361,1.053 3.631,0.25c0.352,-0.225 0.553,-0.299 0.653,-0.241c0.098,0.055 1.535,0.833 3.075,1.665c1.619,0.875 3.001,1.645 3.109,1.723c0.106,0.08 0.128,0.104 0.118,0.174c-0.014,0.102 -0.101,0.286 -0.255,0.605c-0.432,0.928 -0.462,2.098 -0.072,2.845c0.31,0.6 1.057,1.251 1.7,1.484c0.312,0.115 0.584,0.172 0.874,0.172c0.276,0 0.568,-0.052 0.928,-0.155c0.355,-0.106 0.743,-0.33 1.094,-0.629c0.355,-0.303 0.639,-0.656 0.801,-0.996c0.308,-0.647 0.337,-1.662 0.065,-2.312c-0.263,-0.615 -0.232,-0.745 0.277,-1.163c0.453,-0.364 1.704,-1.245 2.743,-1.957c1.434,-0.982 2.181,-1.454 2.268,-1.476c0.001,0 0.001,0 0.002,0c0.096,-0.027 0.395,0.044 0.925,0.334c0.638,0.346 0.872,0.411 1.473,0.411c0.864,0 1.349,-0.187 1.995,-0.769c0.446,-0.404 0.78,-0.955 0.94,-1.55c0.159,-0.601 0.132,-1.206 -0.078,-1.704zM24.751,32.182c-0.011,-0.012 -0.043,-0.061 -0.071,-0.255c-0.029,-0.197 -0.051,-0.501 -0.068,-0.955c-0.038,-0.977 -0.054,-2.653 -0.068,-5.04l-0.032,-5.997l0.67,-0.446c0.43,-0.286 0.735,-0.447 0.792,-0.455c0.012,0.001 0.07,0.014 0.259,0.185c0.154,0.139 0.364,0.355 0.643,0.66c0.545,0.595 1.363,1.541 2.651,3.066l2.294,2.727l-0.031,0.865c-0.011,0.491 -0.053,0.99 -0.083,1.108c-0.052,0.201 -1.33,1.032 -5.41,3.596v0c-0.798,0.505 -1.432,0.887 -1.546,0.941zM15.992,25.997c-0.12,-0.319 -0.206,-0.579 -0.226,-0.654c0.149,-0.183 1.562,-1.502 3.421,-3.191c1.831,-1.664 3.263,-2.932 3.493,-3.094c0.052,0.049 0.18,0.195 0.353,0.427l0.327,0.448v6.021c0,2.594 -0.01,4.004 -0.033,4.866c-0.012,0.451 -0.029,0.77 -0.051,0.977c-0.027,0.252 -0.058,0.294 -0.063,0.299c-0.109,0.09 -0.736,-0.262 -1.315,-0.6c-1.675,-0.966 -3.095,-1.819 -4.107,-2.468c-1.42,-0.909 -1.581,-1.123 -1.595,-1.169c0,-0.109 0,-0.422 0.011,-0.703c0.012,-0.289 -0.08,-0.787 -0.215,-1.159z" fill="#ffffff"></path></g></g>
+                    </svg>
+                    </a>
+                    </div> *@
+                    @* <div class="social-login mb-3 type--A">
+                        <h5 class="text-center mb-3">Social Login</h5>
+                        <button class="btn btn-outline-secondary  mb-3"><i class="fa-brands fa-google text-danger"></i> Sign With Google</button>
+                        <button class="btn btn-outline-secondary mb-3"><i class="fa-brands fa-facebook-f text-primary"></i> Sign With Facebook</button>
+                    </div> *@
+                    <input asp-for="ReturnUrl" type="hidden">
+                </form>
+                @if (Model != null && !Model.Sucesso)
+                {
+                    <br />
+                    <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+                        <h6>Atenção!</h6>
+                        <h6>@Model.Mensagem</h6>
+                    </div>
+                }
+                <!-- Register Link -->
+                <p class="text-center register-test mt-3"><a href="https://txnenterprise.com.br" class="text-decoration-none" target="_blank">txnenterprise.com.br</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: url('/img/background.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .form-2-wrapper {
+        background: #ffffff59;
+        padding: 50px;
+        border-radius: 8px;
+        min-height: 500px;
+        min-width: 500px;
+    }
+
+    input.form-control {
+        padding: 11px;
+        border: none;
+        border: 2px solid #4cbb4f80;
+        border-radius: 30px;
+        background-color: transparent;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: medium;
+    }
+
+        input.form-control:focus {
+            box-shadow: none !important;
+            outline: 0px !important;
+            background-color: transparent;
+            font-size: large;
+        }
+
+    button.login-btn {
+        background: #4cbb4f80;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 30px;
+        font-size: medium;
+    }
+
+    .register-test a {
+        color: #000;
+    }
+
+    .social-login button {
+        border-radius: 30px;
+    }</style>

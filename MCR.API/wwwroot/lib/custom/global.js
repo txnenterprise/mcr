@@ -1,0 +1,870 @@
+var pressedShift = false;
+var shortcutForm = null;
+var shortcutButton = null;
+var Loading = {
+    Open: function () {
+        if ($.blockUI) $.blockUI({ message: gl.StringFormat('<img src="{0}/images/loading.svg" style="width:70px" />', window.location.origin), overlayCSS: { backgroundColor: '#000', opacity: 0.50 } });
+    },
+    OpenNoOpacity: function () {
+        if ($.blockUI) $.blockUI({ message: gl.StringFormat('<img src="{0}/images/loading.svg" style="width:70px" />', window.location.origin), overlayCSS: { backgroundColor: '#000', opacity: 0.50 } });
+    },
+    OpenText: function (message) {
+        if ($.blockUI) $.blockUI({ message: gl.StringFormat('<img src="{1}/images/loading.svg" style="width:70px" /><br /> <p style="font-size: 23px;">{0}</p></div> ', message, window.location.origin), overlayCSS: { backgroundColor: '#FFFDFF', opacity: 0.80 } });
+    },
+    Close: function () {
+        if ($.unblockUI) $.unblockUI();
+    },
+    OpenDiv: function (_div, _small) {
+        if (!_small) {
+            var opts = { message: gl.StringFormat('<img src="{0}/images/loading.svg" style="width:30px" />', window.location.origin), css: {} };
+            if ($(_div).block) $(_div).block(opts);
+        } else {
+            var opts = { message: gl.StringFormat('<img src="{0}/images/loading.svg" style="width:30px" />', window.location.origin), css: { margin: '0px', left: '0px', top: '50% !important', height: '100%', width: '100%' }, themedCSS: { left: '0px', top: '50%' }, overlayCSS: { backgroundColor: 'tranparent' } };
+            if ($(_div).block) $(_div).block(opts);
+        }
+    },
+    CloseDiv: function (_div) {
+        if ($(_div).unblock) $(_div).unblock();
+    }
+};
+
+
+
+var gl = {
+    RenderGet: function (_Action, _Controller, _data, _element, loading, _beforeFN, _completeFN) {
+        if (loading === null || loading === undefined) loading = false;
+        $.ajax({
+            url: "/" + _Controller + "/" + _Action,
+            dataType: 'html',
+            data: _data,
+            traditional: true,
+            type: 'GET',
+            //cache:false,
+            beforeSend: function () { if (loading) Loading.Open(); },
+            complete: function () { if (loading) Loading.Close(); },
+            success: function (content) {
+                if (typeof _beforeFN === 'function')
+                    _beforeFN();
+
+                $(_element).html("");
+                $(_element).html(content);
+                if (typeof _completeFN === 'function')
+                    _completeFN();
+            }, error: function (xhr, status, error) {
+                console.log("status******************", status);
+                console.log("error******************", error);
+                console.log("xhr******************", xhr);
+                gl.onFailed(xhr);
+            }
+        });
+    },
+    RenderPost: function (_Action, _Controller, _data, _element, loading, _beforeFN, _completeFN) {
+        if (loading === null || loading === undefined) loading = false;
+        $.ajax({
+            url: "/" + _Controller + "/" + _Action,
+            dataType: 'html',
+            data: _data,
+            traditional: true,
+            type: 'POST',
+            //cache:false,
+            beforeSend: function () { if (loading) Loading.Open(); },
+            complete: function () { if (loading) Loading.Close(); },
+            success: function (content) {
+                if (typeof _beforeFN === 'function')
+                    _beforeFN();
+
+                $(_element).html("");
+                $(_element).html(content);
+                if (typeof _completeFN === 'function')
+                    _completeFN();
+            }, error: function (xhr, status, error) {
+                console.log("status******************", status);
+                console.log("error******************", error);
+                console.log("xhr******************", xhr);
+                gl.onFailed(xhr);
+            }
+        });
+    },
+    RenderComponent: function (_name, _object, _element, loading, _beforeFN, _completeFN) {
+        if (loading === null || loading === undefined) loading = false;
+        $.ajax({
+            url: "/Base/ViewComponents",
+            dataType: 'html',
+            data: {
+                name: _name,
+                data: JSON.stringify(_object)
+            },
+            traditional: true,
+            type: 'GET',
+            //cache:false,
+            beforeSend: function () { if (loading) Loading.Open(); },
+            complete: function () { if (loading) Loading.Close(); },
+            success: function (content) {
+                if (typeof _beforeFN === 'function')
+                    _beforeFN();
+
+                $(_element).html("");
+                $(_element).html(content);
+                if (typeof _completeFN === 'function')
+                    _completeFN();
+            }, error: function (xhr, status, error) {
+                console.log("status******************", status);
+                console.log("error******************", error);
+                console.log("xhr******************", xhr.status);
+                gl.onFailed(xhr);
+            }
+        });
+    },
+    ComboSet: function (element, data, nameFirst) {
+        $(element).html(gl.StringFormat('<option value=\"0\">{0}</option>', nameFirst));
+        for (var i = 0; i < data.length; i++) {
+            $(element).append(gl.StringFormat("<option value=\"{0}\">{1}</option>", data[i].id, data[i].text));
+        }
+    },
+    StringFormat: function (str, col) {
+        col = typeof col === 'object' ? col : Array.prototype.slice.call(arguments, 1);
+        return str.replace(/\{\{|\}\}|\{(\w+)\}/g, function (m, n) {
+            if (m === "{{") { return "{"; }
+            if (m === "}}") { return "}"; }
+            return col[n];
+        });
+
+    },
+    Post: function (_action, _controller, _data, loading, _callBackFN) {
+        if (loading === null || loading === undefined) loading = false;
+        $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            //contentType: "application/json; charset=utf-8",
+            url: gl.StringFormat("/{0}/{1}", _controller, _action),
+            data: _data,
+            beforeSend: function () { if (loading) Loading.Open(); },
+            complete: function () { if (loading) Loading.Close(); },
+            success: function (r) {
+                if (typeof _callBackFN === 'function')
+                    _callBackFN(r);
+            },
+            error: function (xhr, status, error) {
+                gl.onFailed(xhr);
+            }
+        });
+    },
+    GetToken: function () {
+        return $('input[name="__RequestVerificationToken"]').val();
+
+    },
+    PostCustomLoad: function (_action, _controller, _data, _elementLoad) {
+
+        $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: gl.StringFormat("/{0}/{1}", _controller, _action),
+            data: _data,
+            beforeSend: function () { $(_elementLoad).show() },
+            complete: function () { $(_elementLoad).hide() },
+            success: function (r) {
+                console.log(r);
+            },
+            error: function (xhr, status, error) {
+                gl.onFailed(xhr);
+            }
+        });
+    },
+    Get: function (_action, _controller, _data, loading, _callBackFN) {
+
+        if (loading === null || loading === undefined) loading = false;
+        $.ajax({
+            dataType: 'json',
+            type: 'GET',
+            url: gl.StringFormat("/{0}/{1}", _controller, _action),
+            data: _data,
+            beforeSend: function () { if (loading) Loading.Open(); },
+            complete: function () { if (loading) Loading.Close(); },
+            success: function (r) {
+
+                if (typeof _callBackFN === 'function')
+                    _callBackFN(r);
+
+
+            },
+            error: function (xhr, status, error) {
+
+                gl.onFailed(xhr);
+            }
+        });
+    },
+    GetUrl: function (_url, _data, _callBackFN) {
+        $.ajax({
+            dataType: 'json',
+            type: 'GET',
+            url: _url,
+            data: _data,
+            beforeSend: function () { Loading.Open(); },
+            complete: function () { Loading.Close(); },
+            success: function (r) {
+                if (typeof _callBackFN === 'function')
+                    _callBackFN(r);
+            },
+            error: function (xhr, status, error) {
+                gl.onFailed(xhr);
+            }
+        });
+    },
+    BeginAjax: function () {
+        gl.clearValidationError($(this).closest("form").attr("id"));
+        Loading.Open();
+    },
+    CompleteAjax: function () {
+        Loading.Close();
+        if (typeof cotacaoAgricolaJS !== 'undefined') cotacaoAgricolaJS._submitting = false;
+    },
+    SuccessAjax: function () {
+        Loading.Open();
+        if (r.success === true) {
+            window.location.href = r.response.returnUrl;
+        } else {
+            console.log("Erro", r);
+            $("#msgErro").html(r.message);
+            $("#msgErro").show();
+        }
+    },
+    onFailed: function (r) {
+
+        if (r.responseText == null || r.responseText == "") {
+            if (r.status == 401)
+                notify.confirm("danger", "Sem Permissão", "Ação cancelada. Você precisa estar logado(a) em sua conta, realize seu acesso para continuar.", function () {
+                    $("#modalLogin").modal("show");
+
+                });
+        } else {
+            try {
+                var objError = JSON.parse(r.responseText);
+                if (objError.code !== undefined) {
+                    if (r.code == 401) {
+                        if (objError.error != undefined) {
+                            notify.error("Você não possui permissão de acessso.", objError.error);
+                        }
+                    } else {
+                        if (objError.error != undefined) {
+                            notify.error("Atenção", objError.error);
+                        }
+                    }
+                } else {
+                    var x = objError.value != null ? objError.value : objError;
+                    if (x.errors !== undefined && x.errors !== null && x.errors !== "") {
+                        var erros = JSON.parse(x.errors);
+                        gl.validFormAjaxCore($(this).closest("form").attr("id"), erros);
+                    }
+
+                    if (r.status == 401) {
+                        if (objError.error != undefined) {
+                            notify.error("Você não possui permissão de acessso.", objError.error);
+                        }
+                    } else {
+                        if (objError.error != undefined && objError.error != null) {
+                            notify.error("Atenção", objError.error);
+                        }
+                        else if (objError.message != undefined && objError.message != null) {
+                            notify.error("Atenção", objError.message);
+                        }
+                    }
+                }
+            } catch (e) {
+                // Se não for possível fazer o parse como JSON, exibe o conteúdo HTML
+                console.log("Erro ao processar resposta:", e);
+
+
+                // Exibe uma notificação de erro genérica
+                notify.error("Atenção", "Ocorreu um erro na requisição. Verifique os detalhes no modal.");
+            }
+        }
+    },
+    onSuccess: function (r, textStatus, jqXHR) {
+        
+        if (r.success !== undefined) {
+            if (r.success === true) {
+                // Ler do atributo para não depender do camelCase do jQuery .data()
+                var callbackName = $(this).attr("data-ajax-callback");
+                if (callbackName) {
+                    try {
+                        var callbackFn = eval(callbackName);
+                        if (typeof callbackFn === 'function') {
+                            callbackFn(r);
+                        }
+                    } catch (e) {
+                        console.error("Erro ao executar callback do AJAX:", callbackName, e);
+                    }
+                }
+            } else {
+
+                if (r.errors !== undefined && r.errors !== null && r.errors !== "") {
+                    var erros = JSON.parse(r.errors);
+                    gl.validFormAjaxCore($(this).closest("form").attr("id"), erros);
+                } else {
+                    Swal.fire({
+                        html: r.message,
+                        title: "Atenção",
+                        icon: "error",
+                        buttonsStyling: false,
+                        confirmButtonText: "Ok",
+                        customClass: {
+                            confirmButton: "btn btn-light"
+                        }
+                    });
+                    //notify.error("Atenção", r.message);
+                }
+            }
+        }
+    },
+
+    processErros: function (r) {
+        if (r.errors !== null && r.errors !== "") {
+            var erros = JSON.parse(r.errors);
+            if ($(this).closest("form").attr("id") != undefined && $(this).closest("form").attr("id") != null)
+                gl.validFormAjaxCore($(this).closest("form").attr("id"), erros);
+        } else {
+            notify.error(r.message);
+        }
+    },
+
+    validFormAjaxCore: function (formName, erros) {
+        $(gl.StringFormat("#{0} .field-validation-valid", formName)).each(function () {
+            $(this).html("");
+            var field = $(this).data("valmsg-for");
+            var msgText = Enumerable.From(erros)
+                .Where(function (x) { return x.Field === field.replace(".", "_") })
+                .Select(function (x) { return x.Text })
+                .FirstOrDefault();
+            if (msgText !== null && msgText !== undefined && msgText !== "")
+                $(this).html(gl.StringFormat("<span asp-validation-for=\"{0}\">{1}</span>", field.replace("_", "."), msgText));
+
+        });
+    },
+    clearValidationError: function (formName) {
+        $(gl.StringFormat("#{0} .field-validation-valid", formName)).each(function () {
+            $(this).html("");
+            var field = $(this).data("valmsg-for");
+            $(this).html(gl.StringFormat("<span asp-validation-for=\"{0}\"></span>", field.replace("_", ".")));
+
+        });
+    },
+    textToClipboard: function (msg) {
+
+        try {
+            var temp = document.createElement("textarea");
+            var tempMsg = document.createTextNode(msg);
+            temp.appendChild(tempMsg);
+
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand("copy");
+            document.body.removeChild(temp);
+            notify.info("Texto copiado", "Utilize o CTRL + V para colar");
+        }
+        catch (err) {
+
+            console.log("Ocorreu um erro ao copiar texto: " + err.toString());
+        }
+    },
+    copyToInput: function (element, msg) {
+
+        try {
+            var temp = $(element);
+            var currentText = temp.val();
+            temp.val(msg);
+            temp.select();
+            document.execCommand("copy");
+            temp.val(currentText);
+            notify.info(resources.copyMade, resources.copyCtrlV);
+        }
+        catch (err) {
+
+            console.log(resources.copyError);
+        }
+    },
+    textToClipboardModal: function (msg) {
+
+        try {
+            var temp = document.createElement("textarea");
+            temp.setAttribute("id", "trAppend");
+            var tempMsg = document.createTextNode(msg);
+            temp.appendChild(tempMsg);
+
+            $("#modalRegister").append(temp);
+            temp.select();
+            document.execCommand("copy");
+            $('#trAppend').remove();
+            notify.info("Texto copiado", "Utilize o CTRL + V para colar");
+        }
+        catch (err) {
+
+            console.log("Ocorreu um erro ao copiar texto: " + err.toString());
+        }
+    },
+    textToClipboardByElement: function (elementName, msg) {
+
+        try {
+
+            $(elementName).select();
+            document.execCommand("copy");
+
+            notify.info("Texto copiado", "Utilize o CTRL + V para colar");
+        }
+        catch (err) {
+
+            console.log("Ocorreu um erro ao copiar texto: " + err.toString());
+        }
+    },
+    arrayBufferToBase64: function (buffer) {
+        let binary = '';
+        let bytes = new Uint8Array(buffer);
+        let len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    },
+    replaceCaseSensitive: function (str, find, replace) {
+        const regex = new RegExp(find, 'g');
+        return str.replace(regex, replace);
+    },
+
+    encryptData: function (plainText) {
+        const secretKey = $("#sk").val();
+        var key = CryptoJS.enc.Utf8.parse(secretKey);
+        var encrypted = CryptoJS.AES.encrypt(plainText, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+        return encrypted.toString();
+    },
+
+    decryptData: function (cipherText) {
+        const secretKey = $("#sk").val();
+        var key = CryptoJS.enc.Utf8.parse(secretKey);
+        var decrypted = CryptoJS.AES.decrypt(cipherText, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+        return decrypted.toString(CryptoJS.enc.Utf8);
+    }
+};
+var notify = {
+    send: function (_title, _message, _type, _callbackFn) {
+        if (_title == undefined || _title == null || _title == "") _title = "Mensagem";
+        // Configuração padrão do Swal
+        const swalConfig = {
+            title: _title,
+            html: _message,
+            icon: _type,
+            confirmButtonText: "Ok",
+            buttonsStyling: true
+        };
+
+        Swal.fire(swalConfig).then((result) => {
+            if (result.isConfirmed && _callbackFn != null && _callbackFn != undefined && typeof _callbackFn === 'function') {
+                _callbackFn();
+            }
+        });
+    },
+    success: function (_title, _message, _callbackFn) {
+        if (_message == null || _message == undefined) _message = _title;
+        notify.send(_title, _message, 'success', _callbackFn);
+    },
+    info: function (_title, _message, _callbackFn) {
+        if (_message == null || _message == undefined) _message = _title;
+        notify.send(_title, _message, 'info', _callbackFn);
+    },
+    warning: function (_title, _message, _callbackFn) {
+        if (_message == null || _message == undefined) _message = _title;
+        notify.send(_title, _message, 'warning', _callbackFn);
+    },
+    notification: function (_title, _message) {
+        Swal.fire({
+            title: _title,
+            html: _message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    },
+    error: function (_title, _message, _callbackFn) {
+        if (_message == null || _message == undefined) _message = _title;
+        notify.send(_title, _message, 'warning', _callbackFn);
+    },
+    confirm: function (_color, _title, _message) {
+        let iconType = _color;
+        // Mapeamento de cores para ícones do SweetAlert
+        if (_color === 'primary') iconType = 'info';
+        if (_color === 'secondary') iconType = 'question';
+        if (_color === 'danger') iconType = 'error';
+
+        Swal.fire({
+            title: _title,
+            html: _message,
+            icon: iconType,
+            showCancelButton: false,
+            confirmButtonText: 'Ok',
+            confirmButtonColor: getButtonColor(_color)
+        });
+    },
+    confirmYesNo: function (_color, _title, _message, _callBackFN, _data, _confirmLabel, _cancelLabel) {
+        let iconType = _color;
+        // Mapeamento de cores para ícones do SweetAlert
+        if (_color === 'primary') iconType = 'info';
+        if (_color === 'secondary') iconType = 'question';
+        if (_color === 'danger') iconType = 'error';
+
+        Swal.fire({
+            title: _title,
+            html: _message,
+            icon: iconType,
+            showCancelButton: true,
+            confirmButtonText: _confirmLabel == null || _confirmLabel == undefined ? "Confirmar" : _confirmLabel,
+            cancelButtonText: _cancelLabel == null || _cancelLabel == undefined ? "Não" : _cancelLabel,
+            confirmButtonColor: getButtonColor(_color),
+            cancelButtonColor: '#6c757d', // Bootstrap secondary color
+            reverseButtons: true
+        }).then((result) => {
+            if (_callBackFN != null && typeof _callBackFN === 'function') {
+                _callBackFN(result.isConfirmed);
+            }
+        });
+    }
+};
+
+// Função auxiliar para mapear cores do Bootstrap para valores hexadecimais
+function getButtonColor(colorName) {
+    const colorMap = {
+        'primary': '#0d6efd',
+        'secondary': '#6c757d',
+        'success': '#198754',
+        'danger': '#dc3545',
+        'warning': '#ffc107',
+        'info': '#0dcaf0',
+        'light': '#f8f9fa',
+        'dark': '#212529'
+    };
+
+    return colorMap[colorName] || colorMap.primary;
+}
+
+
+var Masks = {
+    init: function () {
+        $('[data-toggle="input-mask"]').each(function (a, e) {
+            var t = $(e).data("maskFormat"), n = $(e).data("reverse");
+            null != n ? $(e).mask(t, {
+                reverse: n
+            }) : $(e).mask(t)
+        })
+    }
+}
+
+
+var Basics = {
+    clear: function (e) {
+        console.log(e);
+        $(e).val('');
+    },
+    init: function () {
+        $(".btnModalClose").click(function () {
+            $(document).unbind("keyup");
+            $(document).unbind("keydown");
+            shortcutForm = null;
+            console.log("unbind");
+            modalWindow.close();
+        });
+
+
+        $('[data-control="select2"]').select2({
+            width: '100%',
+            placeholder: "Selecione"
+        });
+    },
+    initSelect2: function () {
+        $('[data-control="select2"]').select2({
+            width: '100%',
+            placeholder: "Selecione"
+        });
+    },
+    shortcuts: function (_shortcutForm, _shortcutButton) {
+        shortcutForm = _shortcutForm;
+        shortcutButton = _shortcutButton;
+        $(document).unbind("keyup");
+        $(document).unbind("keydown");
+        $(document).bind("keyup", Basics.handlerKeyUp);
+        $(document).bind("keydown", Basics.handlerKeydown);
+    }, handlerKeydown: function (e) {
+        //if (e.which === 16) pressedShift = true;
+        if (shortcutForm != null) {
+            if ((e.which === 120 || e.keyCode === 120)) {
+                if (shortcutForm != null) {
+                    if (shortcutButton == null || shortcutButton == undefined)
+                        $(gl.StringFormat("{0} button[type=submit]", shortcutForm)).submit();
+                    else
+                        $(shortcutButton).click();
+                }
+            }
+        }
+    },
+    handlerKeyUp: function (e) {
+        if (e.which === 16) pressedShift = false;
+    },
+    maskCnpjCpf: function (_id) {
+        var options = {
+            onKeyPress: function (cpf, ev, el, op) {
+                var masks = ['000.000.000-000', '00.000.000/0000-00'];
+                $(_id).mask((cpf.length > 14) ? masks[1] : masks[0], op);
+            }
+        }
+        $(_id).length > 11 ? $(_id).mask('00.000.000/0000-00', options) : $(_id).mask('000.000.000-00#', options);
+        
+    },
+    maskCnpj: function (_id) {
+        $(_id).mask('00.000.000/0000-00');
+    },
+    maskCpf: function (_id) {
+        $(_id).mask('000.000.000-00');
+    },
+    maskDate: function (_id) {
+        var options = {
+            onKeyPress: function (op) {
+                var masks = ['99/99/9999'];
+                $(_id).mask(masks[0], op);
+            }
+        }
+        $(_id).mask('99/99/9999', options);
+
+    },
+    maskZipCode: function (_id) {
+        $(_id).mask("00000-000");
+    },
+    maskPhone: function (_id) {
+        var SPMaskBehavior = function (val) { return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009'; };
+        var spOptions = {
+            onKeyPress: function (val, e, field, options) { field.mask(SPMaskBehavior.apply({}, arguments), options); }
+        };
+        $(_id).mask(SPMaskBehavior, spOptions);
+    },
+    maskDatePicker: function (elementId, parentEl, timePicker, enableMinMaxYear) {
+
+        $(elementId).daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            timePicker: timePicker,
+            timePicker24Hour: true,
+            autoApply: true,
+            autoUpdateInput: false,
+            parentEl: parentEl,
+            minYear: parseInt(moment().format("YYYY"), 10) - 1,
+            maxYear: enableMinMaxYear ? parseInt(moment().format("YYYY"), 10) + 5 : null,
+            locale: {
+                format: timePicker ? "DD/MM/YYYY HH:mm" : "DD/MM/YYYY",
+                "separator": " - ",
+                "applyLabel": "Aplicar",
+                "cancelLabel": "Cancelar",
+                "fromLabel": "De",
+                "toLabel": "Para",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "D",
+                    "S",
+                    "T",
+                    "Q",
+                    "Q",
+                    "S",
+                    "S  "
+                ],
+                "monthNames": [
+                    "Janeiro",
+                    "Fevereiro",
+                    "Março",
+                    "Abril",
+                    "Maio",
+                    "Junho",
+                    "Julho",
+                    "Agosto",
+                    "Setembro",
+                    "Outubro",
+                    "Novembro",
+                    "Dezembro"
+                ],
+                "firstDay": 0
+            }
+        }).on("apply.daterangepicker", function (e, picker) {
+            picker.element.val(picker.startDate.format(picker.locale.format));
+        });
+    },
+    currencyMask: function (_id) {
+        // Use uma verificação para o evento DOMContentLoaded
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            // DOM já está pronto, executar imediatamente
+            $(_id).maskMoney({
+                prefix: '',
+                allowNegative: false,
+                thousands: '.',
+                decimal: ',',
+                affixesStay: true,
+                allowZero: true
+            });
+        } else {
+            // DOM ainda não está pronto, aguardar
+            $(document).ready(function () {
+                $(_id).maskMoney({
+                    prefix: '',
+                    allowNegative: false,
+                    thousands: '.',
+                    decimal: ',',
+                    affixesStay: true,
+                    allowZero: true
+                });
+            });
+        }
+    },
+    taxaMask: function (_id) {
+        // Use uma verificação para o evento DOMContentLoaded
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            // DOM já está pronto, executar imediatamente
+            $(_id).maskMoney({
+                prefix: '',
+                allowNegative: false,
+                thousands: '.',
+                decimal: ',',
+                affixesStay: true,
+                allowZero: true,
+                precision: 4
+            });
+        } else {
+            // DOM ainda não está pronto, aguardar
+            $(document).ready(function () {
+                $(_id).maskMoney({
+                    prefix: '',
+                    allowNegative: false,
+                    thousands: '.',
+                    decimal: ',',
+                    affixesStay: true,
+                    allowZero: true,
+                    precision: 4
+                });
+            });
+        }
+    },
+    percentualMask: function (_id) {
+        $(_id).maskMoney({
+            prefix: '',
+            allowNegative: false,
+            thousands: '.',
+            decimal: ',',
+            affixesStay: true,
+            allowZero: true
+        });
+    }
+
+}
+var selected2 = {
+    init: function (element, data, placeholder) {
+        var $element = $(element);
+        $element.select2().empty().trigger("change");
+
+        var select2Options = {
+            width: '100%'
+        };
+
+        if (placeholder !== null) {
+            select2Options.data = [{ id: 0, text: placeholder }];
+        }
+
+        if (data !== null && data.length > 0) {
+            select2Options.data = data;
+        }
+
+        $element.select2(select2Options);
+    },
+    fillSelect: function (selectId, data, defaultText) {
+        var $select = $(selectId);
+        // Limpar o select atual
+        $select.empty();
+
+        if (defaultText != null || defaultText != undefined) {
+            // Adicionar a opção padrão
+            $select.append($('<option>', {
+                value: '',
+                text: defaultText
+            }));
+        }
+
+        // Adicionar as opções da lista de dados
+        if (data && data.length > 0) {
+            $.each(data, function (index, item) {
+                if (item && item.id !== undefined && item.text !== undefined) {
+                    $select.append($('<option>', {
+                        value: item.id,
+                        text: item.text
+                    }));
+                }
+            });
+        }
+
+        // Atualizar o select caso esteja usando select2
+        if ($select.hasClass('select2-hidden-accessible')) {
+            $select.trigger('change');
+        }
+    }
+};
+
+// ===== Ajuste de Fuso Horário BRT (UTC-3) =====
+(function () {
+    var regexDataHora = /(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})(?::(\d{2}))?/g;
+
+    function ajustarDataBRT(texto) {
+        return texto.replace(regexDataHora, function (match, d, m, a, h, min, s) {
+            var data = new Date(parseInt(a), parseInt(m) - 1, parseInt(d), parseInt(h), parseInt(min), s ? parseInt(s) : 0);
+            data.setHours(data.getHours() - 3);
+            var dd = String(data.getDate()).padStart(2, '0');
+            var mm = String(data.getMonth() + 1).padStart(2, '0');
+            var yyyy = data.getFullYear();
+            var hh = String(data.getHours()).padStart(2, '0');
+            var mi = String(data.getMinutes()).padStart(2, '0');
+            if (s !== undefined && s !== null) {
+                var ss = String(data.getSeconds()).padStart(2, '0');
+                return dd + '/' + mm + '/' + yyyy + ' ' + hh + ':' + mi + ':' + ss;
+            }
+            return dd + '/' + mm + '/' + yyyy + ' ' + hh + ':' + mi;
+        });
+    }
+
+    function processarElementos(el) {
+        if (el.nodeType === 3) {
+            if (regexDataHora.test(el.textContent)) {
+                el.textContent = ajustarDataBRT(el.textContent);
+                regexDataHora.lastIndex = 0;
+            }
+        } else if (el.nodeType === 1 && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
+            for (var i = 0; i < el.childNodes.length; i++) {
+                processarElementos(el.childNodes[i]);
+            }
+        }
+    }
+
+    function executarAjuste() {
+        processarElementos(document.body);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', executarAjuste);
+    } else {
+        executarAjuste();
+    }
+
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (m) {
+            m.addedNodes.forEach(function (node) {
+                if (node.nodeType === 1) processarElementos(node);
+            });
+        });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    window.gl = window.gl || {};
+    gl.ajustarDatasBRT = executarAjuste;
+})();
+
+

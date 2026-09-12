@@ -1,0 +1,183 @@
+﻿@model MCR.API.Models.ViewModels.BeneficiarioModel
+@{
+    ViewData["Title"] = "Beneficiário - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Beneficiario - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Beneficiario" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    <form asp-controller="Beneficiario" asp-action="Cadastrar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Nome" id="Nome" placeholder="Nome">
+                            <label for="Nome">Nome</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3 col-lg-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.CNPJ" id="CNPJ" placeholder="CNPJ">
+                            <label for="CNPJ">CNPJ</label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+                    <div class="card-body" style="color: var(--color-primary)">
+                        <h6>Dados Bancário</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-floating">
+                                    <select class="form-select form-dropdownlist" aria-label="BancoBeneficiario" asp-for="Beneficiario.Banco" id="Banco" asp-items="ViewBag.Bancos">
+                                        <option value="">Bancos</option>
+                                    </select>
+                                    <label>Bancos</label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Agencia" id="Agencia" placeholder="Agência">
+                                    <label for="Agencia">Agência</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.Conta" id="Conta" placeholder="Conta">
+                                    <label for="Conta">Conta</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control form-input form-control-placeholder" asp-for="Beneficiario.ChavePIX" id="ChavePIX" placeholder="Chave PIX">
+                                    <label for="ChavePIX">Chave PIX</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <label>Documento CNPJ</label>
+                        <div class="mb-3">
+                            <label for="fileUpload" class="form-label">Selecione uma imagem ou PDF:</label>
+                            <input type="file" class="form-control" id="fileUpload" accept="image/*,application/pdf">
+                        </div>
+                        <input type="text" asp-for="ObjectImagem" id="ObjectImagem" name="ObjectImagem" hidden>
+                        <div id="filePreviewContainer">
+                            <img id="imagePreview" class="img-fluid rounded d-none" alt="Pré-visualização da Imagem" style="max-width: 100%; height: auto;">
+                            <div id="pdfPreviewContainer" class="d-none">
+                                <p>Arquivo PDF selecionado:</p>
+                                <iframe id="pdfPreview" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @* <br />
+                <div class="row">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" asp-for="Beneficiario.Ativo" id="Ativo" checked>
+                <label class="form-check-label" for="Ativo">Ativo?</label>
+                </div>
+                </div>
+                </div> *@
+            </div>
+        </div>
+        <br />
+        <div class="social-login">
+            <button type="submit" class="btn btn-success rounded-pill">
+                Salvar
+            </button>
+        </div>
+    </form>
+    @if (Model != null && !Model.Beneficiario.Sucesso)
+    {
+        <br />
+        <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
+            <h6>Atenção!</h6>
+            <h6>@Model.Beneficiario.Mensagem</h6>
+        </div>
+    }
+</div>
+<script>
+    document.getElementById('CNPJ').addEventListener('blur', function () {
+        const cnpj = this.value;
+        if (!validarCNPJ(cnpj)) {
+            alert("CNPJ inválido.")
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileUpload = document.getElementById('fileUpload');
+        const hiddenField = document.getElementById('ObjectImagem');
+        const imagePreview = document.getElementById('imagePreview');
+        const pdfPreviewContainer = document.getElementById('pdfPreviewContainer');
+        const pdfPreview = document.getElementById('pdfPreview');
+
+        // Evento para selecionar arquivo
+        fileUpload.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const base64String = event.target.result;
+
+                    // Atualiza o campo oculto
+                    hiddenField.value = base64String;
+
+                    // Verifica o tipo de arquivo
+                    if (file.type.startsWith('image/')) {
+                        imagePreview.src = base64String;
+                        imagePreview.classList.remove('d-none');
+                        pdfPreviewContainer.classList.add('d-none');
+                    } else if (file.type === 'application/pdf') {
+                        pdfPreview.src = base64String; // Exibe o PDF no iframe
+                        pdfPreviewContainer.classList.remove('d-none');
+                        imagePreview.classList.add('d-none');
+                    }
+                };
+
+                // Lê o arquivo como Base64
+                reader.readAsDataURL(file);
+            } else {
+                // Reseta as pré-visualizações se nenhum arquivo for selecionado
+                hiddenField.value = '';
+                imagePreview.classList.add('d-none');
+                pdfPreviewContainer.classList.add('d-none');
+            }
+        });
+
+        // Carregar o Base64 do Razor Model ao carregar a página
+        const base64String = "@Html.Raw(Model?.ObjectImagem ?? "")";
+        if (base64String && base64String.trim() !== '') {
+            hiddenField.value = base64String;
+
+            if (base64String.startsWith('data:image/')) {
+                // Exibe a imagem
+                imagePreview.src = base64String;
+                imagePreview.classList.remove('d-none');
+                pdfPreviewContainer.classList.add('d-none');
+            } else if (base64String.startsWith('data:application/pdf')) {
+                // Exibe o PDF
+                pdfPreview.src = base64String;
+                pdfPreviewContainer.classList.remove('d-none');
+                imagePreview.classList.add('d-none');
+            }
+        }
+    });
+</script>
