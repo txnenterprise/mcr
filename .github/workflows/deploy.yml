@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: 'Target VPS (all, vps, cocamar)'
+        description: 'Target VPS (all, cocari, cocamar)'
         required: false
         default: 'all'
 
@@ -41,6 +41,11 @@ jobs:
             type=sha,prefix=
             type=raw,value=latest
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: image=moby/buildkit:latest
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -50,17 +55,17 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  deploy-vps:
+  deploy-cocari:
     needs: build
     runs-on: ubuntu-latest
     if: >
       github.event_name == 'push' ||
       github.event.inputs.target == 'all' ||
-      github.event.inputs.target == 'vps'
+      github.event.inputs.target == 'cocari'
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to VPS (mcr.cocari)
+      - name: Deploy to VPS Cocari (217.216.89.186)
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_MCR_HOST }}
@@ -91,7 +96,7 @@ jobs:
 
             echo "=== Checking status ==="
             docker ps
-            echo "Deploy VPS concluido!"
+            echo "Deploy Cocari concluido!"
 
   deploy-cocamar:
     needs: build
