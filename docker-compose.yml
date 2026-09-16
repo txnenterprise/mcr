@@ -8,9 +8,9 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - nginx_html:/usr/share/nginx/html
-      - nginx_certs:/etc/nginx/certs
-      - nginx_vhost:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
+      - ./data/certs:/etc/nginx/certs
+      - ./data/vhost.d:/etc/nginx/vhost.d
       - ./nginx/custom.conf:/etc/nginx/conf.d/custom.conf:ro
     networks:
       - mcr-network
@@ -21,11 +21,12 @@ services:
     image: nginxproxy/acme-companion:latest
     container_name: mcr-acme
     restart: unless-stopped
-    volumes_from:
-      - nginx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - acme_data:/etc/acme.sh
+      - ./data/acme:/etc/acme.sh
+      - ./data/certs:/etc/nginx/certs
+      - ./data/html:/usr/share/nginx/html
+      - ./data/vhost.d:/etc/nginx/vhost.d
     environment:
       - DEFAULT_EMAIL=${LETSENCRYPT_EMAIL}
     networks:
@@ -82,10 +83,6 @@ services:
 
 volumes:
   postgres_data:
-  nginx_html:
-  nginx_certs:
-  nginx_vhost:
-  acme_data:
 
 networks:
   mcr-network:

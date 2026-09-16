@@ -72,11 +72,22 @@ jobs:
             cd /opt/mcr
             git pull origin main
             printf 'API_DOMAIN=mcr.cocari.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=false\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCARI }}' > .env
-            mkdir -p nginx
+            mkdir -p nginx data/certs data/vhost.d data/html data/acme data/dataprotection-keys
             cp deploy/mcr-vps/nginx/custom.conf nginx/custom.conf
+            if [ ! -f data/certs/${{ secrets.DOMAIN_COCARI }}.crt ]; then
+              openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/${{ secrets.DOMAIN_COCARI }}.key -out data/certs/${{ secrets.DOMAIN_COCARI }}.crt -subj /CN=${{ secrets.DOMAIN_COCARI }} 2>/dev/null
+            fi
             docker compose down || true
+            docker volume rm mcr_nginx_certs mcr_nginx_vhost mcr_nginx_html mcr_acme_data 2>/dev/null || true
             MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
-            sleep 15
+            sleep 30
+            DOMAIN=${{ secrets.DOMAIN_COCARI }}
+            CERTS=data/certs/${DOMAIN}
+            if [ -f "${CERTS}/fullchain.pem" ] && [ ! -L data/certs/${DOMAIN}.crt ]; then
+              ln -sf ${DOMAIN}/fullchain.pem data/certs/${DOMAIN}.crt
+              ln -sf ${DOMAIN}/key.pem data/certs/${DOMAIN}.key
+              docker exec mcr-nginx nginx -s reload
+            fi
             docker ps
             echo "Deploy Cocari concluido!"
 
@@ -99,10 +110,21 @@ jobs:
             cd /opt/mcr-cocamar
             git pull origin main
             printf 'API_DOMAIN=mcr.cocamar.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=true\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCAMAR }}' > .env
-            mkdir -p nginx
+            mkdir -p nginx data/certs data/vhost.d data/html data/acme data/dataprotection-keys
             cp deploy/mcr-cocamar/nginx/custom.conf nginx/custom.conf
+            if [ ! -f data/certs/${{ secrets.DOMAIN_COCAMAR }}.crt ]; then
+              openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/${{ secrets.DOMAIN_COCAMAR }}.key -out data/certs/${{ secrets.DOMAIN_COCAMAR }}.crt -subj /CN=${{ secrets.DOMAIN_COCAMAR }} 2>/dev/null
+            fi
             docker compose down || true
+            docker volume rm mcr_nginx_certs mcr_nginx_vhost mcr_nginx_html mcr_acme_data 2>/dev/null || true
             MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
-            sleep 15
+            sleep 30
+            DOMAIN=${{ secrets.DOMAIN_COCAMAR }}
+            CERTS=data/certs/${DOMAIN}
+            if [ -f "${CERTS}/fullchain.pem" ] && [ ! -L data/certs/${DOMAIN}.crt ]; then
+              ln -sf ${DOMAIN}/fullchain.pem data/certs/${DOMAIN}.crt
+              ln -sf ${DOMAIN}/key.pem data/certs/${DOMAIN}.key
+              docker exec mcr-nginx nginx -s reload
+            fi
             docker ps
             echo "Deploy Cocamar concluido!"
