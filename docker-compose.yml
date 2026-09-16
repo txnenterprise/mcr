@@ -3,6 +3,8 @@ services:
     image: nginxproxy/nginx-proxy:latest
     container_name: mcr-nginx
     restart: unless-stopped
+    labels:
+      com.github.nginx-proxy.nginx: "true"
     ports:
       - "80:80"
       - "443:443"
@@ -29,6 +31,7 @@ services:
       - ./data/vhost.d:/etc/nginx/vhost.d
     environment:
       - DEFAULT_EMAIL=${LETSENCRYPT_EMAIL}
+      - NGINX_PROXY_CONTAINER=mcr-nginx
     networks:
       - mcr-network
     depends_on:
