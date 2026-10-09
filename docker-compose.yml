@@ -84,6 +84,27 @@ services:
     networks:
       - mcr-network
 
+  # Alias do mcr-homologacao -> mesmo mcr-api/mesmo banco (só mais um nome roteado).
+  # Sobe APENAS quando COMPOSE_PROFILES=homolog (ativado só no deploy Cocari).
+  homolog-proxy:
+    image: nginx:alpine
+    container_name: mcr-homolog-proxy
+    profiles: ["homolog"]
+    restart: unless-stopped
+    environment:
+      - VIRTUAL_HOST=mcr-homologacao.txnenterprise.com.br
+      - VIRTUAL_PORT=80
+      - LETSENCRYPT_HOST=mcr-homologacao.txnenterprise.com.br
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    volumes:
+      - ./deploy/mcr-vps/nginx/homolog.conf:/etc/nginx/conf.d/default.conf:ro
+    expose:
+      - "80"
+    depends_on:
+      - mcr-api
+    networks:
+      - mcr-network
+
 volumes:
   postgres_data:
 
