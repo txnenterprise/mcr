@@ -71,17 +71,14 @@ jobs:
             set -e
             cd /opt/mcr
             git pull origin main
-            printf 'API_DOMAIN=mcr.cocari.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=true\nCOMPOSE_PROFILES=homolog\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCARI }}' > .env
+            printf 'API_DOMAIN=mcr.cocari.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=true\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCARI }}' > .env
             mkdir -p nginx data/certs data/vhost.d data/html data/acme data/dataprotection-keys
             cp deploy/mcr-vps/nginx/custom.conf nginx/custom.conf
             if [ ! -f data/certs/${{ secrets.DOMAIN_COCARI }}.crt ]; then
               openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/${{ secrets.DOMAIN_COCARI }}.key -out data/certs/${{ secrets.DOMAIN_COCARI }}.crt -subj /CN=${{ secrets.DOMAIN_COCARI }} 2>/dev/null
             fi
-            HOMOLOG=mcr-homologacao.txnenterprise.com.br
-            if [ ! -f data/certs/${HOMOLOG}.crt ]; then
-              openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/${HOMOLOG}.key -out data/certs/${HOMOLOG}.crt -subj /CN=${HOMOLOG} 2>/dev/null
-            fi
             docker compose down || true
+            docker rm -f mcr-homolog-proxy 2>/dev/null || true
             MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
             sleep 30
             DOMAIN=${{ secrets.DOMAIN_COCARI }}
@@ -89,11 +86,6 @@ jobs:
             if [ -f "${CERTS}/fullchain.pem" ] && [ ! -L data/certs/${DOMAIN}.crt ]; then
               ln -sf ${DOMAIN}/fullchain.pem data/certs/${DOMAIN}.crt
               ln -sf ${DOMAIN}/key.pem data/certs/${DOMAIN}.key
-              docker exec mcr-nginx nginx -s reload
-            fi
-            if [ -f "data/certs/${HOMOLOG}/fullchain.pem" ] && [ ! -L data/certs/${HOMOLOG}.crt ]; then
-              ln -sf ${HOMOLOG}/fullchain.pem data/certs/${HOMOLOG}.crt
-              ln -sf ${HOMOLOG}/key.pem data/certs/${HOMOLOG}.key
               docker exec mcr-nginx nginx -s reload
             fi
             docker ps
@@ -117,11 +109,15 @@ jobs:
             set -e
             cd /opt/mcr-cocamar
             git pull origin main
-            printf 'API_DOMAIN=mcr.cocamar.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=true\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCAMAR }}' > .env
+            printf 'API_DOMAIN=mcr.cocamar.txnenterprise.com.br\nLETSENCRYPT_EMAIL=%s\nDB_PASSWORD=%s\nJWT_SECRET=%s\nSKIP_MIGRATIONS=true\nCOMPOSE_PROFILES=homolog\n' '${{ secrets.LETSENCRYPT_EMAIL }}' '${{ secrets.DB_PASSWORD }}' '${{ secrets.JWT_SECRET_COCAMAR }}' > .env
             mkdir -p nginx data/certs data/vhost.d data/html data/acme data/dataprotection-keys
             cp deploy/mcr-cocamar/nginx/custom.conf nginx/custom.conf
             if [ ! -f data/certs/${{ secrets.DOMAIN_COCAMAR }}.crt ]; then
               openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/${{ secrets.DOMAIN_COCAMAR }}.key -out data/certs/${{ secrets.DOMAIN_COCAMAR }}.crt -subj /CN=${{ secrets.DOMAIN_COCAMAR }} 2>/dev/null
+            fi
+            HOMOLOG=mcr-homologacao.txnenterprise.com.br
+            if [ ! -f data/certs/${HOMOLOG}.crt ]; then
+              openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/${HOMOLOG}.key -out data/certs/${HOMOLOG}.crt -subj /CN=${HOMOLOG} 2>/dev/null
             fi
             docker compose down || true
             MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
@@ -131,6 +127,11 @@ jobs:
             if [ -f "${CERTS}/fullchain.pem" ] && [ ! -L data/certs/${DOMAIN}.crt ]; then
               ln -sf ${DOMAIN}/fullchain.pem data/certs/${DOMAIN}.crt
               ln -sf ${DOMAIN}/key.pem data/certs/${DOMAIN}.key
+              docker exec mcr-nginx nginx -s reload
+            fi
+            if [ -f "data/certs/${HOMOLOG}/fullchain.pem" ] && [ ! -L data/certs/${HOMOLOG}.crt ]; then
+              ln -sf ${HOMOLOG}/fullchain.pem data/certs/${HOMOLOG}.crt
+              ln -sf ${HOMOLOG}/key.pem data/certs/${HOMOLOG}.key
               docker exec mcr-nginx nginx -s reload
             fi
             docker ps
