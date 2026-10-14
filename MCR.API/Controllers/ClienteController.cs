@@ -457,8 +457,31 @@ namespace MCR.API.Controllers
         {
             try
             {
-                var retorno = await _clienteService.ObterTodosPaginadoAsync(pesquisaNome, pesquisaCPF, null, null, null, page, pageSize);
-                return Json(new { listaClientes = retorno });
+                // Projeção leve: o modal só exibe Id/Nome/CPF/Telefone/Email.
+                // Evita materializar ImagemCPF/ImagemRG (base64 pesado) por linha.
+                var query = _context.Clientes
+                    .AsNoTracking()
+                    .Where(c => !c.Excluido);
+
+                if (!string.IsNullOrEmpty(pesquisaNome))
+                    query = query.Where(c => c.Nome.Contains(pesquisaNome));
+
+                if (!string.IsNullOrEmpty(pesquisaCPF))
+                {
+                    var cpfBusca = pesquisaCPF.Replace(".", "").Replace("-", "");
+                    query = query.Where(c => c.CPF.Replace(".", "").Replace("-", "").Contains(cpfBusca));
+                }
+
+                var totalItems = await query.CountAsync();
+
+                var listaClientes = await query
+                    .OrderBy(c => c.Nome)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(c => new { c.Id, c.Nome, c.CPF, c.Telefone, c.Email })
+                    .ToListAsync();
+
+                return Json(new { listaClientes, totalItems });
             }
             catch (Exception ex)
             {
