@@ -484,6 +484,8 @@ var cotacaoAgricolaJS = {
 
     // Funções para o modal de seleção de clientes
     cotacaoIdSelecionada: null,
+    clientesPage: 1,
+    clientesPageSize: 5,
 
     abrirModalSelecionarCliente: function (cotacaoId) {
         this.cotacaoIdSelecionada = cotacaoId;
@@ -491,16 +493,24 @@ var cotacaoAgricolaJS = {
         var modalEl = document.getElementById('modalSelecionarCliente');
         var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         modal.show();
-        this.buscarClientes();
+        this.buscarClientes(1);
     },
 
-    buscarClientes: function () {
+    buscarClientes: function (page) {
+        cotacaoAgricolaJS.clientesPage = page || 1;
         const nome = $('#pesquisaNomeCliente').val();
         const cpf = $('#pesquisaCPFCliente').val();
 
-        $.get('/Cliente/PesquisarClientes', { pesquisaNome: nome, pesquisaCPF: cpf }, function (data) {
+        $.get('/Cliente/PesquisarClientes', {
+            pesquisaNome: nome,
+            pesquisaCPF: cpf,
+            page: cotacaoAgricolaJS.clientesPage,
+            pageSize: cotacaoAgricolaJS.clientesPageSize
+        }, function (data) {
             const tbody = $('#tblClientesModal tbody');
             tbody.empty();
+            // Sem seleção após (re)render — mantém confirmação desabilitada
+            $('#btnConfirmarCliente').prop('disabled', true);
 
             if (data.listaClientes && data.listaClientes.length > 0) {
                 data.listaClientes.forEach(cliente => {
@@ -520,14 +530,23 @@ var cotacaoAgricolaJS = {
                 tbody.append('<tr><td colspan="5" class="text-center">Nenhum cliente encontrado.</td></tr>');
             }
 
-            // Evento para habilitar o botão ao selecionar um cliente
-            $('input[name=\"clienteSelecionado\"]').on('change', function () {
-                $('#btnConfirmarCliente').prop('disabled', !$('input[name=\"clienteSelecionado\"]:checked').length);
-            });
+            // Paginação
+            const total = data.totalItems || 0;
+            const totalPages = Math.max(1, Math.ceil(total / cotacaoAgricolaJS.clientesPageSize));
+            const $pager = $('#pagerClientesModal');
+            if (total > cotacaoAgricolaJS.clientesPageSize) {
+                $pager.show();
+                $('#pagerInfoClientes').text('Página ' + cotacaoAgricolaJS.clientesPage + ' de ' + totalPages + ' (' + total + ' clientes)');
+                $('#btnPagePrevClientes').prop('disabled', cotacaoAgricolaJS.clientesPage <= 1);
+                $('#btnPageNextClientes').prop('disabled', cotacaoAgricolaJS.clientesPage >= totalPages);
+            } else {
+                $pager.hide();
+            }
         }).fail(function () {
             const tbody = $('#tblClientesModal tbody');
             tbody.empty();
             tbody.append('<tr><td colspan="5" class="text-center text-danger">Erro ao buscar clientes.</td></tr>');
+            $('#pagerClientesModal').hide();
         });
     },
 
@@ -576,16 +595,30 @@ var cotacaoAgricolaJS = {
     },
 
     initModalClientes: function () {
-        // Usar delegação de eventos no document para garantir que funcione
-        // mesmo se o modal for re-renderizado
+        // Delegação de eventos no document: o modal pode ser re-renderizado via AJAX
+        // (component CotacaoAgricolaDadosPropostas) — bindings diretos se perdem.
         $(document).on('click', '#btnPesquisarClientes', function () {
-            cotacaoAgricolaJS.buscarClientes();
+            cotacaoAgricolaJS.buscarClientes(1);
         });
 
         $(document).on('keypress', '#pesquisaNomeCliente, #pesquisaCPFCliente', function (e) {
             if (e.which === 13) {
-                cotacaoAgricolaJS.buscarClientes();
+                cotacaoAgricolaJS.buscarClientes(1);
             }
+        });
+
+        // Habilita confirmação ao marcar rádio (delegado — sobrevive a re-render da tabela)
+        $(document).on('change', 'input[name="clienteSelecionado"]', function () {
+            $('#btnConfirmarCliente').prop('disabled', !$('input[name="clienteSelecionado"]:checked').length);
+        });
+
+        // Paginação do modal de clientes
+        $(document).on('click', '#btnPagePrevClientes', function () {
+            if (cotacaoAgricolaJS.clientesPage > 1)
+                cotacaoAgricolaJS.buscarClientes(cotacaoAgricolaJS.clientesPage - 1);
+        });
+        $(document).on('click', '#btnPageNextClientes', function () {
+            cotacaoAgricolaJS.buscarClientes(cotacaoAgricolaJS.clientesPage + 1);
         });
 
         $(document).on('click', '#btnConfirmarCliente', function () {
