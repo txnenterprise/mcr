@@ -55,10 +55,9 @@ namespace MCR.API.Components.CotacaoAgricola
             var todosCanais = await _context.Canais.Where(c => c.Ativo && !c.Excluido).ToListAsync();
             var todosPontos = await _context.PontosAtendimento.Where(p => p.Ativo && !p.Excluido).ToListAsync();
 
-            var isCorretor = _httpContextAccessor.IsCorretor();
-            var isConsultor = _httpContextAccessor.IsConsultor();
+            var isAdmin = _httpContextAccessor.IsAdministrador();
 
-            if (isCorretor || isConsultor)
+            if (!isAdmin)
             {
                 var userIdClaim = UserClaimsPrincipal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 if (Guid.TryParse(userIdClaim, out var userId))
@@ -71,14 +70,17 @@ namespace MCR.API.Components.CotacaoAgricola
                     var canalIds = estruturas.Where(x => x.CanalId.HasValue).Select(x => x.CanalId!.Value).Distinct().ToList();
                     var paIds = estruturas.Where(x => x.PontoAtendimentoId.HasValue).Select(x => x.PontoAtendimentoId!.Value).Distinct().ToList();
 
-                    corretoras = corretoras.Where(x => corretoraIds.Contains(x.Id)).ToList();
-                    todosCanais = todosCanais.Where(x => canalIds.Contains(x.Id)).ToList();
-                    todosPontos = todosPontos.Where(x => paIds.Contains(x.Id)).ToList();
+                    // Coluna nullable = "todas" — só filtra quando houver vínculo específico
+                    if (corretoraIds.Any())
+                        corretoras = corretoras.Where(x => corretoraIds.Contains(x.Id)).ToList();
+                    if (canalIds.Any())
+                        todosCanais = todosCanais.Where(x => canalIds.Contains(x.Id)).ToList();
+                    if (paIds.Any())
+                        todosPontos = todosPontos.Where(x => paIds.Contains(x.Id)).ToList();
                 }
             }
 
             // Auto-preencher ANTES de criar os SelectLists
-            var isAdmin = _httpContextAccessor.IsAdministrador();
             if (!isAdmin)
             {
                 if (!model.CorretoraId.HasValue && corretoras.Any())
