@@ -79,8 +79,13 @@ jobs:
             fi
             docker compose down || true
             docker rm -f mcr-homolog-proxy 2>/dev/null || true
+            docker pull ghcr.io/${{ github.repository }}/mcr-api:latest
             MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
             sleep 30
+            # Smoke check: container deve usar a imagem recem-baixada
+            RUNNING=$(docker inspect --format='{{.Image}}' mcr-api)
+            PULLED=$(docker inspect --format='{{.Id}}' ghcr.io/${{ github.repository }}/mcr-api:latest)
+            if [ "$RUNNING" != "$PULLED" ]; then echo "ERRO: mcr-api rodando com imagem antiga!" && exit 1; fi
             DOMAIN=${{ secrets.DOMAIN_COCARI }}
             CERTS=data/certs/${DOMAIN}
             if [ -f "${CERTS}/fullchain.pem" ] && [ ! -L data/certs/${DOMAIN}.crt ]; then
@@ -120,8 +125,13 @@ jobs:
               openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/${HOMOLOG}.key -out data/certs/${HOMOLOG}.crt -subj /CN=${HOMOLOG} 2>/dev/null
             fi
             docker compose down || true
+            docker pull ghcr.io/${{ github.repository }}/mcr-api:latest
             MCR_IMAGE=ghcr.io/${{ github.repository }}/mcr-api:latest docker compose up -d
             sleep 30
+            # Smoke check: container deve usar a imagem recem-baixada
+            RUNNING=$(docker inspect --format='{{.Image}}' mcr-api)
+            PULLED=$(docker inspect --format='{{.Id}}' ghcr.io/${{ github.repository }}/mcr-api:latest)
+            if [ "$RUNNING" != "$PULLED" ]; then echo "ERRO: mcr-api rodando com imagem antiga!" && exit 1; fi
             DOMAIN=${{ secrets.DOMAIN_COCAMAR }}
             CERTS=data/certs/${DOMAIN}
             if [ -f "${CERTS}/fullchain.pem" ] && [ ! -L data/certs/${DOMAIN}.crt ]; then
