@@ -19,11 +19,30 @@ namespace MCR.API.Controllers
         public async Task<IActionResult> SalvarStatus([FromForm] PropostasStatusDTO model)
         {
             var usuarioId = GetUserId();
+            var ehNavegacaoBrowser = Request.Headers.Accept.ToString().Contains("text/html", StringComparison.OrdinalIgnoreCase);
+
             if (!usuarioId.HasValue)
+            {
+                if (ehNavegacaoBrowser)
+                    return Redirect("/Propostas");
                 return Json(new { success = false, message = "Usuário não autenticado" });
+            }
 
             var (sucesso, mensagem) = await _service.SalvarStatusProposta(model, usuarioId.Value);
+
+            if (ehNavegacaoBrowser)
+                return Redirect(ListaPorStatus(model.Status));
+
             return Json(new { success = sucesso, message = mensagem, status = model.Status });
+        }
+
+        private static string ListaPorStatus(string status)
+        {
+            var s = (status ?? string.Empty).ToLowerInvariant();
+            if (s.Contains("apólice") || s.Contains("apolice")) return "/Apolices";
+            if (s.Contains("sinistro") || s.Contains("comunicar_sinistro") || s.Contains("deferido") || s.Contains("indeferido")) return "/Sinistro";
+            if (s.Contains("endosso")) return "/Endosso";
+            return "/Propostas";
         }
 
         [HttpGet]

@@ -59,7 +59,6 @@ var propostaStatusJs = {
     onSuccessCallbackStatus: function (r) {
         if (r.success == true) {
             $("#modalStatus").fadeOut(300);
-            notify.success("Status", r.message, null);
 
             var url = "/Propostas";
             if (r.status) {
@@ -74,9 +73,23 @@ var propostaStatusJs = {
                     url = "/Propostas";
             }
 
-            setTimeout(function () {
-                window.location.href = url;
-            }, 1500);
+            var msg = r.message || "Status alterado com sucesso.";
+            var redirecionar = function () { window.location.href = url; };
+
+            if (typeof Swal !== "undefined") {
+                Swal.fire({
+                    title: "Status alterado com sucesso",
+                    text: msg,
+                    icon: "success",
+                    confirmButtonText: "OK"
+                }).then(redirecionar);
+            } else if (typeof notify !== "undefined") {
+                notify.success("Status", msg, null);
+                setTimeout(redirecionar, 1500);
+            } else {
+                alert(msg);
+                redirecionar();
+            }
         } else {
             notify.error("Atenção", r.message);
         }
