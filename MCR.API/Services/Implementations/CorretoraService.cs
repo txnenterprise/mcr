@@ -31,7 +31,7 @@ namespace MCR.API.Services.Implementations
 
         public async Task<IEnumerable<CorretoraEntity>> ObterTodosAsync()
         {
-            var retorno = await _context.CorretoraEntity.ToListAsync();
+            var retorno = await _context.CorretoraEntity.Include(c => c.Plano).ToListAsync();
 
             if (retorno == null)
                 return new List<CorretoraEntity> { new CorretoraEntity { Sucesso = false, Mensagem = "Nenhum cadastro localizado." } };
@@ -71,6 +71,19 @@ namespace MCR.API.Services.Implementations
                 entity.Sucesso = false;
                 return entity;
             }
+
+            // Plano é configurável uma única vez: depois de salvo, fica somente para visualização
+            if (getEntity.PlanoId.HasValue)
+            {
+                if (entity.PlanoId.HasValue && entity.PlanoId != getEntity.PlanoId)
+                {
+                    entity.Mensagem = "O plano desta corretora já foi configurado e não pode ser alterado.";
+                    entity.Sucesso = false;
+                    return entity;
+                }
+                entity.PlanoId = getEntity.PlanoId; // select desabilitado não envia o valor — preserva
+            }
+
             _context.Entry(entity).State = EntityState.Modified;
             var retorno = await _context.SaveChangesAsync();
 

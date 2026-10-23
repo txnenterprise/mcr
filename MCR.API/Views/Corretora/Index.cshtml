@@ -23,6 +23,7 @@
                     <th>Nome Fantasia</th>
                     <th>CNPJ</th>
                     <th>Cidade</th>
+                    <th>Plano</th>
                     <th>Ativo?</th>
                     <th>Ações</th>
                 </tr>
@@ -37,6 +38,16 @@
                             <td>@item.NomeFantasia</td>
                             <td>@item.CNPJ</td>
                             <td>@item.Cidade</td>
+                            <td>
+                                @if (item.Plano != null)
+                                {
+                                    <span class="badge bg-success">@item.Plano.Nome</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger" title="Sem plano: cadastro/alteração de usuários bloqueado">sem plano</span>
+                                }
+                            </td>
                             <td>@(item.Ativa ? "Sim" : "Não")</td>
                             <td>
                                 <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Editar</a>

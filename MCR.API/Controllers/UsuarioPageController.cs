@@ -12,12 +12,14 @@ namespace MCR.API.Controllers
     public class UsuarioPageController : Controller
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly IValidacaoLimiteService _validacaoLimiteService;
         private readonly UserManager<UsuarioEntity> _userManager;
         private readonly ILogger<UsuarioPageController> _logger;
 
-        public UsuarioPageController(IUsuarioService usuarioService, UserManager<UsuarioEntity> userManager, ILogger<UsuarioPageController> logger)
+        public UsuarioPageController(IUsuarioService usuarioService, IValidacaoLimiteService validacaoLimiteService, UserManager<UsuarioEntity> userManager, ILogger<UsuarioPageController> logger)
         {
             _usuarioService = usuarioService;
+            _validacaoLimiteService = validacaoLimiteService;
             _userManager = userManager;
             _logger = logger;
         }
@@ -73,6 +75,25 @@ namespace MCR.API.Controllers
             {
                 if (!ModelState.IsValid)
                     return Json(new { success = false, message = "Verifique os campos obrigatórios." });
+
+                // Regra: cadastro de usuário exige corretora com plano configurado
+                var corretorasAlvo = (model.EstruturaNegocio ?? new List<MCR.API.Entities.UsuarioEstruturaNegocioDTO>())
+                    .Where(e => e.CorretoraId.HasValue)
+                    .Select(e => e.CorretoraId!.Value)
+                    .Distinct()
+                    .ToList();
+                if (!corretorasAlvo.Any() && model.DefaultCorretoraId.HasValue)
+                    corretorasAlvo.Add(model.DefaultCorretoraId.Value);
+
+                if (!corretorasAlvo.Any())
+                    return Json(new { success = false, message = "Informe a corretora do usuário — ela precisa ter um plano configurado pelo administrador." });
+
+                foreach (var corretoraId in corretorasAlvo)
+                {
+                    var (limiteOk, limiteMsg) = await _validacaoLimiteService.ValidarLimiteUsuariosAsync(corretoraId);
+                    if (!limiteOk)
+                        return Json(new { success = false, message = limiteMsg ?? "Limite de usuários do plano atingido." });
+                }
 
                 var entity = new MCR.API.Entities.UsuarioEntity
                 {

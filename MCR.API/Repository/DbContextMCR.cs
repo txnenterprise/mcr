@@ -18,6 +18,7 @@ namespace MCR.API.Repository
 
         /*Multi-Cálculo*/
         public DbSet<CorretoraEntity> CorretoraEntity { get; set; }
+        public DbSet<PlanoEntity> Planos { get; set; }
         public DbSet<ParametrizacaoSeguradoraEntity> ParametrizacaoSeguradoraEntity { get; set; }
         public DbSet<ParametrizacaoBeneficiarioEntity> ParametrizacaoBeneficiarioEntity { get; set; }
         public DbSet<ParametrizacaoRiscoEntity> ParametrizacaoRiscoEntity { get; set; }
@@ -181,6 +182,7 @@ namespace MCR.API.Repository
             /*Multi-Cálculo*/
 
             builder.ApplyConfiguration(new CorretoraMap());
+            // PlanoMap é aplicado automaticamente via ApplyConfigurationsFromAssembly abaixo
             builder.ApplyConfiguration(new SeguradoraMap());
             builder.ApplyConfiguration(new SeguradoraAnteriorMap());
             builder.ApplyConfiguration(new BancoMap());
@@ -712,6 +714,37 @@ namespace MCR.API.Repository
                 builder.Property(a => a.EmailCopiaSeguro).HasMaxLength(256);
                 builder.Property(a => a.EmailSinistro).HasMaxLength(256);
                 builder.Property(a => a.EmailCopiaSinistro).HasMaxLength(256);
+                builder.Property(a => a.PlanoId).IsRequired(false);
+                builder.HasOne(a => a.Plano)
+                    .WithMany()
+                    .HasForeignKey(a => a.PlanoId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            }
+        }
+        public class PlanoMap : IEntityTypeConfiguration<PlanoEntity>
+        {
+            public void Configure(EntityTypeBuilder<PlanoEntity> builder)
+            {
+                builder.ToTable("Planos");
+                builder.HasKey(a => a.Id);
+                builder.Property(a => a.Id).ValueGeneratedOnAdd();
+                builder.Property(a => a.Nome).IsRequired().HasMaxLength(60);
+                builder.Property(a => a.MaximoUsuarios).IsRequired(false);
+                builder.Property(a => a.MaximoPAsPorUsuario).IsRequired(false);
+                builder.Property(a => a.Ativo).IsRequired();
+                builder.Property(a => a.Excluido).IsRequired();
+                builder.HasIndex(a => a.Nome).IsUnique();
+
+                // Catálogo fixo — planos imutáveis pré-cadastrados (null = ilimitado)
+                builder.HasData(
+                    new PlanoEntity { Id = Guid.Parse("11111111-1111-1111-1111-111111111101"), Nome = "Start", MaximoUsuarios = 10, MaximoPAsPorUsuario = 2, Ativo = true, Excluido = false },
+                    new PlanoEntity { Id = Guid.Parse("11111111-1111-1111-1111-111111111102"), Nome = "Growth", MaximoUsuarios = 15, MaximoPAsPorUsuario = 3, Ativo = true, Excluido = false },
+                    new PlanoEntity { Id = Guid.Parse("11111111-1111-1111-1111-111111111103"), Nome = "Professional", MaximoUsuarios = 20, MaximoPAsPorUsuario = 4, Ativo = true, Excluido = false },
+                    new PlanoEntity { Id = Guid.Parse("11111111-1111-1111-1111-111111111104"), Nome = "Business", MaximoUsuarios = 30, MaximoPAsPorUsuario = 6, Ativo = true, Excluido = false },
+                    new PlanoEntity { Id = Guid.Parse("11111111-1111-1111-1111-111111111105"), Nome = "Advanced", MaximoUsuarios = 40, MaximoPAsPorUsuario = 8, Ativo = true, Excluido = false },
+                    new PlanoEntity { Id = Guid.Parse("11111111-1111-1111-1111-111111111106"), Nome = "Enterprise", MaximoUsuarios = 50, MaximoPAsPorUsuario = 10, Ativo = true, Excluido = false },
+                    new PlanoEntity { Id = Guid.Parse("11111111-1111-1111-1111-111111111107"), Nome = "Enterprise plus", MaximoUsuarios = null, MaximoPAsPorUsuario = null, Ativo = true, Excluido = false }
+                );
             }
         }
         public class ParametrizacaoSeguradoraMap : IEntityTypeConfiguration<ParametrizacaoSeguradoraEntity>

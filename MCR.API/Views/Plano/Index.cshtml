@@ -1,0 +1,46 @@
+@model IEnumerable<MCR.API.Entities.PlanoEntity>
+@{
+    ViewData["Title"] = "Planos";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Planos</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-3">
+            <a asp-action="Cadastrar" asp-controller="Plano" class="btn btn-secondary rounded-pill">
+                Novo Plano
+            </a>
+        </div>
+    </div>
+    <br />
+    <div class="alert alert-info" role="alert" style="border-radius: 12px;">
+        Planos definem os limites de usuários e pontos de atendimento (PA) por corretora.
+        <strong>Planos não podem ser alterados ou excluídos após a criação.</strong>
+    </div>
+    <div style="overflow-x:auto;">
+        <table id="table-grid" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Plano</th>
+                    <th>Máx. Usuários</th>
+                    <th>Máx. PA Vinculado</th>
+                    <th>Situação</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Nome</td>
+                            <td>@(item.MaximoUsuarios.HasValue ? item.MaximoUsuarios.Value.ToString() : "Ilimitado")</td>
+                            <td>@(item.MaximoPAsPorUsuario.HasValue ? item.MaximoPAsPorUsuario.Value.ToString() : "Ilimitado")</td>
+                            <td>@(item.Ativo ? "Ativo" : "Inativo")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

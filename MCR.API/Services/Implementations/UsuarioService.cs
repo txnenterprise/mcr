@@ -16,6 +16,7 @@ namespace MCR.API.Services.Implementations
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly DbContextMCR _context;
         private readonly IUsuarioEstruturaNegocioService _usuarioEstruturaNegocioService;
+        private readonly IValidacaoLimiteService _validacaoLimiteService;
         private readonly ILogger<UsuarioService> _logger;
 
         public UsuarioService(
@@ -24,6 +25,7 @@ namespace MCR.API.Services.Implementations
             RoleManager<IdentityRole<Guid>> roleManager,
             DbContextMCR context,
             IUsuarioEstruturaNegocioService usuarioEstruturaNegocioService,
+            IValidacaoLimiteService validacaoLimiteService,
             ILogger<UsuarioService> logger)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -31,6 +33,7 @@ namespace MCR.API.Services.Implementations
             _roleManager = roleManager;
             _context = context;
             _usuarioEstruturaNegocioService = usuarioEstruturaNegocioService;
+            _validacaoLimiteService = validacaoLimiteService;
             _logger = logger;
         }
 
@@ -367,13 +370,27 @@ namespace MCR.API.Services.Implementations
                     var result = await _userManager.UpdateAsync(existing);
                     if (result.Succeeded)
                     {
-                        // Só altera EstruturaNegocio se veio preenchido no formulário
-                        if (model.EstruturaNegocio != null)
+                    // Só altera EstruturaNegocio se veio preenchido no formulário
+                    if (model.EstruturaNegocio != null)
+                    {
+                        // Valida limite de usuários do plano por corretora-alvo da nova estrutura
+                        var corretorasAlvo = model.EstruturaNegocio
+                            .Where(item => item.CorretoraId.HasValue)
+                            .Select(item => item.CorretoraId!.Value)
+                            .Distinct()
+                            .ToList();
+
+                        foreach (var corretoraId in corretorasAlvo)
                         {
-                            // Remove estruturas antigas
-                            var antigas = _context.UsuarioEstruturaNegocio
-                                .Where(x => x.UsuarioId == userId).ToList();
-                            _context.UsuarioEstruturaNegocio.RemoveRange(antigas);
+                            var (limiteOk, limiteMsg) = await _validacaoLimiteService.ValidarLimiteUsuariosAsync(corretoraId, userId);
+                            if (!limiteOk)
+                                return (false, limiteMsg ?? "Limite de usuários do plano atingido.");
+                        }
+
+                        // Remove estruturas antigas
+                        var antigas = _context.UsuarioEstruturaNegocio
+                            .Where(x => x.UsuarioId == userId).ToList();
+                        _context.UsuarioEstruturaNegocio.RemoveRange(antigas);
 
                             // Cria novas estruturas a partir do formulário
                             if (model.EstruturaNegocio.Any())

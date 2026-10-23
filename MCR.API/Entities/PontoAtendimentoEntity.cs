@@ -28,6 +28,9 @@ namespace MCR.API.Entities
         public bool Ativo { get; set; }
         public bool Excluido { get; set; }
 
+        /// <summary>Usuário que criou o PA (base do limite de PA por usuário do plano).</summary>
+        public Guid? UsuarioCriadorId { get; set; }
+
 
         public string? EmailSeguro { get; set; }
         public string? EmailCopiaSeguro { get; set; }

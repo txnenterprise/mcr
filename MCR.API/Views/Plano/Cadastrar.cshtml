@@ -1,0 +1,61 @@
+@model MCR.API.Entities.PlanoEntity
+@{
+    ViewData["Title"] = "Planos - Cadastrar";
+}
+<div class="form-box">
+    <h4 class="form-title form-box-title justify-content-center align-items-center">Planos - Cadastrar</h4>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-2">
+            <a asp-action="Index" asp-controller="Plano" class="btn btn-secondary rounded-pill">
+                Voltar
+            </a>
+        </div>
+    </div>
+    <br /><br />
+    @if (!string.IsNullOrEmpty(Model?.Mensagem))
+    {
+        <div class="alert alert-danger" role="alert" style="border-radius: 12px;">@Model.Mensagem</div>
+    }
+    <form asp-controller="Plano" asp-action="Cadastrar" method="post">
+        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
+            <div class="card-body" style="color: var(--color-primary)">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-input form-control-placeholder" asp-for="Nome" id="Nome" placeholder="Nome" maxlength="60" required>
+                            <label for="Nome">Nome do Plano</label>
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="number" min="1" class="form-control form-input form-control-placeholder" asp-for="MaximoUsuarios" id="MaximoUsuarios" placeholder="Máximo de Usuários">
+                            <label for="MaximoUsuarios">Máximo de Usuários</label>
+                            <span class="text-muted" style="font-size: small;">Deixe em branco para ilimitado</span>
+                            <span asp-validation-for="MaximoUsuarios" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <input type="number" min="1" class="form-control form-input form-control-placeholder" asp-for="MaximoPAsPorUsuario" id="MaximoPAsPorUsuario" placeholder="Máximo de PA Vinculado">
+                            <label for="MaximoPAsPorUsuario">Máximo de PA Vinculado</label>
+                            <span class="text-muted" style="font-size: small;">Deixe em branco para ilimitado</span>
+                            <span asp-validation-for="MaximoPAsPorUsuario" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="alert alert-warning" role="alert" style="border-radius: 12px; font-size: 0.9rem;">
+                    Atenção: após salvar, o plano <strong>não poderá ser alterado nem excluído</strong>. Confira os valores antes de confirmar.
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary rounded-pill">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>

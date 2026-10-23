@@ -88,6 +88,19 @@
                             <label class="form-check-label" for="Ativo">Ativo?</label>
                         </div>
                     </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        @{ var planoTravado = Model?.Corretora?.PlanoId.HasValue == true; }
+                        <div class="form-floating">
+                            <select class="form-select form-input form-control-placeholder" asp-for="Corretora.PlanoId" asp-items="ViewBag.Planos" id="PlanoId" disabled="@planoTravado">
+                                <option value="">Sem plano (sem limite)</option>
+                            </select>
+                            <label for="PlanoId">Plano (limite de usuários/PA)</label>
+                        </div>
+                        @if (planoTravado)
+                        {
+                            <span class="text-muted" style="font-size: small;">Plano já configurado — somente visualização (não pode ser alterado).</span>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

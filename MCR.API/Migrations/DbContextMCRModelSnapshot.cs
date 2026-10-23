@@ -347,11 +347,16 @@ namespace MCR.API.Migrations
                     b.Property<string>("PlanoContratado")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("PlanoId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("RazaoSocial")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PlanoId");
 
                     b.ToTable("Corretoras", (string)null);
                 });
@@ -1885,6 +1890,100 @@ namespace MCR.API.Migrations
                     b.ToTable("ParametrizacaoSeguradora", (string)null);
                 });
 
+            modelBuilder.Entity("MCR.API.Entities.PlanoEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("MaximoPAsPorUsuario")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MaximoUsuarios")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Nome")
+                        .IsUnique();
+
+                    b.ToTable("Planos", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111101"),
+                            Ativo = true,
+                            Excluido = false,
+                            MaximoPAsPorUsuario = 2,
+                            MaximoUsuarios = 10,
+                            Nome = "Start"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111102"),
+                            Ativo = true,
+                            Excluido = false,
+                            MaximoPAsPorUsuario = 3,
+                            MaximoUsuarios = 15,
+                            Nome = "Growth"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111103"),
+                            Ativo = true,
+                            Excluido = false,
+                            MaximoPAsPorUsuario = 4,
+                            MaximoUsuarios = 20,
+                            Nome = "Professional"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111104"),
+                            Ativo = true,
+                            Excluido = false,
+                            MaximoPAsPorUsuario = 6,
+                            MaximoUsuarios = 30,
+                            Nome = "Business"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111105"),
+                            Ativo = true,
+                            Excluido = false,
+                            MaximoPAsPorUsuario = 8,
+                            MaximoUsuarios = 40,
+                            Nome = "Advanced"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111106"),
+                            Ativo = true,
+                            Excluido = false,
+                            MaximoPAsPorUsuario = 10,
+                            MaximoUsuarios = 50,
+                            Nome = "Enterprise"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111107"),
+                            Ativo = true,
+                            Excluido = false,
+                            Nome = "Enterprise plus"
+                        });
+                });
+
             modelBuilder.Entity("MCR.API.Entities.PontoAtendimentoEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1963,6 +2062,9 @@ namespace MCR.API.Migrations
                     b.Property<string>("Telefone")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("UsuarioCriadorId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -4388,6 +4490,16 @@ namespace MCR.API.Migrations
                         .HasForeignKey("CorretoraId");
 
                     b.Navigation("Corretora");
+                });
+
+            modelBuilder.Entity("MCR.API.Entities.CorretoraEntity", b =>
+                {
+                    b.HasOne("MCR.API.Entities.PlanoEntity", "Plano")
+                        .WithMany()
+                        .HasForeignKey("PlanoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Plano");
                 });
 
             modelBuilder.Entity("MCR.API.Entities.CotacoesAgricolaClassificacaoSoloEntity", b =>

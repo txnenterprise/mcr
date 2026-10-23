@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MCR.API.Entities;
 using MCR.API.Repository;
@@ -8,10 +9,17 @@ namespace MCR.API.Services.Implementations
     public class PontoAtendimentoService : IPontoAtendimentoService
     {
         private readonly DbContextMCR _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IValidacaoLimiteService _validacaoLimiteService;
 
-        public PontoAtendimentoService(DbContextMCR context)
+        public PontoAtendimentoService(
+            DbContextMCR context,
+            IHttpContextAccessor httpContextAccessor,
+            IValidacaoLimiteService validacaoLimiteService)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+            _validacaoLimiteService = validacaoLimiteService;
         }
 
         public async Task<PontoAtendimentoEntity> ObterPorIdAsync(Guid id)
@@ -74,6 +82,23 @@ namespace MCR.API.Services.Implementations
 
         public async Task<PontoAtendimentoEntity> CadastrarAsync(PontoAtendimentoEntity entity)
         {
+            var userIdClaim = _httpContextAccessor.HttpContext?.User?
+                .FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            Guid? usuarioCriadorId = Guid.TryParse(userIdClaim, out var uid) ? uid : null;
+            entity.UsuarioCriadorId = usuarioCriadorId;
+
+            if (usuarioCriadorId.HasValue)
+            {
+                var (limiteOk, limiteMsg) = await _validacaoLimiteService
+                    .ValidarLimitePAsPorUsuarioAsync(usuarioCriadorId.Value, entity.CanalId);
+                if (!limiteOk)
+                {
+                    entity.Sucesso = false;
+                    entity.Mensagem = limiteMsg ?? "Limite de pontos de atendimento do plano atingido.";
+                    return entity;
+                }
+            }
+
             entity.Ativo = true;
             entity.Excluido = false;
 
@@ -86,6 +111,11 @@ namespace MCR.API.Services.Implementations
 
         public async Task<PontoAtendimentoEntity> AtualizarAsync(PontoAtendimentoEntity entity)
         {
+            // Preserva o criador: não vem do form e o Update marcaria como null
+            var existente = await _context.PontosAtendimento.FindAsync(entity.Id);
+            if (existente != null)
+                entity.UsuarioCriadorId = existente.UsuarioCriadorId;
+
             _context.PontosAtendimento.Update(entity);
             var retorno = await _context.SaveChangesAsync();
             entity.Sucesso = retorno > 0;

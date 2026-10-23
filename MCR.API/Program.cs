@@ -167,6 +167,8 @@ builder.Services.AddScoped<ISeguradoraService, SeguradoraService>();
 builder.Services.AddScoped<ISubvencaoFederalService, SubvencaoFederalService>();
 builder.Services.AddScoped<ISubvencaoEstadualService, SubvencaoEstadualService>();
 builder.Services.AddScoped<ICorretoraService, CorretoraService>();
+builder.Services.AddScoped<IPlanoService, PlanoService>();
+builder.Services.AddScoped<IValidacaoLimiteService, ValidacaoLimiteService>();
 builder.Services.AddScoped<ICanalService, CanalService>();
 builder.Services.AddScoped<IPontoAtendimentoService, PontoAtendimentoService>();
 builder.Services.AddScoped<IBeneficiarioService, BeneficiarioService>();

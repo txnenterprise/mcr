@@ -87,6 +87,14 @@
                             <label class="form-check-label" for="Ativo">Ativo?</label>
                         </div>
                     </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-floating">
+                            <select class="form-select form-input form-control-placeholder" asp-for="Corretora.PlanoId" asp-items="ViewBag.Planos" id="PlanoId">
+                                <option value="">Sem plano (sem limite)</option>
+                            </select>
+                            <label for="PlanoId">Plano (limite de usuários/PA)</label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

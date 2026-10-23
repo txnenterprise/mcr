@@ -22,6 +22,10 @@ namespace MCR.API.Entities
         public bool Ativa { get; set; }
         public bool EmAtraso { get; set; }
         public string PlanoContratado { get; set; } = string.Empty;
+
+        /// <summary>Plano que define os limites de usuários/PA desta corretora (null = sem plano/sem limite).</summary>
+        public Guid? PlanoId { get; set; }
+        public virtual PlanoEntity? Plano { get; set; }
         public string ImagemLogo { get; set; } = string.Empty;
         public int DiaVencimento { get; set; }
         public string EmailSeguro { get; set; } = string.Empty;

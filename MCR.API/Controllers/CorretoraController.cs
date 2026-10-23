@@ -9,10 +9,19 @@ namespace MCR.API.Controllers
     public class CorretoraController : Controller
     {
         private readonly ICorretoraService _service;
+        private readonly IPlanoService _planoService;
 
-        public CorretoraController(ICorretoraService service)
+        public CorretoraController(ICorretoraService service, IPlanoService planoService)
         {
             _service = service;
+            _planoService = planoService;
+        }
+
+        private async Task CarregarPlanos()
+        {
+            var planos = (await _planoService.ObterTodosAsync()).ToList();
+            ViewBag.Planos = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                planos.Select(p => new { p.Id, p.Nome }), "Id", "Nome");
         }
 
         [HttpGet]
@@ -39,7 +48,11 @@ namespace MCR.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Cadastrar() => View(new CorretoraModel());
+        public async Task<IActionResult> Cadastrar()
+        {
+            await CarregarPlanos();
+            return View(new CorretoraModel());
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -61,6 +74,7 @@ namespace MCR.API.Controllers
             if (corretora == null)
                 return RedirectToAction(nameof(Index));
 
+            await CarregarPlanos();
             return View(new CorretoraModel { Corretora = corretora });
         }
 
