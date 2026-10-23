@@ -76,8 +76,16 @@ namespace MCR.API.Controllers
                 if (!ModelState.IsValid)
                     return Json(new { success = false, message = "Verifique os campos obrigatórios." });
 
+                // '*' proibido: toda linha da estrutura deve ter Corretora, Canal e PA
+                var linhas = model.EstruturaNegocio ?? new List<MCR.API.Entities.UsuarioEstruturaNegocioDTO>();
+                foreach (var linha in linhas)
+                {
+                    if (!linha.CorretoraId.HasValue || !linha.CanalId.HasValue || !linha.PontoAtendimentoId.HasValue)
+                        return Json(new { success = false, message = "Toda linha da Estrutura de Negócios deve ter Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido." });
+                }
+
                 // Regra: cadastro de usuário exige corretora com plano configurado
-                var corretorasAlvo = (model.EstruturaNegocio ?? new List<MCR.API.Entities.UsuarioEstruturaNegocioDTO>())
+                var corretorasAlvo = linhas
                     .Where(e => e.CorretoraId.HasValue)
                     .Select(e => e.CorretoraId!.Value)
                     .Distinct()
@@ -93,6 +101,15 @@ namespace MCR.API.Controllers
                     var (limiteOk, limiteMsg) = await _validacaoLimiteService.ValidarLimiteUsuariosAsync(corretoraId);
                     if (!limiteOk)
                         return Json(new { success = false, message = limiteMsg ?? "Limite de usuários do plano atingido." });
+
+                    // Máx. de PA vinculados do plano (por corretora)
+                    var pasDaCorretora = linhas
+                        .Where(l => l.CorretoraId == corretoraId && l.PontoAtendimentoId.HasValue)
+                        .Select(l => l.PontoAtendimentoId!.Value)
+                        .ToList();
+                    var (paOk, paMsg) = await _validacaoLimiteService.ValidarLimitePAsVinculadosAsync(corretoraId, pasDaCorretora);
+                    if (!paOk)
+                        return Json(new { success = false, message = paMsg ?? "Limite de pontos de atendimento do plano atingido." });
                 }
 
                 var entity = new MCR.API.Entities.UsuarioEntity

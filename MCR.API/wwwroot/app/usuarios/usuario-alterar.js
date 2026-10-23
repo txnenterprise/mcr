@@ -12,24 +12,7 @@ var userJs = {
         });
 
         $('#DefaultCanalId').select2().off('select2:select').on('select2:select', function (e) {
-            const canalId = $(this).val();
-            $("#DefaultPontoAtendimentoId").empty();
-
-            if (!canalId) {
-                $("#DefaultPontoAtendimentoId").append('<option value="">Selecione...</option>');
-                return;
-            }
-
-            gl.Get("ListarPontosAtendimentoPorCanal", "PontoAtendimento", { canalId: canalId }, false, function (r) {
-                if (r && r.length > 0) {
-                    $("#DefaultPontoAtendimentoId").append('<option value="">Selecione...</option>');
-                    r.forEach(item => {
-                        $("#DefaultPontoAtendimentoId").append(`<option value="${item.id}">${item.text}</option>`);
-                    });
-                } else {
-                    $("#DefaultPontoAtendimentoId").append('<option value="">Nenhum ponto de atendimento encontrado</option>');
-                }
-            });
+            userJs.loadPAs($(this).val());
         });
 
         $("#btnAddEN").off("click").on("click", function () {
@@ -38,15 +21,16 @@ var userJs = {
             var canalId = $("#DefaultCanalId").val();
             var pontoAtendimentoId = $("#DefaultPontoAtendimentoId").val();
 
+            // Regra: vínculo com '*' não é mais permitido — Corretora, Canal e PA são obrigatórios
+            if (!corretoraId || !canalId || !pontoAtendimentoId) {
+                notify.error("Atenção", "Selecione Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido.");
+                return;
+            }
+
             // Busca os textos selecionados
             var corretoraText = $("#DefaultCorretoraId option:selected").text();
             var canalText = $("#DefaultCanalId option:selected").text();
             var pontoAtendimentoText = $("#DefaultPontoAtendimentoId option:selected").text();
-
-            // Verifica se os valores estão vazios para aplicar o '*'
-            if (!corretoraId) corretoraText = "*";
-            if (!canalId) canalText = "*";
-            if (!pontoAtendimentoId) pontoAtendimentoText = "*";
 
             // Adiciona o novo item à lista
             userJs.enList.push({
@@ -67,11 +51,12 @@ var userJs = {
                 $("#DefaultCanalId").val(singleOption).trigger('change');
             }
 
-            if ($("#DefaultPontoAtendimentoId option").length > 2) {
-                $("#DefaultPontoAtendimentoId").val("").trigger('change');
-            } else if ($("#DefaultPontoAtendimentoId option").length == 2) {
-                var singleOption = $("#DefaultPontoAtendimentoId option:not([value=''])").val();
-                $("#DefaultPontoAtendimentoId").val(singleOption).trigger('change');
+            // Recarrega os PAs do canal resultante (trigger('change') não dispara select2:select)
+            var canalAtual = $("#DefaultCanalId").val();
+            if (canalAtual) {
+                userJs.loadPAs(canalAtual);
+            } else {
+                $("#DefaultPontoAtendimentoId").empty().append('<option value="">Selecione...</option>');
             }
 
             // Atualiza a tabela
@@ -88,6 +73,22 @@ var userJs = {
         // Inicializa o evento de alteração de senha
         userJs.initChangePassword();
     },
+    // Carrega os PAs do canal (trigger('change') programático não dispara select2:select)
+    loadPAs: function (canalId) {
+        var $pa = $("#DefaultPontoAtendimentoId");
+        $pa.empty().append('<option value="">Selecione...</option>');
+        if (!canalId) return;
+        gl.Get("ListarPontosAtendimentoPorCanal", "PontoAtendimento", { canalId: canalId }, false, function (r) {
+            $pa.empty().append('<option value="">Selecione...</option>');
+            if (r && r.length > 0) {
+                r.forEach(function (item) {
+                    $pa.append(`<option value="${item.id}">${item.text}</option>`);
+                });
+            } else {
+                $pa.append('<option value="">Nenhum ponto de atendimento encontrado</option>');
+            }
+        });
+    },
     OnSuccessCallback: function (r) {
         if (r.success == true) {
             notify.success("Usuário", r.message, function () {
@@ -103,9 +104,9 @@ var userJs = {
 
         // Recriar a tabela com base na lista atual
         $.each(userJs.enList, function (index, item) {
-            var corretoraText = item.corretoraText || "*";
-            var canalText = item.canalText || "*";
-            var pontoAtendimentoText = item.pontoAtendimentoText || "*";
+            var corretoraText = item.corretoraText || "";
+            var canalText = item.canalText || "";
+            var pontoAtendimentoText = item.pontoAtendimentoText || "";
 
             var template = `
                 <tr data-index="${index}">

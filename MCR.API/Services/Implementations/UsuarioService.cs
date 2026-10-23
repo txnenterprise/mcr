@@ -373,6 +373,13 @@ namespace MCR.API.Services.Implementations
                     // Só altera EstruturaNegocio se veio preenchido no formulário
                     if (model.EstruturaNegocio != null)
                     {
+                        // '*' proibido: toda linha da estrutura deve ter Corretora, Canal e PA
+                        foreach (var linha in model.EstruturaNegocio)
+                        {
+                            if (!linha.CorretoraId.HasValue || !linha.CanalId.HasValue || !linha.PontoAtendimentoId.HasValue)
+                                return (false, "Toda linha da Estrutura de Negócios deve ter Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido.");
+                        }
+
                         // Valida limite de usuários do plano por corretora-alvo da nova estrutura
                         var corretorasAlvo = model.EstruturaNegocio
                             .Where(item => item.CorretoraId.HasValue)
@@ -385,6 +392,15 @@ namespace MCR.API.Services.Implementations
                             var (limiteOk, limiteMsg) = await _validacaoLimiteService.ValidarLimiteUsuariosAsync(corretoraId, userId);
                             if (!limiteOk)
                                 return (false, limiteMsg ?? "Limite de usuários do plano atingido.");
+
+                            // Máx. de PA vinculados do plano (por corretora)
+                            var pasDaCorretora = model.EstruturaNegocio
+                                .Where(l => l.CorretoraId == corretoraId && l.PontoAtendimentoId.HasValue)
+                                .Select(l => l.PontoAtendimentoId!.Value)
+                                .ToList();
+                            var (paOk, paMsg) = await _validacaoLimiteService.ValidarLimitePAsVinculadosAsync(corretoraId, pasDaCorretora);
+                            if (!paOk)
+                                return (false, paMsg ?? "Limite de pontos de atendimento do plano atingido.");
                         }
 
                         // Remove estruturas antigas

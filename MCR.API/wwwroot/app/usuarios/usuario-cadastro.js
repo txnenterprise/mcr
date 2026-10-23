@@ -30,6 +30,8 @@ var userJs = {
                     });
                     if (r.length === 1) {
                         $("#DefaultCanalId").val(r[0].id).trigger('change');
+                        // trigger('change') NÃO dispara select2:select — carrega os PAs explicitamente
+                        userJs.loadPAs(r[0].id, true);
                     }
                 } else {
                     $("#DefaultCanalId").append('<option value="">Nenhum canal encontrado</option>');
@@ -38,27 +40,7 @@ var userJs = {
         });
 
         $('#DefaultCanalId').select2().off('select2:select').on('select2:select', function (e) {
-            const canalId = $(this).val();
-            $("#DefaultPontoAtendimentoId").empty();
-
-            if (!canalId) {
-                $("#DefaultPontoAtendimentoId").append('<option value="">Selecione...</option>');
-                return;
-            }
-
-            gl.Get("ListarPontosAtendimentoPorCanal", "PontoAtendimento", { canalId: canalId }, false, function (r) {
-                if (r && r.length > 0) {
-                    $("#DefaultPontoAtendimentoId").append('<option value="">Selecione...</option>');
-                    r.forEach(item => {
-                        $("#DefaultPontoAtendimentoId").append(`<option value="${item.id}">${item.text}</option>`);
-                    });
-                    if (r.length === 1) {
-                        $("#DefaultPontoAtendimentoId").val(r[0].id).trigger('change');
-                    }
-                } else {
-                    $("#DefaultPontoAtendimentoId").append('<option value="">Nenhum ponto de atendimento encontrado</option>');
-                }
-            });
+            userJs.loadPAs($(this).val(), false);
         });
 
         $("#btnAddEN").off("click").on("click", function () {
@@ -67,15 +49,16 @@ var userJs = {
             var canalId = $("#DefaultCanalId").val();
             var pontoAtendimentoId = $("#DefaultPontoAtendimentoId").val();
 
+            // Regra: vínculo com '*' não é mais permitido — Corretora, Canal e PA são obrigatórios
+            if (!corretoraId || !canalId || !pontoAtendimentoId) {
+                notify.error("Atenção", "Selecione Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido.");
+                return;
+            }
+
             // Busca os textos selecionados
             var corretoraText = $("#DefaultCorretoraId option:selected").text();
             var canalText = $("#DefaultCanalId option:selected").text();
             var pontoAtendimentoText = $("#DefaultPontoAtendimentoId option:selected").text();
-
-            // Verifica se os valores estão vazios para aplicar o '*'
-            if (!corretoraId) corretoraText = "*";
-            if (!canalId) canalText = "*";
-            if (!pontoAtendimentoId) pontoAtendimentoText = "*";
 
             // Adiciona o novo item à lista
             userJs.enList.push({
@@ -99,7 +82,7 @@ var userJs = {
                 $("#DefaultCorretoraId").val(singleOption).trigger('change');
             }
 
-            // Verifica o select de Canal
+            // Verifica o select de Canal (e recarrega os PAs do canal resultante)
             if ($("#DefaultCanalId option").length > 2) {
                 $("#DefaultCanalId").val("").trigger('change');
             } else if ($("#DefaultCanalId option").length == 2) {
@@ -107,12 +90,11 @@ var userJs = {
                 $("#DefaultCanalId").val(singleOption).trigger('change');
             }
 
-            // Verifica o select de Ponto de Atendimento
-            if ($("#DefaultPontoAtendimentoId option").length > 2) {
-                $("#DefaultPontoAtendimentoId").val("").trigger('change');
-            } else if ($("#DefaultPontoAtendimentoId option").length == 2) {
-                var singleOption = $("#DefaultPontoAtendimentoId option:not([value=''])").val();
-                $("#DefaultPontoAtendimentoId").val(singleOption).trigger('change');
+            var canalAtual = $("#DefaultCanalId").val();
+            if (canalAtual) {
+                userJs.loadPAs(canalAtual, true);
+            } else {
+                $("#DefaultPontoAtendimentoId").empty().append('<option value="">Selecione...</option>');
             }
 
             // Atualiza a tabela
@@ -121,6 +103,26 @@ var userJs = {
 
         // Inicializa a tabela
         userJs.reloadENTable();
+    },
+    // Carrega os PAs do canal; autoSelectSingle=true selecione o único PA automaticamente.
+    // Necessário porque .trigger('change') não dispara select2:select.
+    loadPAs: function (canalId, autoSelectSingle) {
+        var $pa = $("#DefaultPontoAtendimentoId");
+        $pa.empty().append('<option value="">Selecione...</option>');
+        if (!canalId) return;
+        gl.Get("ListarPontosAtendimentoPorCanal", "PontoAtendimento", { canalId: canalId }, false, function (r) {
+            $pa.empty().append('<option value="">Selecione...</option>');
+            if (r && r.length > 0) {
+                r.forEach(function (item) {
+                    $pa.append(`<option value="${item.id}">${item.text}</option>`);
+                });
+                if (autoSelectSingle && r.length === 1) {
+                    $pa.val(r[0].id).trigger('change');
+                }
+            } else {
+                $pa.append('<option value="">Nenhum ponto de atendimento encontrado</option>');
+            }
+        });
     },
     OnSuccessCallback: function (r) {
         if (r.success == true) {
@@ -137,9 +139,9 @@ var userJs = {
 
         // Recriar a tabela com base na lista atual
         $.each(userJs.enList, function (index, item) {
-            var corretoraText = item.corretoraText || "*";
-            var canalText = item.canalText || "*";
-            var pontoAtendimentoText = item.pontoAtendimentoText || "*";
+            var corretoraText = item.corretoraText || "";
+            var canalText = item.canalText || "";
+            var pontoAtendimentoText = item.pontoAtendimentoText || "";
 
             var template = `
                 <tr data-index="${index}">

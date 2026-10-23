@@ -71,5 +71,28 @@ namespace MCR.API.Services.Implementations
 
             return (true, null);
         }
+
+        public async Task<(bool ok, string? mensagem)> ValidarLimitePAsVinculadosAsync(Guid corretoraId, ICollection<Guid> pontoAtendimentoIds)
+        {
+            var distinctPAs = pontoAtendimentoIds?.Distinct().ToList() ?? new List<Guid>();
+            if (distinctPAs.Count == 0)
+                return (true, null);
+
+            var corretora = await _context.CorretoraEntity
+                .Include(c => c.Plano)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == corretoraId);
+
+            var plano = corretora?.Plano;
+            if (plano == null || !plano.MaximoPAsPorUsuario.HasValue)
+                return (true, null);
+
+            var max = plano.MaximoPAsPorUsuario.Value;
+
+            if (distinctPAs.Count > max)
+                return (false, $"A corretora \"{corretora!.NomeFantasia}\" (plano \"{plano.Nome}\") permite no máximo {max} ponto(s) de atendimento por usuário. Selecionados: {distinctPAs.Count}.");
+
+            return (true, null);
+        }
     }
 }
