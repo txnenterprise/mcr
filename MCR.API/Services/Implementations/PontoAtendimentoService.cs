@@ -80,23 +80,54 @@ namespace MCR.API.Services.Implementations
             return pontos;
         }
 
+        /// <summary>
+        /// Resolve o usuário logado com cascata de claims. Fail-closed: null = criação bloqueada.
+        /// </summary>
+        private async Task<Guid?> ObterUsuarioLogadoIdAsync()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user?.Identity?.IsAuthenticated != true)
+                return null;
+
+            foreach (var tipo in new[] { System.Security.Claims.ClaimTypes.NameIdentifier, "nameid", "sub" })
+            {
+                var valor = user.Claims.FirstOrDefault(c => c.Type == tipo)?.Value;
+                if (Guid.TryParse(valor, out var id) && id != Guid.Empty)
+                    return id;
+            }
+
+            var nome = user.Identity!.Name;
+            if (!string.IsNullOrEmpty(nome))
+            {
+                var normalizado = nome.ToUpperInvariant();
+                var entidade = await _context.Usuarios.AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizado);
+                if (entidade != null)
+                    return entidade.Id;
+            }
+
+            return null;
+        }
+
         public async Task<PontoAtendimentoEntity> CadastrarAsync(PontoAtendimentoEntity entity)
         {
-            var userIdClaim = _httpContextAccessor.HttpContext?.User?
-                .FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            Guid? usuarioCriadorId = Guid.TryParse(userIdClaim, out var uid) ? uid : null;
+            var usuarioCriadorId = await ObterUsuarioLogadoIdAsync();
+            if (!usuarioCriadorId.HasValue)
+            {
+                entity.Sucesso = false;
+                entity.Mensagem = "Não foi possível identificar o usuário logado — criação de PA bloqueada. Faça login novamente.";
+                return entity;
+            }
+
             entity.UsuarioCriadorId = usuarioCriadorId;
 
-            if (usuarioCriadorId.HasValue)
+            var (limiteOk, limiteMsg) = await _validacaoLimiteService
+                .ValidarLimitePAsPorUsuarioAsync(usuarioCriadorId.Value, entity.CanalId);
+            if (!limiteOk)
             {
-                var (limiteOk, limiteMsg) = await _validacaoLimiteService
-                    .ValidarLimitePAsPorUsuarioAsync(usuarioCriadorId.Value, entity.CanalId);
-                if (!limiteOk)
-                {
-                    entity.Sucesso = false;
-                    entity.Mensagem = limiteMsg ?? "Limite de pontos de atendimento do plano atingido.";
-                    return entity;
-                }
+                entity.Sucesso = false;
+                entity.Mensagem = limiteMsg ?? "Limite de pontos de atendimento do plano atingido.";
+                return entity;
             }
 
             entity.Ativo = true;

@@ -10,7 +10,7 @@ namespace MCR.API.Services.Implementations
             string pesquisaNomeUsuario, string pesquisaNomeLiderado, string pesquisaNomePontoAtendimento,
             string pesquisaNomeCanal, int page, int pageSize);
         Task<UsuarioPontoAtendimentoEntity> ObterPorIdAsync(Guid id);
-        Task<List<UsuarioPontoAtendimentoEntity>> AdicionarUsuarioPontoAtendimentoAsync(List<UsuarioPontoAtendimentoEntity> vinculos);
+        Task<(bool Sucesso, string? Mensagem, List<UsuarioPontoAtendimentoEntity> Lista)> AdicionarUsuarioPontoAtendimentoAsync(List<UsuarioPontoAtendimentoEntity> vinculos);
         Task<UsuarioPontoAtendimentoEntity> RemoverUsuarioPontoAtendimentoAsync(Guid id);
     }
 
@@ -61,8 +61,74 @@ namespace MCR.API.Services.Implementations
                 .FirstOrDefaultAsync(u => u.Id == id && !u.Excluido);
         }
 
-        public async Task<List<UsuarioPontoAtendimentoEntity>> AdicionarUsuarioPontoAtendimentoAsync(List<UsuarioPontoAtendimentoEntity> vinculos)
+        /// <summary>
+        /// Adiciona vínculos usuário↔PA validando o MaximoPAsPorUsuario do plano da corretora do PA.
+        /// Usuário-alvo = Liderado; conta vínculos distintos existentes (como Liderado OU Usuario) + novos do lote.
+        /// Sem plano ou limite null = sem limite (regra vigente).
+        /// </summary>
+        public async Task<(bool Sucesso, string? Mensagem, List<UsuarioPontoAtendimentoEntity> Lista)> AdicionarUsuarioPontoAtendimentoAsync(List<UsuarioPontoAtendimentoEntity> vinculos)
         {
+            var lista = new List<UsuarioPontoAtendimentoEntity>();
+            if (vinculos == null || vinculos.Count == 0)
+                return (true, null, lista);
+
+            // Carrega a cadeia PA → canal → corretora → plano do lote
+            var paIds = vinculos.Select(v => v.PontoAtendimentoId).Distinct().ToList();
+            var paCanal = await _context.PontosAtendimento.AsNoTracking()
+                .Where(p => paIds.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id, p => p.CanalId);
+
+            var canalIds = paCanal.Values.Distinct().ToList();
+            var canalCorretora = await _context.Canais.AsNoTracking()
+                .Where(c => canalIds.Contains(c.Id))
+                .ToDictionaryAsync(c => c.Id, c => c.CorretoraId);
+
+            var corretoraIds = canalCorretora.Values.Where(id => id.HasValue).Select(id => id!.Value).Distinct().ToList();
+            var planos = await _context.CorretoraEntity.AsNoTracking()
+                .Include(c => c.Plano)
+                .Where(c => corretoraIds.Contains(c.Id))
+                .ToDictionaryAsync(c => c.Id, c => c.Plano);
+
+            // Validação por (usuário-alvo, corretora)
+            var grupos = vinculos
+                .Where(v => paCanal.ContainsKey(v.PontoAtendimentoId)
+                            && canalCorretora.ContainsKey(paCanal[v.PontoAtendimentoId])
+                            && canalCorretora[paCanal[v.PontoAtendimentoId]].HasValue)
+                .GroupBy(v => new
+                {
+                    Alvo = v.LideradoId,
+                    CorretoraId = canalCorretora[paCanal[v.PontoAtendimentoId]]!.Value
+                });
+
+            foreach (var grupo in grupos)
+            {
+                var plano = planos.TryGetValue(grupo.Key.CorretoraId, out var pl) ? pl : null;
+                if (plano == null || !plano.MaximoPAsPorUsuario.HasValue)
+                    continue;
+
+                var max = plano.MaximoPAsPorUsuario.Value;
+                var alvo = grupo.Key.Alvo;
+                var novos = grupo.Select(v => v.PontoAtendimentoId).Distinct().ToList();
+
+                var existentes = await _context.UsuariosPontoAtendimento.AsNoTracking()
+                    .Where(u => !u.Excluido && (u.LideradoId == alvo || u.UsuarioId == alvo))
+                    .Select(u => u.PontoAtendimentoId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var total = existentes.Union(novos).Count();
+                if (total > max)
+                {
+                    var nomeCorretora = await _context.CorretoraEntity.AsNoTracking()
+                        .Where(c => c.Id == grupo.Key.CorretoraId)
+                        .Select(c => c.NomeFantasia)
+                        .FirstOrDefaultAsync() ?? "da corretora";
+                    return (false,
+                        $"A corretora \"{nomeCorretora}\" (plano \"{plano.Nome}\") permite no máximo {max} ponto(s) de atendimento por usuário. Vinculados: {total}.",
+                        new List<UsuarioPontoAtendimentoEntity>());
+                }
+            }
+
             foreach (var v in vinculos)
             {
                 v.Id = Guid.NewGuid();
@@ -70,7 +136,7 @@ namespace MCR.API.Services.Implementations
                 _context.UsuariosPontoAtendimento.Add(v);
             }
             await _context.SaveChangesAsync();
-            return vinculos;
+            return (true, null, vinculos);
         }
 
         public async Task<UsuarioPontoAtendimentoEntity> RemoverUsuarioPontoAtendimentoAsync(Guid id)

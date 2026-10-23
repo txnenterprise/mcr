@@ -96,5 +96,6 @@ namespace MCR.API.Services.Interfaces
         Task<bool> DesbloquearAsync(string userId);
         Task<bool> ChangePasswordAsync(string userId, string currentPassword, string newPassword);
         Task<(bool Sucesso, string Mensagem)> AlterarUsuarioAsync(MCR.API.Usuario.Domain.DTO.UsuarioAlterarDTO model, Guid usuarioCriadorId);
+        Task<(bool Sucesso, string Mensagem)> SalvarEstruturaInicialAsync(Guid usuarioId, IList<MCR.API.Entities.UsuarioEstruturaNegocioDTO> linhas);
     }
 }

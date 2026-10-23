@@ -149,6 +149,49 @@ namespace MCR.API.Services.Implementations
             return ValidateUser(getUser, "Atualizar", result);
         }
 
+        /// <summary>
+        /// Persiste a EstruturaNegocio submetida no cadastro de usuário.
+        /// Corrige o drift em que /Usuario/Registrar só criava o usuário Identity e nunca salvava a corretora.
+        /// </summary>
+        public async Task<(bool Sucesso, string Mensagem)> SalvarEstruturaInicialAsync(Guid usuarioId, IList<MCR.API.Entities.UsuarioEstruturaNegocioDTO> linhas)
+        {
+            if (usuarioId == Guid.Empty)
+                return (false, "Usuário não identificado.");
+
+            if (linhas == null || linhas.Count == 0)
+                return (false, "Estrutura de negócios vazia — informe ao menos um vínculo de Corretora, Canal e Ponto de Atendimento.");
+
+            foreach (var linha in linhas)
+            {
+                if (!linha.CorretoraId.HasValue || !linha.CanalId.HasValue || !linha.PontoAtendimentoId.HasValue)
+                    return (false, "Toda linha da Estrutura de Negócios deve ter Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido.");
+            }
+
+            var criadorClaim = _httpContextAccessor.HttpContext?.User?
+                .FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var criadorId = Guid.TryParse(criadorClaim, out var cid) ? cid : usuarioId;
+
+            var entidades = linhas.Select(l => new UsuarioEstruturaNegocioEntity
+            {
+                Id = Guid.NewGuid(),
+                UsuarioId = usuarioId,
+                CorretoraId = l.CorretoraId!.Value,
+                CanalId = l.CanalId!.Value,
+                PontoAtendimentoId = l.PontoAtendimentoId!.Value,
+                UsuarioCriadorId = criadorId,
+                Ativo = true,
+                Excluido = false
+            }).ToList();
+
+            _context.UsuarioEstruturaNegocio.AddRange(entidades);
+            var retorno = await _context.SaveChangesAsync();
+
+            if (retorno > 0)
+                return (true, string.Empty);
+
+            return (false, "Não foi possível salvar a estrutura de negócios do usuário.");
+        }
+
         public async Task<bool> BloquearAsync(string userId)
         {
             _logger.LogInformation("Tentando bloquear usuário {UserId}", userId);

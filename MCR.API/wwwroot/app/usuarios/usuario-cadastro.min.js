@@ -55,6 +55,26 @@ var userJs = {
                 return;
             }
 
+            // Valida limite de PA do plano já no botão Adicionar (por corretora)
+            var limite = (window.limitesPlanos || {})[corretoraId];
+            if (limite && limite.maxPa !== null && limite.maxPa !== undefined) {
+                var distintos = {};
+                userJs.enList.forEach(function (it) {
+                    if (it.corretoraId === corretoraId && it.pontoAtendimentoId)
+                        distintos[it.pontoAtendimentoId] = true;
+                });
+                var jaVinculado = !!distintos[pontoAtendimentoId];
+                var total = Object.keys(distintos).length + (jaVinculado ? 0 : 1);
+                if (jaVinculado) {
+                    notify.error("Atenção", "Este ponto de atendimento já foi adicionado para a corretora selecionada.");
+                    return;
+                }
+                if (total > limite.maxPa) {
+                    notify.error("Atenção", "O plano \"" + limite.plano + "\" permite no máximo " + limite.maxPa + " ponto(s) de atendimento por usuário nesta corretora.");
+                    return;
+                }
+            }
+
             // Busca os textos selecionados
             var corretoraText = $("#DefaultCorretoraId option:selected").text();
             var canalText = $("#DefaultCanalId option:selected").text();

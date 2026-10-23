@@ -169,6 +169,7 @@ builder.Services.AddScoped<ISubvencaoEstadualService, SubvencaoEstadualService>(
 builder.Services.AddScoped<ICorretoraService, CorretoraService>();
 builder.Services.AddScoped<IPlanoService, PlanoService>();
 builder.Services.AddScoped<IValidacaoLimiteService, ValidacaoLimiteService>();
+builder.Services.AddScoped<IUsuarioPontoAtendimentoService, UsuarioPontoAtendimentoService>();
 builder.Services.AddScoped<ICanalService, CanalService>();
 builder.Services.AddScoped<IPontoAtendimentoService, PontoAtendimentoService>();
 builder.Services.AddScoped<IBeneficiarioService, BeneficiarioService>();

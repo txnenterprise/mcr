@@ -84,17 +84,25 @@ namespace MCR.API.Controllers
                         return Json(new { success = false, message = "Toda linha da Estrutura de Negócios deve ter Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido." });
                 }
 
+                // Fallback: selects habilitados enviam Default* — monta a linha única se nenhuma linha foi adicionada
+                if (!linhas.Any() && model.DefaultCorretoraId.HasValue && model.DefaultCanalId.HasValue && model.DefaultPontoAtendimentoId.HasValue)
+                {
+                    linhas.Add(new MCR.API.Entities.UsuarioEstruturaNegocioDTO
+                    {
+                        CorretoraId = model.DefaultCorretoraId.Value,
+                        CanalId = model.DefaultCanalId.Value,
+                        PontoAtendimentoId = model.DefaultPontoAtendimentoId.Value
+                    });
+                }
+
+                if (!linhas.Any())
+                    return Json(new { success = false, message = "Informe ao menos um vínculo de Corretora, Canal e Ponto de Atendimento — a estrutura de negócios é obrigatória no cadastro." });
+
                 // Regra: cadastro de usuário exige corretora com plano configurado
                 var corretorasAlvo = linhas
-                    .Where(e => e.CorretoraId.HasValue)
                     .Select(e => e.CorretoraId!.Value)
                     .Distinct()
                     .ToList();
-                if (!corretorasAlvo.Any() && model.DefaultCorretoraId.HasValue)
-                    corretorasAlvo.Add(model.DefaultCorretoraId.Value);
-
-                if (!corretorasAlvo.Any())
-                    return Json(new { success = false, message = "Informe a corretora do usuário — ela precisa ter um plano configurado pelo administrador." });
 
                 foreach (var corretoraId in corretorasAlvo)
                 {
@@ -126,7 +134,14 @@ namespace MCR.API.Controllers
                 var cadastro = await _usuarioService.CadastrarAsync(entity, model.Password, model.PerfilAcesso);
 
                 if (cadastro.Success)
+                {
+                    // A corretora/estrutura SEMPRE é salva junto do cadastro (antes só criava o Identity)
+                    var (estOk, estMsg) = await _usuarioService.SalvarEstruturaInicialAsync(entity.Id, linhas);
+                    if (!estOk)
+                        return Json(new { success = false, message = "Usuário criado, mas a estrutura não foi salva: " + estMsg + " Edite o usuário para corrigir." });
+
                     return Json(new { success = true, message = "Usuário cadastrado com sucesso!" });
+                }
 
                 return Json(new { success = false, message = cadastro.Message ?? "Erro ao cadastrar usuário." });
             }
