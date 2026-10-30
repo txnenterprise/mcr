@@ -22,10 +22,10 @@
           data-ajax-callback="clienteJS.onSuccessCallback">
 
         <input type="hidden" name="Cliente.Id" value="@Model.Cliente.Id" />
-        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-            <div class="card-body" style="color: var(--color-primary)">
-                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-                    <div class="card-body" style="color: var(--color-primary)">
+        <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+            <div class="card-body" style="color: var(--color-heading)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+                    <div class="card-body" style="color: var(--color-heading)">
                         <h6>Dados Pessoais</h6>
                         <div class="row">
                             <div class="col-sm-12 col-md-4 col-lg-4">
@@ -84,8 +84,8 @@
                     </div>
                 </div>
                 <br />
-                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-                    <div class="card-body" style="color: var(--color-primary)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+                    <div class="card-body" style="color: var(--color-heading)">
                         <h6>Documentos</h6>
                         <div class="row">
                             <div class="col-sm-12 col-md-4 col-lg-4">
@@ -120,7 +120,7 @@
                                     </div>
                                     @if (!string.IsNullOrEmpty(Model.Cliente.ImagemCPF))
                                     {
-                                        <a href="/Cliente/DownloadDocumento/@Model.Cliente.Id/CPF" title="Download documento do CPF" target="_blank" style="color: var(--color-primary); font-size: 0.8rem;">
+                                        <a href="/Cliente/DownloadDocumento/@Model.Cliente.Id/CPF" title="Download documento do CPF" target="_blank" style="color: var(--color-heading); font-size: 0.8rem;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                                             Download
                                         </a>
@@ -163,7 +163,7 @@
                                     </div>
                                     @if (!string.IsNullOrEmpty(Model.Cliente.ImagemRG))
                                     {
-                                        <a href="/Cliente/DownloadDocumento/@Model.Cliente.Id/RG" title="Download documento do RG" target="_blank" style="color: var(--color-primary); font-size: 0.8rem;">
+                                        <a href="/Cliente/DownloadDocumento/@Model.Cliente.Id/RG" title="Download documento do RG" target="_blank" style="color: var(--color-heading); font-size: 0.8rem;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                                             Download
                                         </a>
@@ -190,8 +190,8 @@
                     </div>
                 </div>
                 <br />
-                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-                    <div class="card-body" style="color: var(--color-primary)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+                    <div class="card-body" style="color: var(--color-heading)">
                         <h6>Contato</h6>
                         <div class="row">
                             <div class="col-sm-12 col-md-3 col-lg-3">
@@ -216,8 +216,8 @@
                     </div>
                 </div>
                 <br />
-                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-                    <div class="card-body" style="color: var(--color-primary)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+                    <div class="card-body" style="color: var(--color-heading)">
                         <h6>Endereço</h6>
                         <div class="row">
                             <div class="col-sm-12 col-md-3 col-lg-3">
@@ -270,8 +270,8 @@
                     </div>
                 </div>
                 <br />
-                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-                    <div class="card-body" style="color: var(--color-primary)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+                    <div class="card-body" style="color: var(--color-heading)">
                         <h6>Dados Bancário</h6>
                         <div class="row">
                             <div class="col-sm-12 col-md-6 col-lg-6">
@@ -316,8 +316,8 @@
                 </div>
                 </div>
                 </div> *@
-                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-                    <div class="card-body" style="color: var(--color-primary)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+                    <div class="card-body" style="color: var(--color-heading)">
                         <h6>Vínculos Familiares</h6>
                         <div class="row">
                             <div class="col-sm-12 col-md-3 col-lg-3">
@@ -422,8 +422,8 @@
                     </div>
                 </div>
                 <br />
-                <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-                    <div class="card-body" style="color: var(--color-primary)">
+                <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+                    <div class="card-body" style="color: var(--color-heading)">
                         <h6>Vincular Propriedades</h6>
                         <div class="mb-2">
                             <a class="btn btn-primary rounded-pill" id="btnAdicionarPropriedade">

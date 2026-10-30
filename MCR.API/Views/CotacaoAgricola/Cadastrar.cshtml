@@ -44,8 +44,8 @@
         <input asp-for="Id" hidden />
         <input asp-for="ClienteInfo.ClienteId" hidden />
         @await Component.InvokeAsync("CotacaoAgricolaDadosAtendimento", new { model = Model })
-        <div class="card pt-3" style="border-radius: 15px; border-color: var(--color-primary)">
-            <div class="card-body pt-3" style="color: var(--color-primary)">
+        <div class="card pt-3" style="border-radius: 15px; border-color: #e9ecef">
+            <div class="card-body pt-3" style="color: var(--color-heading)">
                 <h6>Dados do Cliente</h6>
                 <div class="row">
                     <div class="col-sm-12 col-md-3 col-lg-3" id="divClienteCpf">

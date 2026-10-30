@@ -38,7 +38,7 @@
 
   /* Cores (espelho da paleta existente) */
   --color-primary: #4154f1;
-  --color-heading: #012970;
+  --color-heading: #212529;
   --color-text: #444444;
   --color-bg: #f6f9ff;
   --color-green: #4cbb4f;
@@ -84,7 +84,7 @@ a {
 }
 
 a:hover {
-  color: #4154f1;
+  color: #000;
   text-decoration: none;
 }
 
@@ -123,7 +123,7 @@ h6 {
   font-size: 24px;
   margin-bottom: 0;
   font-weight: 600;
-  color: #012970;
+  color: var(--color-heading);
 }
 
 /*--------------------------------------------------------------
@@ -295,7 +295,7 @@ h6 {
   padding: 20px 0 15px 0;
   font-size: 18px;
   font-weight: 500;
-  color: #012970;
+  color: var(--color-heading);
   font-family: var(--font-body);
 }
 
@@ -341,7 +341,7 @@ h6 {
 }
 
 .accordion-button:not(.collapsed) {
-  color: #012970;
+  color: var(--color-heading);
   background-color: #f6f9ff;
 }
 
@@ -353,7 +353,7 @@ h6 {
 
 .accordion-flush .accordion-button:not(.collapsed) {
   box-shadow: none;
-  color: #4154f1;
+  color: var(--color-heading);
 }
 
 .accordion-flush .accordion-body {
@@ -401,13 +401,13 @@ h6 {
 
 .nav-tabs-bordered .nav-link:hover,
 .nav-tabs-bordered .nav-link:focus {
-  color: #4154f1;
+  color: #000;
 }
 
 .nav-tabs-bordered .nav-link.active {
   background-color: #fff;
-  color: #4154f1;
-  border-bottom: 2px solid #4154f1;
+  color: var(--color-heading);
+  border-bottom: 2px solid var(--color-heading);
 }
 
 /*--------------------------------------------------------------
@@ -450,7 +450,7 @@ h6 {
   font-size: 32px;
   padding-left: 10px;
   cursor: pointer;
-  color: #012970;
+  color: var(--color-heading);
 }
 
 .header .search-bar {
@@ -487,7 +487,7 @@ h6 {
 .header .search-form input {
   border: 0;
   font-size: 14px;
-  color: #012970;
+  color: var(--color-heading);
   border: 1px solid rgba(1, 41, 112, 0.2);
   padding: 7px 38px 7px 8px;
   border-radius: 3px;
@@ -510,7 +510,7 @@ h6 {
 }
 
 .header .search-form button i {
-  color: #012970;
+  color: var(--color-heading);
 }
 
 /*--------------------------------------------------------------
@@ -527,13 +527,13 @@ h6 {
 
 .header-nav .nav-icon {
   font-size: 22px;
-  color: #012970;
+  color: var(--color-heading);
   margin-right: 25px;
   position: relative;
 }
 
 .header-nav .nav-profile {
-  color: #012970;
+  color: var(--color-heading);
 }
 
 .header-nav .nav-profile img {
@@ -753,7 +753,7 @@ h6 {
 .sidebar-nav .nav-link i {
   font-size: 16px;
   margin-right: 10px;
-  color: #4154f1;
+  color: var(--color-heading);
 }
 
 .sidebar-nav .nav-link.collapsed {
@@ -766,12 +766,12 @@ h6 {
 }
 
 .sidebar-nav .nav-link:hover {
-  color: #4154f1;
+  color: #000;
   background: #f6f9ff;
 }
 
 .sidebar-nav .nav-link:hover i {
-  color: #4154f1;
+  color: #000;
 }
 
 .sidebar-nav .nav-link .bi-chevron-down {
@@ -794,7 +794,7 @@ h6 {
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: #012970;
+  color: var(--color-heading);
   transition: 0.3;
   padding: 10px 0 10px 40px;
   transition: 0.3s;
@@ -809,11 +809,11 @@ h6 {
 
 .sidebar-nav .nav-content a:hover,
 .sidebar-nav .nav-content a.active {
-  color: #4154f1;
+  color: #000;
 }
 
 .sidebar-nav .nav-content a.active i {
-  background-color: #4154f1;
+  background-color: var(--color-heading);
 }
 
 /*--------------------------------------------------------------
@@ -836,7 +836,7 @@ h6 {
 
 .dashboard .filter .icon:hover,
 .dashboard .filter .icon:focus {
-  color: #4154f1;
+  color: #000;
 }
 
 .dashboard .filter .dropdown-header {
@@ -864,7 +864,7 @@ h6 {
 
 .dashboard .info-card h6 {
   font-size: 28px;
-  color: #012970;
+  color: var(--color-heading);
   font-weight: 700;
   margin: 0;
   padding: 0;
@@ -960,12 +960,13 @@ h6 {
 }
 
 .dashboard .news h4 a {
-  color: #012970;
+  color: var(--color-heading);
   transition: 0.3s;
 }
 
 .dashboard .news h4 a:hover {
-  color: #4154f1;
+  color: #000;
+  transition: 0.3s;
 }
 
 .dashboard .news p {
@@ -1032,7 +1033,7 @@ h6 {
   background-color: #fff;
   border-radius: 0.25rem;
   text-align: center;
-  color: #012970;
+  color: var(--color-heading);
   padding: 15px 0;
 }
 
@@ -1081,7 +1082,7 @@ h6 {
 }
 
 .profile .profile-card .social-links a:hover {
-  color: #012970;
+  color: var(--color-heading);
 }
 
 .profile .profile-overview .row {
@@ -1090,7 +1091,7 @@ h6 {
 }
 
 .profile .profile-overview .card-title {
-  color: #012970;
+  color: var(--color-heading);
 }
 
 .profile .profile-overview .label {
@@ -1113,7 +1114,7 @@ h6 {
 .faq .basic h6 {
   font-size: 18px;
   font-weight: 600;
-  color: #4154f1;
+  color: var(--color-heading);
 }
 
 .faq .basic p {
@@ -1130,12 +1131,12 @@ h6 {
 .contact .info-box i {
   font-size: 38px;
   line-height: 0;
-  color: #4154f1;
+  color: var(--color-heading);
 }
 
 .contact .info-box h3 {
   font-size: 20px;
-  color: #012970;
+  color: var(--color-heading);
   font-weight: 700;
   margin: 20px 0 10px 0;
 }
@@ -1241,7 +1242,7 @@ h6 {
 .error-404 h1 {
   font-size: 180px;
   font-weight: 700;
-  color: #4154f1;
+  color: var(--color-heading);
   margin-bottom: 0;
   line-height: 150px;
 }
@@ -1249,7 +1250,7 @@ h6 {
 .error-404 h2 {
   font-size: 24px;
   font-weight: 700;
-  color: #012970;
+  color: var(--color-heading);
   margin-bottom: 30px;
 }
 
@@ -1281,14 +1282,14 @@ h6 {
 
 .footer .copyright {
   text-align: center;
-  color: #012970;
+  color: var(--color-heading);
 }
 
 .footer .credits {
   padding-top: 5px;
   text-align: center;
   font-size: 13px;
-  color: #012970;
+  color: var(--color-heading);
 }
 
 
