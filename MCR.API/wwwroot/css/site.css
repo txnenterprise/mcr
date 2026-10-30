@@ -79,12 +79,12 @@ body {
 
 
 a {
-  color: #4154f1;
+  color: #2c384e;
   text-decoration: none;
 }
 
 a:hover {
-  color: #717ff5;
+  color: #4154f1;
   text-decoration: none;
 }
 
@@ -743,7 +743,7 @@ h6 {
   align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: #4154f1;
+  color: #2c384e;
   transition: 0.3;
   background: #f6f9ff;
   padding: 10px 15px;
@@ -757,7 +757,7 @@ h6 {
 }
 
 .sidebar-nav .nav-link.collapsed {
-  color: #012970;
+  color: #2c384e;
   background: #fff;
 }
 

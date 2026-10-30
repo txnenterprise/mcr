@@ -7,7 +7,7 @@
         <div class="col-lg-6 d-flex align-items-center justify-content-center right-side">
             <div class="form-2-wrapper">
                 <div class="logo text-center">
-                    <h2>Login</h2>
+                    <h2>Acesse sua conta</h2>
                 </div>
                 <form asp-controller="Login" asp-action="Authentication" method="post" id="loginForm">
                     <div class="mb-3">
@@ -45,7 +45,7 @@
                     </div> *@
                     <input asp-for="ReturnUrl" type="hidden">
                 </form>
-                @if (Model != null && !Model.Sucesso)
+                @if (Model != null && !Model.Sucesso && !string.IsNullOrEmpty(Model.Mensagem))
                 {
                     <br />
                     <div class="alert alert-warning text-center" role="alert" style="color: #b59900; border-radius: 15px">
@@ -53,8 +53,6 @@
                         <h6>@Model.Mensagem</h6>
                     </div>
                 }
-                <!-- Register Link -->
-                <p class="text-center register-test mt-3"><a href="https://txnenterprise.com.br" class="text-decoration-none" target="_blank">txnenterprise.com.br</a></p>
             </div>
         </div>
     </div>
@@ -74,23 +72,43 @@
         font-family: var(--font-body);
     }
 
+    body #main {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .container > .row > .col-lg-6:first-child {
+        display: none;
+    }
+
+    .container > .row > .col-lg-6.right-side {
+        width: 100%;
+    }
+
     .form-2-wrapper {
         background: rgba(255, 255, 255, 0.92);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        padding: var(--space-8) var(--space-12);
+        padding: var(--space-8);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-lg);
-        min-height: 500px;
-        min-width: 500px;
+        width: 100%;
+        max-width: 440px;
+        margin: var(--space-4);
+    }
+
+    .form-2-wrapper .logo {
+        width: auto;
     }
 
     .logo h2 {
         font-size: var(--text-xl);
         font-weight: 700;
         color: var(--color-heading);
-        letter-spacing: 0.02em;
-        margin-bottom: var(--space-8);
+        letter-spacing: 0.01em;
+        margin: 0 0 var(--space-6) 0;
+        text-align: center;
     }
 
     input.form-control {
@@ -136,24 +154,12 @@
         box-shadow: var(--shadow-md);
     }
 
-    .register-test a {
-        color: var(--color-heading);
-        font-size: var(--text-sm);
-    }
-
-    .register-test a:hover {
-        color: var(--color-primary);
-    }
-
     .social-login button {
         border-radius: var(--radius-pill);
     }
 
     @@media (max-width: 576px) {
         .form-2-wrapper {
-            min-width: 0;
-            min-height: 0;
-            width: 100%;
             margin: var(--space-4);
             padding: var(--space-6);
         }
