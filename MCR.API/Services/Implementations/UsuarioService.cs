@@ -423,6 +423,10 @@ namespace MCR.API.Services.Implementations
                                 return (false, "Toda linha da Estrutura de Negócios deve ter Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido.");
                         }
 
+                        // PA iguais: mesma corretora + mesmo PA não pode se repetir
+                        if (model.EstruturaNegocio.GroupBy(l => new { l.CorretoraId, l.PontoAtendimentoId }).Any(g => g.Count() > 1))
+                            return (false, "Ponto de Atendimento repetido na Estrutura de Negócios — cada PA pode ser vinculado apenas uma vez por corretora.");
+
                         // Valida limite de usuários do plano por corretora-alvo da nova estrutura
                         var corretorasAlvo = model.EstruturaNegocio
                             .Where(item => item.CorretoraId.HasValue)

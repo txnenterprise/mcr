@@ -66,6 +66,20 @@ namespace MCR.API.Components.Usuarios
                 corretoras.Select(x => new { id = x.Id, text = x.NomeFantasia }).OrderBy(x => x.text).ToList(),
                 "id", "text");
 
+            // Limites do plano por corretora para validação no botão "Adicionar" (máx. PA)
+            var limitePorCorretora = corretoras
+                .Where(c => c.Plano != null)
+                .GroupBy(c => c.Id)
+                .ToDictionary(
+                    g => g.Key.ToString(),
+                    g => new
+                    {
+                        plano = g.First().Plano!.Nome,
+                        maxUsuarios = g.First().Plano.MaximoUsuarios,
+                        maxPa = g.First().Plano.MaximoPAsPorUsuario
+                    });
+            ViewBag.LimitePorCorretora = System.Text.Json.JsonSerializer.Serialize(limitePorCorretora);
+
             var canais = (await _canalService.ObterTodosPaginadoAsync()).ToList();
             ViewBag.Canal = new SelectList(
                 canais.Select(x => new { id = x.Id, text = x.RazaoSocial }).OrderBy(x => x.text).ToList(),

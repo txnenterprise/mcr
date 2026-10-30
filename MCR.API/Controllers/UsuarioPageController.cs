@@ -84,6 +84,10 @@ namespace MCR.API.Controllers
                         return Json(new { success = false, message = "Toda linha da Estrutura de Negócios deve ter Corretora, Canal e Ponto de Atendimento — vínculo com '*' não é mais permitido." });
                 }
 
+                // PA iguais: mesma corretora + mesmo PA não pode se repetir
+                if (linhas.GroupBy(l => new { l.CorretoraId, l.PontoAtendimentoId }).Any(g => g.Count() > 1))
+                    return Json(new { success = false, message = "Ponto de Atendimento repetido na Estrutura de Negócios — cada PA pode ser vinculado apenas uma vez por corretora." });
+
                 // Fallback: selects habilitados enviam Default* — monta a linha única se nenhuma linha foi adicionada
                 if (!linhas.Any() && model.DefaultCorretoraId.HasValue && model.DefaultCanalId.HasValue && model.DefaultPontoAtendimentoId.HasValue)
                 {
